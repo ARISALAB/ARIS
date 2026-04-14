@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Report - Financial App</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.min.js"></script>
+    <style>
+        .lang-toggle-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 20px;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 0.85em;
+            margin-left: 16px;
+            transition: background 0.2s;
+            vertical-align: middle;
+        }
+        .lang-toggle-btn:hover { background: rgba(255,255,255,0.35); }
+    </style>
+</head>
+<body>
+    <header><h1 data-i18n="dr_title">Daily Financial Report</h1></header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+            <li><a href="income.html" data-i18n="nav_income">Daily Income</a></li>
+            <li><a href="expenses.html" data-i18n="nav_expenses">Daily Expenses</a></li>
+            <li><a href="suppliers.html" data-i18n="nav_suppliers">Suppliers</a></li>
+            <li><a href="payroll.html" data-i18n="nav_payroll">Payroll</a></li>
+            <li class="dropdown">
+                <a href="#" data-i18n="nav_reports">Reports ▼</a>
+                <ul class="dropdown-menu">
+                    <li><a href="daily-report.html" data-i18n="nav_daily">Daily Report</a></li>
+                    <li><a href="weekly-report.html" data-i18n="nav_weekly">Weekly Report</a></li>
+                    <li><a href="monthly-report.html" data-i18n="nav_monthly">Monthly Report</a></li>
+                    <li><a href="annual-report.html" data-i18n="nav_annual">Annual Report</a></li>
+                </ul>
+            </li>
+            <li><button id="lang-toggle-btn" class="lang-toggle-btn" onclick="toggleLang()">🇬🇷 Ελληνικά</button></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section class="report-controls">
+            <h2 data-i18n="dr_select_h">Select Report Date</h2>
+            <div class="form-group" style="max-width:180px;margin:0 auto;text-align:center;">
+                <label for="report-date" data-i18n="dr_date_lbl">Date:</label>
+                <input type="date" id="report-date" name="report-date" required>
+            </div>
+        </section>
+
+        <div class="split-layout report-layout">
+            <section class="left-column">
+                <h2><span data-i18n="dr_summary_h">Summary for</span> <span id="report-date-display" data-i18n="dr_summary_def">selected date</span></h2>
+                <table id="summary-table">
+                    <thead>
+                        <tr>
+                            <th data-i18n="dr_col_cat">Category</th>
+                            <th data-i18n="dr_col_amount">Amount (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td data-i18n="dr_cash_inc">Cash Income:</td><td id="report-cash-income">0.00</td></tr>
+                        <tr><td data-i18n="dr_card_inc">Card Income:</td><td id="report-card-income">0.00</td></tr>
+                        <tr><td><b data-i18n="dr_total_inc">Total Income:</b></td><td id="report-total-income">0.00</td></tr>
+                        <tr><td colspan="2"><hr></td></tr>
+                        <tr><td data-i18n="dr_cash_exp">Cash Expenses:</td><td id="report-cash-expenses">0.00</td></tr>
+                        <tr><td data-i18n="dr_card_exp">Card Expenses:</td><td id="report-card-expenses">0.00</td></tr>
+                        <tr><td><b data-i18n="dr_total_exp">Total Expenses:</b></td><td id="report-total-expenses">0.00</td></tr>
+                        <tr><td data-i18n="dr_credit_exp">Credit Expenses:</td><td id="report-credit-expenses">0.00</td></tr>
+                        <tr><td colspan="2"><hr></td></tr>
+                        <tr><td data-i18n="dr_cash_bal">Cash Balance:</td><td id="report-cash-balance">0.00</td></tr>
+                        <tr><td data-i18n="dr_card_bal">Card Balance:</td><td id="report-card-balance">0.00</td></tr>
+                        <tr><td><b data-i18n="dr_total_bal">Total Cash Balance:</b></td><td id="report-total-balance">0.00</td></tr>
+                    </tbody>
+                </table>
+                <p id="no-report-data-message" style="display:none;text-align:center;" data-i18n="dr_no_data">No income or expense data found for this date.</p>
+                <button id="export-pdf-button" class="export-button" data-i18n="dr_export_pdf">Export to PDF</button>
+            </section>
+
+            <section class="right-column chart-container">
+                <h2 data-i18n="dr_chart_h">Data Visualisation</h2>
+                <div style="max-width:400px;margin:20px auto;">
+                    <h3 data-i18n="dr_chart_inc">Income Analysis</h3>
+                    <canvas id="incomePieChart"></canvas>
+                </div>
+                <div style="max-width:400px;margin:20px auto;">
+                    <h3 data-i18n="dr_chart_cmp">Income vs Expenses (Cash &amp; Card)</h3>
+                    <canvas id="totalComparisonPieChart"></canvas>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer><p data-i18n="footer_copy">© 2023 My Application</p></footer>
+
+    <script src="daily-report.js"></script>
+    <script src="i18n.js"></script>
+</body>
+</html>
