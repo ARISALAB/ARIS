@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Expenses - Financial App</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.min.js"></script>
+    <style>
+        .lang-toggle-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 20px;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 0.85em;
+            margin-left: 16px;
+            transition: background 0.2s;
+            vertical-align: middle;
+        }
+        .lang-toggle-btn:hover { background: rgba(255,255,255,0.35); }
+    </style>
+</head>
+<body>
+    <header><h1 data-i18n="exp_title">Daily Expense Recording</h1></header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+            <li><a href="income.html" data-i18n="nav_income">Daily Income</a></li>
+            <li><a href="expenses.html" data-i18n="nav_expenses">Daily Expenses</a></li>
+            <li><a href="suppliers.html" data-i18n="nav_suppliers">Suppliers</a></li>
+            <li><a href="payroll.html" data-i18n="nav_payroll">Payroll</a></li>
+            <li class="dropdown">
+                <a href="#" data-i18n="nav_reports">Reports ▼</a>
+                <ul class="dropdown-menu">
+                    <li><a href="daily-report.html" data-i18n="nav_daily">Daily Report</a></li>
+                    <li><a href="weekly-report.html" data-i18n="nav_weekly">Weekly Report</a></li>
+                    <li><a href="monthly-report.html" data-i18n="nav_monthly">Monthly Report</a></li>
+                    <li><a href="annual-report.html" data-i18n="nav_annual">Annual Report</a></li>
+                </ul>
+            </li>
+            <li><button id="lang-toggle-btn" class="lang-toggle-btn" onclick="toggleLang()">🇬🇷 Ελληνικά</button></li>
+        </ul>
+    </nav>
+
+    <main class="split-layout">
+        <section class="left-column">
+            <h2 data-i18n="exp_add_h">Add Expense</h2>
+            <form id="expense-form">
+                <input type="hidden" id="editing-expense-id">
+                <div class="form-group">
+                    <label for="expense-date" data-i18n="exp_date">Date:</label>
+                    <input type="date" id="expense-date" name="expense-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="expense-supplier-input" data-i18n="exp_supplier">Supplier:</label>
+                    <input type="text" id="expense-supplier-input" name="expense-supplier" list="supplier-list" required
+                           data-i18n-attr="placeholder" data-i18n="exp_supplier_ph" placeholder="Type or Select">
+                    <datalist id="supplier-list"></datalist>
+                </div>
+                <div class="form-group">
+                    <label for="expense-type" data-i18n="exp_type">Expense Type:</label>
+                    <select id="expense-type" name="expense-type" required>
+                        <option value="" data-i18n="exp_type_sel">Select Type</option>
+                        <option value="FC">FC</option>
+                        <option value="Διάφορα">Miscellaneous</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="expense-payment-method" data-i18n="exp_payment">Payment Method:</label>
+                    <select id="expense-payment-method" name="expense-payment-method" required>
+                        <option value="" data-i18n="exp_pay_sel">Select Method</option>
+                        <option value="cash" data-i18n="exp_pay_cash">Cash</option>
+                        <option value="card" data-i18n="exp_pay_card">Card</option>
+                        <option value="credit" data-i18n="exp_pay_credit">On Credit</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="expense-invoice-number" data-i18n="exp_invoice">Invoice / Receipt No.:</label>
+                    <input type="text" id="expense-invoice-number" name="expense-invoice-number">
+                </div>
+                <div class="form-group">
+                    <label for="expense-amount" data-i18n="exp_amount">Amount (€):</label>
+                    <input type="number" id="expense-amount" name="expense-amount" step="0.01" required value="0">
+                </div>
+                <button type="submit" id="submit-expense-button" data-i18n="exp_btn_add">Add Expense</button>
+            </form>
+        </section>
+
+        <section class="right-column">
+            <h2><span data-i18n="exp_list_h">Expenses for</span> <span id="selected-expense-date-display"></span></h2>
+            <p id="no-expense-data-message" style="display:none;text-align:center;" data-i18n="exp_no_data">No expense entries found for the selected date.</p>
+            <table id="expenses-table">
+                <thead>
+                    <tr>
+                        <th data-i18n="exp_col_time">Time</th>
+                        <th data-i18n="exp_col_supplier">Supplier</th>
+                        <th data-i18n="exp_col_type">Type</th>
+                        <th data-i18n="exp_col_payment">Payment</th>
+                        <th data-i18n="exp_col_invoice">Invoice No.</th>
+                        <th data-i18n="exp_col_amount">Amount (€)</th>
+                        <th data-i18n="exp_col_actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5" class="total-row" data-i18n="exp_total_cash">Total Cash:</td>
+                        <td id="daily-total-cash" class="total-row">0.00€</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="total-row" data-i18n="exp_total_card">Total Card:</td>
+                        <td id="daily-total-card" class="total-row">0.00€</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="total-row" data-i18n="exp_total_cc">Total Cash + Card:</td>
+                        <td id="daily-total-cash-card" class="total-row">0.00€</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="total-row credit-total" data-i18n="exp_total_credit">Total On Credit:</td>
+                        <td id="daily-total-credit" class="total-row credit-total">0.00€</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+            <button id="export-expenses-pdf-button" class="export-button" data-i18n="exp_export_pdf">Export to PDF</button>
+        </section>
+    </main>
+
+    <footer><p data-i18n="footer_copy">© 2023 My Application</p></footer>
+
+    <script src="expenses.js"></script>
+    <script src="i18n.js"></script>
+</body>
+</html>

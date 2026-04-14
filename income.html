@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Income - Financial App</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .lang-toggle-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 20px;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 0.85em;
+            margin-left: 16px;
+            transition: background 0.2s;
+            vertical-align: middle;
+        }
+        .lang-toggle-btn:hover { background: rgba(255,255,255,0.35); }
+    </style>
+</head>
+<body>
+    <header><h1 data-i18n="inc_title">Daily Income Recording</h1></header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+            <li><a href="income.html" data-i18n="nav_income">Daily Income</a></li>
+            <li><a href="expenses.html" data-i18n="nav_expenses">Daily Expenses</a></li>
+            <li><a href="suppliers.html" data-i18n="nav_suppliers">Suppliers</a></li>
+            <li><a href="payroll.html" data-i18n="nav_payroll">Payroll</a></li>
+            <li class="dropdown">
+                <a href="#" data-i18n="nav_reports">Reports ▼</a>
+                <ul class="dropdown-menu">
+                    <li><a href="daily-report.html" data-i18n="nav_daily">Daily Report</a></li>
+                    <li><a href="weekly-report.html" data-i18n="nav_weekly">Weekly Report</a></li>
+                    <li><a href="monthly-report.html" data-i18n="nav_monthly">Monthly Report</a></li>
+                    <li><a href="annual-report.html" data-i18n="nav_annual">Annual Report</a></li>
+                </ul>
+            </li>
+            <li><button id="lang-toggle-btn" class="lang-toggle-btn" onclick="toggleLang()">🇬🇷 Ελληνικά</button></li>
+        </ul>
+    </nav>
+
+    <main class="split-layout">
+        <section class="left-column">
+            <h2 data-i18n="inc_add_h">Add Income</h2>
+            <form id="income-form">
+                <div class="form-group">
+                    <label for="income-date" data-i18n="inc_date">Date:</label>
+                    <input type="date" id="income-date" name="income-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="income-description" data-i18n="inc_desc">Description:</label>
+                    <input type="text" id="income-description" name="income-description"
+                           data-i18n-attr="placeholder" data-i18n="inc_desc_ph"
+                           placeholder="e.g. Day sales, Delivery, Other" required>
+                </div>
+                <div class="form-group">
+                    <label for="income-cash-amount" data-i18n="inc_cash">Cash Amount (€):</label>
+                    <input type="number" id="income-cash-amount" name="income-cash-amount" step="0.01" value="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="income-card-amount" data-i18n="inc_card">Card Amount (€):</label>
+                    <input type="number" id="income-card-amount" name="income-card-amount" step="0.01" value="0" required>
+                </div>
+                <div class="total-section">
+                    <h3><span data-i18n="inc_entry_total">Entry Total:</span> <span id="current-entry-total">0.00</span> €</h3>
+                </div>
+                <button type="submit" data-i18n="inc_btn_add">Add Income</button>
+            </form>
+        </section>
+
+        <section class="right-column">
+            <h2><span data-i18n="inc_list_h">Income for</span> <span id="selected-date-display" data-i18n="inc_list_default">selected date</span></h2>
+            <table id="income-table">
+                <thead>
+                    <tr>
+                        <th data-i18n="inc_col_time">Time</th>
+                        <th data-i18n="inc_col_desc">Description</th>
+                        <th data-i18n="inc_col_cash">Cash (€)</th>
+                        <th data-i18n="inc_col_card">Card (€)</th>
+                        <th data-i18n="inc_col_total">Total (€)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4" class="total-row" data-i18n="inc_daily_total">Daily Total:</td>
+                        <td id="daily-total-income" class="total-row">0.00</td>
+                    </tr>
+                </tfoot>
+            </table>
+            <p id="no-data-message" style="display:none;text-align:center;" data-i18n="inc_no_data">No entries found for this date.</p>
+        </section>
+    </main>
+
+    <footer><p data-i18n="footer_copy">© 2023 My Application</p></footer>
+
+    <script src="income.js"></script>
+    <script src="i18n.js"></script>
+</body>
+</html>
