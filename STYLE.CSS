@@ -1,0 +1,1007 @@
+/* =====================================
+   DARK CYBER UI THEME
+===================================== */
+
+:root{
+
+--bg:#0b0f19;
+--panel:#111827;
+--panel-light:#1f2937;
+
+--primary:#00e5ff;
+--primary-glow:#00e5ff55;
+
+--accent:#8b5cf6;
+
+--success:#00ff9d;
+--danger:#ff3d5c;
+
+--text:#e5e7eb;
+--text-muted:#9ca3af;
+
+--border:#293548;
+
+--radius:10px;
+
+--glow:0 0 10px var(--primary),0 0 20px var(--primary-glow);
+
+}
+
+/* =====================================
+BASE
+===================================== */
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
+
+body{
+
+font-family:
+"Inter",
+"Segoe UI",
+sans-serif;
+
+background:
+radial-gradient(circle at 20% 20%, #111827, #020617);
+
+color:var(--text);
+
+min-height:100vh;
+
+line-height:1.6;
+
+}
+
+/* =====================================
+HEADER
+===================================== */
+
+header{
+
+background:linear-gradient(120deg,#020617,#0f172a);
+
+border-bottom:1px solid var(--border);
+
+padding:25px;
+
+text-align:center;
+
+font-size:22px;
+
+letter-spacing:1px;
+
+}
+
+/* =====================================
+NAVBAR
+===================================== */
+
+nav{
+
+background:#020617;
+
+border-bottom:1px solid var(--border);
+
+}
+
+nav ul{
+
+display:flex;
+
+justify-content:center;
+
+list-style:none;
+
+flex-wrap:wrap;
+
+}
+
+nav a{
+
+display:block;
+
+padding:14px 22px;
+
+color:var(--text-muted);
+
+text-decoration:none;
+
+transition:0.3s;
+
+}
+
+nav a:hover{
+
+color:var(--primary);
+
+text-shadow:var(--glow);
+
+}
+
+/* dropdown */
+
+.dropdown-menu{
+
+display:none;
+
+position:absolute;
+
+background:#020617;
+
+border:1px solid var(--border);
+
+border-radius:var(--radius);
+
+}
+
+.dropdown:hover .dropdown-menu{
+
+display:block;
+
+}
+
+.dropdown-menu a{
+
+padding:10px 15px;
+
+}
+
+/* =====================================
+MAIN CONTAINER
+===================================== */
+
+main{
+
+max-width:1300px;
+
+margin:40px auto;
+
+padding:30px;
+
+background:rgba(17,24,39,0.8);
+
+backdrop-filter:blur(12px);
+
+border-radius:var(--radius);
+
+border:1px solid var(--border);
+
+box-shadow:0 10px 40px rgba(0,0,0,0.7);
+
+}
+
+/* =====================================
+LAYOUT
+===================================== */
+
+.split-layout{
+
+display:grid;
+
+grid-template-columns:1fr 2fr;
+
+gap:30px;
+
+}
+
+@media(max-width:900px){
+
+.split-layout{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+/* =====================================
+FORM
+===================================== */
+
+.form-group{
+
+margin-bottom:18px;
+
+}
+
+.form-group label{
+
+display:block;
+
+margin-bottom:6px;
+
+color:var(--text-muted);
+
+}
+
+.form-group input,
+.form-group select{
+
+width:100%;
+
+padding:10px;
+
+background:#020617;
+
+border:1px solid var(--border);
+
+border-radius:var(--radius);
+
+color:var(--text);
+
+}
+
+.form-group input:focus{
+
+outline:none;
+
+border-color:var(--primary);
+
+box-shadow:var(--glow);
+
+}
+
+/* =====================================
+BUTTONS
+===================================== */
+
+button{
+
+padding:10px 16px;
+
+border-radius:var(--radius);
+
+border:none;
+
+cursor:pointer;
+
+font-weight:600;
+
+transition:0.3s;
+
+}
+
+button:hover{
+
+transform:translateY(-2px);
+
+}
+
+/* primary */
+
+button{
+
+background:linear-gradient(135deg,#00e5ff,#0099ff);
+
+color:#001018;
+
+box-shadow:var(--glow);
+
+}
+
+button:hover{
+
+box-shadow:0 0 15px var(--primary),0 0 30px var(--primary);
+
+}
+
+/* success */
+
+.success{
+
+background:linear-gradient(135deg,#00ff9d,#00c97c);
+
+}
+
+/* danger */
+
+.danger{
+
+background:linear-gradient(135deg,#ff3d5c,#ff0033);
+
+}
+
+/* =====================================
+TABLE
+===================================== */
+
+.data-table{
+
+width:100%;
+
+border-collapse:collapse;
+
+margin-top:15px;
+
+background:var(--panel);
+
+border-radius:var(--radius);
+
+overflow:hidden;
+
+}
+
+.data-table thead{
+
+background:linear-gradient(90deg,#020617,#111827);
+
+}
+
+.data-table th{
+
+padding:12px;
+
+text-align:center;
+
+color:var(--primary);
+
+border-bottom:1px solid var(--border);
+
+}
+
+.data-table td{
+
+padding:10px;
+
+text-align:center;
+
+border-bottom:1px solid var(--border);
+
+}
+
+.data-table tbody tr:hover{
+
+background:#020617;
+
+}
+
+/* =====================================
+ACTION BUTTONS
+===================================== */
+
+.action-buttons{
+
+display:flex;
+
+justify-content:center;
+
+gap:8px;
+
+}
+
+.action-buttons button{
+
+padding:6px 10px;
+
+font-size:13px;
+
+}
+
+/* =====================================
+MODAL
+===================================== */
+
+.modal{
+
+display:none;
+
+position:fixed;
+
+z-index:1000;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,0.8);
+
+}
+
+.modal-content{
+
+background:#020617;
+
+margin:60px auto;
+
+padding:25px;
+
+max-width:900px;
+
+border-radius:var(--radius);
+
+border:1px solid var(--border);
+
+box-shadow:0 0 40px #000;
+
+}
+
+.close-button{
+
+position:absolute;
+
+top:10px;
+right:15px;
+
+font-size:28px;
+
+cursor:pointer;
+
+color:var(--text-muted);
+
+}
+
+.close-button:hover{
+
+color:var(--danger);
+
+}
+
+/* =====================================
+PAYROLL TABLE
+===================================== */
+
+#range-payroll-table{
+
+min-width:900px;
+
+border-collapse:collapse;
+
+}
+
+#range-payroll-table th{
+
+position:sticky;
+
+top:0;
+
+background:#020617;
+
+color:var(--primary);
+
+}
+
+#range-payroll-table td,
+#range-payroll-table th{
+
+border:1px solid var(--border);
+
+padding:10px;
+
+}
+
+#range-payroll-table td:first-child,
+#range-payroll-table th:first-child{
+
+position:sticky;
+
+left:0;
+
+background:#020617;
+
+}
+
+/* =====================================
+TOTALS
+===================================== */
+
+.employee-total-hours{
+
+background:#012e2a;
+
+color:var(--success);
+
+font-weight:bold;
+
+}
+
+.employee-total-salary-cell{
+
+background:#021d2a;
+
+color:var(--primary);
+
+font-weight:bold;
+
+}
+
+/* =====================================
+FOOTER
+===================================== */
+
+footer{
+
+text-align:center;
+
+padding:20px;
+
+margin-top:40px;
+
+border-top:1px solid var(--border);
+
+color:var(--text-muted);
+
+}
+
+/* =====================================
+SCROLLBAR
+===================================== */
+
+::-webkit-scrollbar{
+
+width:8px;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+background:var(--primary);
+
+border-radius:10px;
+
+}
+/* =========================
+SUPPLIERS TABLE
+========================= */
+
+#suppliers-table{
+
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+background:#0f172a;
+border-radius:10px;
+overflow:hidden;
+
+box-shadow:0 10px 30px rgba(0,0,0,0.6);
+
+}
+
+/* header */
+
+#suppliers-table thead{
+
+background:linear-gradient(90deg,#020617,#111827);
+
+}
+
+#suppliers-table th{
+
+padding:14px;
+text-align:left;
+
+font-size:14px;
+
+letter-spacing:0.5px;
+
+color:#00e5ff;
+
+border-bottom:1px solid #1f2937;
+
+}
+
+/* rows */
+
+#suppliers-table td{
+
+padding:12px;
+
+border-bottom:1px solid #1f2937;
+
+color:#e5e7eb;
+
+font-size:14px;
+
+}
+
+/* zebra rows */
+
+#suppliers-table tbody tr:nth-child(even){
+
+background:#020617;
+
+}
+
+/* hover */
+
+#suppliers-table tbody tr:hover{
+
+background:#111827;
+
+transform:scale(1.01);
+
+transition:0.2s;
+
+}
+
+/* supplier name */
+
+#suppliers-table td:first-child{
+
+font-weight:600;
+
+color:#fff;
+
+}
+
+/* amount column */
+
+#suppliers-table td.amount{
+
+color:#00ff9d;
+
+font-weight:bold;
+
+}
+
+/* actions */
+
+.supplier-actions{
+
+display:flex;
+
+gap:8px;
+
+}
+
+/* buttons */
+
+.supplier-actions button{
+
+border:none;
+
+padding:6px 10px;
+
+border-radius:6px;
+
+font-size:13px;
+
+cursor:pointer;
+
+transition:0.25s;
+
+}
+
+/* edit */
+
+.btn-edit{
+
+background:#2563eb;
+
+color:white;
+
+}
+
+.btn-edit:hover{
+
+background:#1d4ed8;
+
+}
+
+/* delete */
+
+.btn-delete{
+
+background:#ff3d5c;
+
+color:white;
+
+}
+
+.btn-delete:hover{
+
+background:#e11d48;
+
+}
+
+/* add supplier button */
+
+#add-supplier-btn{
+
+margin-bottom:15px;
+
+padding:10px 16px;
+
+background:linear-gradient(135deg,#00e5ff,#0099ff);
+
+border:none;
+
+border-radius:8px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+box-shadow:0 0 10px #00e5ff55;
+
+}
+
+#add-supplier-btn:hover{
+
+box-shadow:0 0 20px #00e5ff;
+
+transform:translateY(-2px);
+
+}
+/* =====================================
+   DARK CYBER UI - ROBUST EDITION
+===================================== */
+
+:root {
+    --bg: #0b0f19;
+    --panel: #111827;
+    --panel-light: #1f2937;
+    --primary: #00e5ff;
+    --primary-glow: #00e5ff55;
+    --accent: #8b5cf6;
+    --success: #00ff9d;
+    --danger: #ff3d5c;
+    --text: #e5e7eb;
+    --text-muted: #9ca3af;
+    --border: #293548;
+    --radius: 10px;
+    --glow: 0 0 10px var(--primary), 0 0 20px var(--primary-glow);
+}
+
+/* =====================================
+   BASE & LAYOUT
+===================================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Inter", "Segoe UI", sans-serif;
+    background: radial-gradient(circle at 20% 20%, #111827, #020617);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+header {
+    background: linear-gradient(120deg, #020617, #0f172a);
+    border-bottom: 1px solid var(--border);
+    padding: 25px;
+    text-align: center;
+    font-size: 22px;
+    letter-spacing: 1px;
+}
+
+nav {
+    background: #020617;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    flex-wrap: wrap;
+}
+
+nav a {
+    display: block;
+    padding: 14px 22px;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+nav a:hover {
+    color: var(--primary);
+    text-shadow: var(--glow);
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background: #020617;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    min-width: 180px;
+}
+
+.dropdown:hover .dropdown-menu { display: block; }
+.dropdown-menu a { padding: 10px 15px; }
+
+main {
+    max-width: 1300px;
+    margin: 40px auto;
+    padding: 30px;
+    background: rgba(17, 24, 39, 0.8);
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+}
+
+.split-layout {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 30px;
+}
+
+@media(max-width:900px) {
+    .split-layout { grid-template-columns: 1fr; }
+}
+
+/* =====================================
+   FORMS
+===================================== */
+.form-group { margin-bottom: 18px; }
+.form-group label { display: block; margin-bottom: 6px; color: var(--text-muted); font-size: 14px; }
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 12px;
+    background: #020617;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-size: 15px;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: var(--glow);
+}
+
+/* =====================================
+   BUTTONS (PRESERVED)
+===================================== */
+button {
+    padding: 10px 16px;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+button:hover { transform: translateY(-2px); }
+
+#submit-expense-button, #add-supplier-btn, button[type="submit"] {
+    background: linear-gradient(135deg, #00e5ff, #0099ff);
+    color: #001018;
+    box-shadow: var(--glow);
+    width: 100%; /* For forms */
+}
+
+.export-button {
+    background: linear-gradient(135deg, #00ff9d, #00c97c);
+    margin-top: 20px;
+    color: #001018;
+}
+
+/* =====================================
+   TABLES (CYBER STYLE - APPLIED TO ALL)
+===================================== */
+table, .data-table, #expenses-table, #suppliers-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: #0f172a;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+thead {
+    background: linear-gradient(90deg, #020617, #111827);
+}
+
+th {
+    padding: 14px;
+    text-align: left;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    color: var(--primary);
+    border-bottom: 1px solid #1f2937;
+    text-transform: uppercase;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #1f2937;
+    color: var(--text);
+    font-size: 14px;
+}
+
+/* Zebra Rows */
+tbody tr:nth-child(even) { background: #020617; }
+
+/* Hover Effect */
+tbody tr:hover {
+    background: #111827;
+    transform: scale(1.005);
+    transition: 0.2s;
+}
+
+/* Totals Styling */
+tfoot .total-row {
+    background: #020617;
+    font-weight: bold;
+    color: var(--primary);
+    border-top: 2px solid var(--border);
+}
+
+/* =====================================
+   MODAL (FIXED - NO FUNCTIONAL CHANGES)
+===================================== */
+.modal {
+    display: none; /* Controlled by JS */
+    position: fixed;
+    z-index: 2000;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+}
+
+.modal-content {
+    background: #020617;
+    margin: 60px auto;
+    padding: 30px;
+    max-width: 900px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: 0 0 50px #000;
+    position: relative; /* For close button */
+}
+
+.close-button {
+    position: absolute;
+    top: 15px; right: 20px;
+    font-size: 32px;
+    cursor: pointer;
+    color: var(--text-muted);
+}
+
+.close-button:hover { color: var(--danger); }
+
+/* =====================================
+   ACTION BUTTONS
+===================================== */
+.action-buttons, .supplier-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-edit, .edit-button { background: #2563eb; color: white; }
+.btn-delete, .delete-button { background: var(--danger); color: white; }
+
+/* =====================================
+   PAYROLL SPECIALS
+===================================== */
+#range-payroll-table td:first-child,
+#range-payroll-table th:first-child {
+    position: sticky;
+    left: 0;
+    background: #020617;
+    z-index: 2;
+    border-right: 2px solid var(--border);
+}
+
+/* =====================================
+   FOOTER
+===================================== */
+footer {
+    text-align: center;
+    padding: 30px;
+    margin-top: 40px;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }

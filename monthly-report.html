@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly Report - Financial App</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.min.js"></script>
+    <style>
+        .lang-toggle-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 20px;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 0.85em;
+            margin-left: 16px;
+            transition: background 0.2s;
+            vertical-align: middle;
+        }
+        .lang-toggle-btn:hover { background: rgba(255,255,255,0.35); }
+    </style>
+    <style>
+        #month-year-input { width:180px;display:block;margin:10px auto;padding:8px 12px;font-size:1em;border:1px solid #ced4da;border-radius:4px; }
+        #monthly-summary-table,#monthly-supplier-credit-table,#monthly-weekly-breakdown-table { margin-top:20px;width:100%;border-collapse:collapse;box-shadow:0 2px 5px rgba(0,0,0,0.08);border-radius:4px;overflow:hidden; }
+        #monthly-weekly-breakdown-table th,#monthly-weekly-breakdown-table td { padding:5px 3px;border:1px solid #dee2e6;font-size:0.8em;white-space:normal;word-break:break-word; }
+        #monthly-weekly-breakdown-table th { background-color:var(--table-header-bg);color:var(--table-header-color);font-weight:bold;text-transform:uppercase;text-align:center;vertical-align:middle; }
+        #monthly-weekly-breakdown-table td { text-align:right; }
+        #monthly-weekly-breakdown-table td:first-child { text-align:left;font-weight:bold;padding-left:6px; }
+        #monthly-weekly-breakdown-table tbody tr:nth-child(even) { background-color:var(--table-row-alt-bg); }
+        #monthly-weekly-breakdown-table tfoot td { font-weight:bold;background-color:var(--total-row-bg);border-top:2px solid #adb5bd;padding:8px 5px;text-align:right;font-size:0.85em; }
+        #monthly-weekly-breakdown-table tfoot td:first-child { text-align:left; }
+        #monthly-food-cost-container { margin-top:20px;padding:10px;background-color:#fff3cd;border:1px solid #ffeeba;color:#856404;text-align:center;border-radius:4px;display:none;font-size:1em; }
+        #monthly-food-cost-interpretation { margin-top:20px;padding:15px;border-left:4px solid var(--primary-color);background-color:var(--secondary-background);color:var(--text-color);font-size:1em;line-height:1.6;display:none; }
+        #monthly-weekly-comparison-chart-container { max-width:800px; }
+        .chart-container { max-width:500px;margin:20px auto; }
+        .chart-container h3 { text-align:center;margin-bottom:15px; }
+        .split-layout .left-column,.split-layout .right-column { padding:20px; }
+    </style>
+</head>
+<body>
+    <header><h1 data-i18n="mr_title">Monthly Financial Report</h1></header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+            <li><a href="income.html" data-i18n="nav_income">Daily Income</a></li>
+            <li><a href="expenses.html" data-i18n="nav_expenses">Daily Expenses</a></li>
+            <li><a href="suppliers.html" data-i18n="nav_suppliers">Suppliers</a></li>
+            <li><a href="payroll.html" data-i18n="nav_payroll">Payroll</a></li>
+            <li class="dropdown">
+                <a href="#" data-i18n="nav_reports">Reports ▼</a>
+                <ul class="dropdown-menu">
+                    <li><a href="daily-report.html" data-i18n="nav_daily">Daily Report</a></li>
+                    <li><a href="weekly-report.html" data-i18n="nav_weekly">Weekly Report</a></li>
+                    <li><a href="monthly-report.html" data-i18n="nav_monthly">Monthly Report</a></li>
+                    <li><a href="annual-report.html" data-i18n="nav_annual">Annual Report</a></li>
+                </ul>
+            </li>
+            <li><button id="lang-toggle-btn" class="lang-toggle-btn" onclick="toggleLang()">🇬🇷 Ελληνικά</button></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section class="report-controls">
+            <h2 data-i18n="mr_select_h">Select Report Month and Year</h2>
+            <div class="form-group" style="text-align:center;">
+                <label for="month-year-input" data-i18n="mr_month_lbl">Month/Year:</label>
+                <input type="month" id="month-year-input" name="month-year-input" required>
+            </div>
+        </section>
+
+        <div class="split-layout report-layout">
+            <section class="left-column">
+                <h2><span data-i18n="mr_summary_h">Summary for</span> <span id="selected-month-display" data-i18n="mr_summary_def">selected month</span></h2>
+                <table id="monthly-summary-table" style="display:none;">
+                    <thead><tr><th data-i18n="dr_col_cat">Category</th><th data-i18n="dr_col_amount">Amount (€)</th></tr></thead>
+                    <tbody>
+                        <tr><td data-i18n="mr_cash_inc">Cash Income:</td><td id="monthly-cash-income">0.00</td></tr>
+                        <tr><td data-i18n="mr_card_inc">Card Income:</td><td id="monthly-card-income">0.00</td></tr>
+                        <tr><td><b data-i18n="mr_total_inc">Total Income:</b></td><td id="monthly-total-income">0.00</td></tr>
+                        <tr><td colspan="2"><hr></td></tr>
+                        <tr><td data-i18n="mr_cash_exp">Cash Expenses:</td><td id="monthly-cash-expenses">0.00</td></tr>
+                        <tr><td data-i18n="mr_card_exp">Card Expenses:</td><td id="monthly-card-expenses">0.00</td></tr>
+                        <tr><td><b data-i18n="mr_total_exp_cc">Total Expenses (Cash &amp; Card):</b></td><td id="monthly-total-expenses-cash-card">0.00</td></tr>
+                        <tr><td data-i18n="mr_credit_exp">Credit Expenses:</td><td id="monthly-credit-expenses">0.00</td></tr>
+                        <tr><td colspan="2"><hr></td></tr>
+                        <tr><td data-i18n="mr_cash_bal">Cash Balance:</td><td id="monthly-cash-balance">0.00</td></tr>
+                        <tr><td data-i18n="mr_card_bal">Card Balance:</td><td id="monthly-card-balance">0.00</td></tr>
+                        <tr><td><b data-i18n="mr_total_bal">Total Cash Balance:</b></td><td id="monthly-total-balance">0.00</td></tr>
+                    </tbody>
+                </table>
+                <p id="no-monthly-report-data-message" style="display:none;" data-i18n="mr_no_data">No income or expense data found for this month.</p>
+
+                <h2 style="margin-top:30px;" data-i18n="mr_supplier_h">Total Credit Expenses by Supplier (Monthly)</h2>
+                <table id="monthly-supplier-credit-table" style="display:none;">
+                    <thead><tr><th data-i18n="mr_sup_col_name">Supplier Name</th><th data-i18n="mr_sup_col_total">Total On Credit (€)</th></tr></thead>
+                    <tbody></tbody>
+                    <tfoot><tr><td data-i18n="mr_sup_total_lbl">Total On Credit:</td><td id="monthly-supplier-credit-total">0.00</td></tr></tfoot>
+                </table>
+                <p id="no-monthly-supplier-credit-message" style="display:none;" data-i18n="mr_no_credit">No credit expenses found for this month.</p>
+            </section>
+
+            <section class="right-column chart-container">
+                <h2 data-i18n="mr_chart_h">Month Data Visualisation</h2>
+                <div style="max-width:500px;margin:0 auto;">
+                    <h3 data-i18n="mr_chart_cmp">Total Income vs Expenses Comparison (Cash &amp; Card)</h3>
+                    <canvas id="monthlyTotalComparisonPieChart"></canvas>
+                </div>
+            </section>
+        </div>
+
+        <h2 style="margin-top:30px;" data-i18n="mr_breakdown_h">Weekly Breakdown for the Month</h2>
+        <table id="monthly-weekly-breakdown-table" style="display:none;">
+            <thead>
+                <tr>
+                    <th data-i18n="mr_col_week">Week (Dates)</th>
+                    <th data-i18n="mr_col_cash_inc">Cash Income (€)</th>
+                    <th data-i18n="mr_col_card_inc">Card Income (€)</th>
+                    <th data-i18n="mr_col_total_inc">Total Income (€)</th>
+                    <th data-i18n="mr_col_cash_exp">Cash Expenses (€)</th>
+                    <th data-i18n="mr_col_card_exp">Card Expenses (€)</th>
+                    <th data-i18n="mr_col_total_exp">Total Expenses (€)</th>
+                    <th data-i18n="mr_col_cash_bal">Cash Balance (€)</th>
+                    <th data-i18n="mr_col_card_bal">Card Balance (€)</th>
+                    <th data-i18n="mr_col_total_bal">Total Balance (€)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+                <tr>
+                    <td data-i18n="mr_month_totals">Month Totals:</td>
+                    <td id="monthly-weekly-total-cash-income">0.00</td>
+                    <td id="monthly-weekly-total-card-income">0.00</td>
+                    <td id="monthly-weekly-total-income-sum">0.00</td>
+                    <td id="monthly-weekly-total-cash-expenses">0.00</td>
+                    <td id="monthly-weekly-total-card-expenses">0.00</td>
+                    <td id="monthly-weekly-total-expenses-cash-card-sum">0.00</td>
+                    <td id="monthly-weekly-cash-balance">0.00</td>
+                    <td id="monthly-weekly-card-balance">0.00</td>
+                    <td id="monthly-weekly-total-balance">0.00</td>
+                </tr>
+            </tfoot>
+        </table>
+        <p id="no-monthly-weekly-breakdown-message" style="display:none;" data-i18n="mr_no_breakdown">No detailed weekly data found for this month.</p>
+
+        <div id="monthly-weekly-comparison-chart-container" class="chart-container">
+            <h3 data-i18n="mr_chart_weekly_h">Income, Expenses and Balance by Week</h3>
+            <canvas id="monthlyWeeklyComparisonChart"></canvas>
+            <p id="no-monthly-weekly-chart-message" style="display:none;" data-i18n="mr_no_chart">No data available to create the weekly chart.</p>
+        </div>
+
+        <div id="monthly-food-cost-container">
+            <strong data-i18n="mr_fc_label">Food Cost Analysis (FC):</strong>
+            <span data-i18n="mr_fc_total_exp">Total FC Expenses:</span> <span id="monthly-total-fc-expenses">0.00€</span> /
+            <span data-i18n="mr_fc_total_inc">Total Income:</span> <span id="monthly-total-income-for-fc">0.00€</span> =
+            <span data-i18n="mr_fc_value">Food Cost (FC):</span> <span id="monthly-food-cost-value">N/A</span>
+        </div>
+        <div id="monthly-food-cost-interpretation" style="display:none;"></div>
+
+        <button id="export-monthly-pdf-button" class="export-button" style="margin-top:30px;" data-i18n="mr_export_pdf">Export to PDF</button>
+    </main>
+
+    <footer><p data-i18n="footer_copy">© 2023 My Application</p></footer>
+
+    <script src="monthly-report.js"></script>
+    <script src="i18n.js"></script>
+</body>
+</html>

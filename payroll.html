@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payroll - Financial App</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <style>
+        .lang-toggle-btn { background:rgba(255,255,255,0.2);color:white;border:1px solid rgba(255,255,255,0.5);border-radius:20px;padding:4px 12px;cursor:pointer;font-size:0.85em;margin-left:16px;transition:background 0.2s;vertical-align:middle; }
+        .lang-toggle-btn:hover { background:rgba(255,255,255,0.35); }
+
+        button { background-color:#4CAF50;color:white;padding:10px 15px;border:none;border-radius:5px;cursor:pointer;font-size:1rem;transition:background-color 0.3s ease,transform 0.2s ease;box-shadow:0 2px 5px rgba(0,0,0,0.2);margin-top:10px; }
+        button:hover { background-color:#45a049;transform:translateY(-1px); }
+        button:active { transform:translateY(0);box-shadow:0 1px 3px rgba(0,0,0,0.2); }
+        input[type="date"],input[type="number"] { padding:8px;border:1px solid #ccc;border-radius:4px;font-size:1rem;box-sizing:border-box; }
+        input.daily-hours-input { width:60px;text-align:center;background-color:white !important;pointer-events:auto !important;z-index:10;border:1px solid #007bff;box-shadow:inset 0 1px 3px rgba(0,0,0,0.1); }
+        .data-table { width:100%;border-collapse:collapse;margin-top:20px;background-color:#fff;box-shadow:0 1px 5px rgba(0,0,0,0.1); }
+        .data-table th,.data-table td { border:1px solid #ddd;padding:10px;text-align:left; }
+        .data-table thead th { background-color:#6c757d;color:white;font-weight:bold;text-transform:uppercase;font-size:0.9em;position:relative; }
+        .data-table tbody tr:nth-child(even) { background-color:#f9f9f9; }
+        .data-table tbody tr:hover { background-color:#f1f1f1; }
+        .data-table tfoot .total-row td { font-weight:bold;background-color:#e0e0e0;text-align:right; }
+        .employee-total-hours,.employee-total-salary-cell { font-weight:bold;text-align:center;background-color:#e6ffe6; }
+        .employee-total-salary-cell { color:#007bff; }
+        .grand-total-label { background-color:#d4edda;color:#155724; }
+        #range-total-payroll-amount,#summary-grand-total { color:#dc3545;font-size:1.1em; }
+        .no-data-message { text-align:center;color:#666;margin-top:20px;padding:15px;border:1px solid #ffeeba;border-radius:5px;background-color:#fff3cd; }
+        .export-button { background-color:#007bff;margin-top:15px; }
+        .export-button:hover { background-color:#0056b3; }
+        .split-layout { display:flex;flex-wrap:wrap;gap:20px;padding:20px; }
+        .left-column,.right-column { flex:1;min-width:300px;background-color:#fff;padding:20px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+        #range-payroll-table-container { overflow-x:auto;margin-top:20px;position:relative; }
+        #range-payroll-table { min-width:900px;position:relative; }
+        #range-payroll-table th:first-child,#range-payroll-table td:first-child { position:sticky;left:0;z-index:10;min-width:150px;max-width:150px;width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background-color:#fff;border-right:1px solid #ddd; }
+        #range-payroll-table thead th:first-child { background-color:#6c757d;color:white;z-index:12; }
+        #range-payroll-table tbody tr:nth-child(even) td:first-child { background-color:#f9f9f9; }
+        #range-payroll-table tbody tr:hover td:first-child { background-color:#e0e0e0; }
+        @media (max-width:768px) { .split-layout { flex-direction:column; } }
+    </style>
+</head>
+<body>
+    <header><h1 data-i18n="pay_title">Employee Payroll</h1></header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+            <li><a href="income.html" data-i18n="nav_income">Daily Income</a></li>
+            <li><a href="expenses.html" data-i18n="nav_expenses">Daily Expenses</a></li>
+            <li><a href="suppliers.html" data-i18n="nav_suppliers">Suppliers</a></li>
+            <li><a href="employees.html" data-i18n="nav_employees">Employees</a></li>
+            <li><a href="payroll.html" data-i18n="nav_payroll">Payroll</a></li>
+            <li class="dropdown">
+                <a href="#" data-i18n="nav_reports">Reports ▼</a>
+                <ul class="dropdown-menu">
+                    <li><a href="daily-report.html" data-i18n="nav_daily">Daily Report</a></li>
+                    <li><a href="weekly-report.html" data-i18n="nav_weekly">Weekly Report</a></li>
+                    <li><a href="monthly-report.html" data-i18n="nav_monthly">Monthly Report</a></li>
+                    <li><a href="annual-report.html" data-i18n="nav_annual">Annual Report</a></li>
+                </ul>
+            </li>
+            <li><button id="lang-toggle-btn" class="lang-toggle-btn" onclick="toggleLang()">🇬🇷 Ελληνικά</button></li>
+        </ul>
+    </nav>
+
+    <main class="split-layout">
+        <section class="left-column">
+            <h2 data-i18n="pay_range_h">Weekly Range Payroll</h2>
+            <div class="form-group">
+                <label for="range-from-date" data-i18n="pay_date_lbl">Select Week Date:</label>
+                <input type="date" id="range-from-date">
+            </div>
+            <button type="button" id="load-employees-for-range-button" data-i18n="pay_load_btn">Load Employees</button>
+
+            <div id="range-payroll-table-container" style="display:none;">
+                <table id="range-payroll-table" class="data-table">
+                    <thead>
+                        <tr>
+                            <th data-i18n="pay_col_employee">Employee</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr class="total-row">
+                            <td class="grand-total-label" style="text-align:right;" data-i18n="pay_grand_total">Range Payroll Grand Total:</td>
+                            <td id="range-total-payroll-amount">0.00€</td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <p id="no-employees-for-range-message" class="no-data-message" style="display:none;text-align:center;" data-i18n="pay_no_emp">No employees found for entry.</p>
+                <button type="button" id="save-range-payroll-button" style="display:none;" data-i18n="pay_save_btn">Save Range Payroll</button>
+            </div>
+        </section>
+
+        <section class="right-column">
+            <h2 data-i18n="pay_summary_h">Payroll Summary</h2>
+            <div class="form-group">
+                <label for="summary-from-date" data-i18n="pay_from">From Date:</label>
+                <input type="date" id="summary-from-date">
+            </div>
+            <div class="form-group">
+                <label for="summary-to-date" data-i18n="pay_to">To Date:</label>
+                <input type="date" id="summary-to-date">
+            </div>
+            <button type="button" id="load-summary-button" data-i18n="pay_load_sum">Load Summary</button>
+
+            <div id="payroll-summary-container" style="display:none;">
+                <table id="payroll-summary-table" class="data-table">
+                    <thead>
+                        <tr>
+                            <th data-i18n="pay_col_employee">Employee</th>
+                            <th data-i18n="pay_col_salary">Total Salary (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr class="total-row">
+                            <td data-i18n="pay_total_lbl">Payroll Total:</td>
+                            <td id="summary-grand-total">0.00€</td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <button type="button" id="export-detailed-payroll-pdf-button" class="export-button" data-i18n="pay_export_pdf">Export Detailed Report to PDF</button>
+                <button type="button" id="clear-payroll-data-button" class="export-button" style="background-color:#dc3545;" data-i18n="pay_clear_btn">Delete Payroll Data</button>
+            </div>
+            <p id="no-summary-data-message" class="no-data-message" style="display:none;text-align:center;" data-i18n="pay_no_summary">Select a date range and load employees to see the summary.</p>
+        </section>
+    </main>
+
+    <footer><p data-i18n="footer_copy">© 2023 My Application</p></footer>
+
+    <script src="payroll.js"></script>
+    <script src="employees.js"></script>
+    <script src="i18n.js"></script>
+</body>
+</html>
