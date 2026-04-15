@@ -1,155 +1,2385 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial Management App</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        .lang-toggle-btn {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.5);
-            border-radius: 20px;
-            padding: 4px 12px;
-            cursor: pointer;
-            font-size: 0.85em;
-            margin-left: 16px;
-            transition: background 0.2s;
-            vertical-align: middle;
-        }
-        .lang-toggle-btn:hover { background: rgba(255,255,255,0.35); }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>FinanceOS — Business Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  /* Dark luxury palette */
+  --bg:#0a0b0f;
+  --bg2:#0f1117;
+  --bg3:#141720;
+  --surface:#161b27;
+  --surface2:#1c2233;
+  --surface3:#222840;
+  --glass:rgba(22,27,39,0.7);
+  --border:rgba(255,255,255,.07);
+  --border-bright:rgba(255,255,255,.14);
+  --ink:#f0f2f8;
+  --ink2:#a0a8c0;
+  --ink3:#5a637a;
+  /* Accent: electric teal/cyan */
+  --accent:#00d4aa;
+  --accent2:#00b8ff;
+  --accent-glow:rgba(0,212,170,.18);
+  --accent-subtle:rgba(0,212,170,.08);
+  --danger:#ff4d6d;
+  --danger-subtle:rgba(255,77,109,.1);
+  --success:#00d4aa;
+  --success-subtle:rgba(0,212,170,.1);
+  --warning:#f59e0b;
+  --warning-subtle:rgba(245,158,11,.1);
+  --gold:#e8c66a;
+  --radius:10px;
+  --radius-lg:14px;
+  --radius-xl:20px;
+  --radius-2xl:28px;
+  --shadow:0 4px 24px rgba(0,0,0,.4);
+  --shadow-md:0 8px 32px rgba(0,0,0,.5);
+  --shadow-glow:0 0 40px rgba(0,212,170,.15);
+  --font:'Plus Jakarta Sans',sans-serif;
+  --display:'Plus Jakarta Sans',sans-serif;
+  --mono:'Fira Code',monospace;
+  --nav-h:64px;
+  --bottom-h:72px;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6;min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden}
 
-        .hero-section {
-            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-            color: white; padding: 60px 20px; text-align: center; margin-bottom: 30px;
-        }
-        .hero-section h1 { color: white; font-size: 2.5em; margin-bottom: 10px; }
-        .hero-section p { font-size: 1.2em; opacity: 0.9; max-width: 800px; margin: 0 auto; }
-        .features-section, .benefits-section, .cta-section { padding: 40px 20px; margin-bottom: 30px; }
-        .features-section h2, .benefits-section h2, .cta-section h2 {
-            text-align: center; margin-bottom: 30px; color: var(--primary-color); font-size: 2em;
-        }
-        .feature-grid, .benefit-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px; max-width: 1200px; margin: 0 auto;
-        }
-        .feature-item, .benefit-item {
-            background-color: white; padding: 25px; border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; transition: transform 0.3s ease;
-        }
-        .feature-item:hover, .benefit-item:hover { transform: translateY(-5px); }
-        .feature-item h3, .benefit-item h3 { color: var(--secondary-color); margin-bottom: 10px; font-size: 1.5em; }
-        .feature-item p, .benefit-item p { color: #555; line-height: 1.6; }
-        .cta-section { background-color: var(--light-gray); text-align: center; }
-        .cta-section .button {
-            display: inline-block; background-color: var(--accent-color); color: white;
-            padding: 15px 30px; border-radius: 5px; text-decoration: none; font-size: 1.1em;
-        }
-        @media (max-width: 768px) {
-            .hero-section { padding: 40px 15px; }
-            .hero-section h1 { font-size: 2em; }
-            .hero-section p { font-size: 1em; }
-        }
-    </style>
+/* ── GRAIN OVERLAY ── */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;opacity:.4}
+
+/* ── AMBIENT GLOW ── */
+.ambient{position:fixed;pointer-events:none;z-index:0;border-radius:50%;filter:blur(120px);opacity:.25}
+.ambient-1{width:600px;height:600px;background:radial-gradient(circle,rgba(0,212,170,.3) 0%,transparent 70%);top:-200px;right:-100px}
+.ambient-2{width:400px;height:400px;background:radial-gradient(circle,rgba(0,184,255,.2) 0%,transparent 70%);bottom:-100px;left:-50px}
+
+/* ── NAV ── */
+nav{background:rgba(10,11,15,.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;height:var(--nav-h)}
+.nav-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;height:100%;padding:0 28px;gap:0}
+.nav-logo{display:flex;align-items:center;gap:11px;cursor:pointer;margin-right:32px;text-decoration:none;flex-shrink:0}
+.nav-logo-mark{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(0,212,170,.4),inset 0 1px 0 rgba(255,255,255,.2)}
+.nav-logo-mark svg{width:18px;height:18px;fill:white}
+.nav-logo-text{line-height:1}
+.nav-logo-name{font-family:var(--display);font-size:16px;font-weight:700;color:var(--ink);letter-spacing:-.3px}
+.nav-logo-tagline{font-size:9.5px;color:var(--ink3);font-weight:400;letter-spacing:.6px;text-transform:uppercase;margin-top:1px}
+.nav-links{display:flex;align-items:center;gap:2px;flex:1}
+.nav-link{padding:7px 13px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--ink3);border:none;background:none;transition:all .15s;white-space:nowrap;font-family:var(--font);letter-spacing:-.1px}
+.nav-link:hover{background:var(--surface2);color:var(--ink)}
+.nav-link.active{background:var(--accent-subtle);color:var(--accent);font-weight:600}
+.nav-dropdown{position:relative}
+.nav-dropdown-menu{position:absolute;top:calc(100% + 12px);left:0;background:var(--surface);border:1px solid var(--border-bright);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);min-width:210px;z-index:300;overflow:hidden;display:none;padding:6px}
+.nav-dropdown.open .nav-dropdown-menu{display:block}
+.nav-dropdown-item{display:flex;align-items:center;gap:9px;padding:9px 12px;font-size:13px;color:var(--ink2);cursor:pointer;transition:all .12s;border-radius:8px}
+.nav-dropdown-item:hover{background:var(--surface2);color:var(--ink)}
+.nav-dropdown-item.active{background:var(--accent-subtle);color:var(--accent)}
+.nav-spacer{flex:1}
+.nav-actions{display:flex;align-items:center;gap:8px}
+.lang-btn{padding:5px 12px;border-radius:8px;border:1px solid var(--border-bright);background:none;cursor:pointer;font-size:12px;color:var(--ink3);font-family:var(--font);font-weight:500;transition:all .15s;display:flex;align-items:center;gap:4px}
+.lang-btn:hover{background:var(--surface2);color:var(--ink)}
+.lang-btn.active-lang{background:var(--accent-subtle);border-color:rgba(0,212,170,.3);color:var(--accent)}
+
+/* ── HAMBURGER ── */
+.mobile-nav-toggle{display:none;flex-direction:column;justify-content:center;align-items:center;width:40px;height:40px;border:none;background:none;cursor:pointer;border-radius:8px;padding:6px;transition:background .15s;margin-left:auto;flex-shrink:0}
+.mobile-nav-toggle:hover{background:var(--surface2)}
+.hamburger-line{width:20px;height:1.5px;background:var(--ink2);border-radius:2px;transition:all .25s ease;transform-origin:center}
+.hamburger-line:nth-child(2){margin:5px 0}
+.mobile-nav-toggle.open .hamburger-line:nth-child(1){transform:translateY(6.5px) rotate(45deg);background:var(--accent)}
+.mobile-nav-toggle.open .hamburger-line:nth-child(2){opacity:0;transform:scaleX(0)}
+.mobile-nav-toggle.open .hamburger-line:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);background:var(--accent)}
+.mobile-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:150;backdrop-filter:blur(4px)}
+.mobile-overlay.open{display:block}
+
+/* ── MAIN ── */
+main{max-width:1400px;margin:0 auto;padding:32px 28px;flex:1;width:100%;position:relative;z-index:1}
+.page{display:none;animation:fadeUp .25s ease}
+.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── PAGE HEADER ── */
+.page-header{margin-bottom:30px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.page-title{font-family:var(--display);font-size:26px;font-weight:700;color:var(--ink);letter-spacing:-.5px;margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--ink3);font-weight:400}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:24px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent)}
+.card-title{font-size:11px;font-weight:600;margin-bottom:18px;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+
+/* ── GRIDS ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:1024px){.grid-4{grid-template-columns:repeat(2,1fr)}.grid-3{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.grid-4,.grid-3,.grid-2{grid-template-columns:1fr}}
+
+/* ── STAT CARDS ── */
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:22px 24px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.stat:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.stat-glow{position:absolute;top:0;right:0;width:120px;height:120px;border-radius:50%;filter:blur(50px);opacity:.25;pointer-events:none}
+.stat.green .stat-glow{background:var(--accent)}
+.stat.red .stat-glow{background:var(--danger)}
+.stat.blue .stat-glow{background:var(--accent2)}
+.stat.amber .stat-glow{background:var(--warning)}
+.stat-label{font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
+.stat-value{font-size:30px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:-1.5px;line-height:1}
+.stat-value.green{color:var(--accent)}
+.stat-value.red{color:var(--danger)}
+.stat-value.blue{color:var(--accent2)}
+.stat-value.amber{color:var(--warning)}
+.stat-sub{font-size:11.5px;color:var(--ink3);margin-top:8px}
+.stat-icon{position:absolute;right:20px;top:20px;width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border)}
+.stat-icon.green{background:rgba(0,212,170,.1)}
+.stat-icon.red{background:rgba(255,77,109,.1)}
+.stat-icon.blue{background:rgba(0,184,255,.1)}
+.stat-icon.amber{background:rgba(245,158,11,.1)}
+
+/* ── FORMS ── */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:18px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+label{font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px}
+input,select,textarea{padding:10px 13px;border:1px solid var(--border-bright);border-radius:var(--radius);font-size:13.5px;font-family:var(--font);color:var(--ink);background:var(--bg3);outline:none;transition:border .15s,box-shadow .15s;width:100%;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{border-color:rgba(0,212,170,.5);box-shadow:0 0 0 3px rgba(0,212,170,.08)}
+input[type=date],input[type=month],input[type=number]{font-family:var(--mono);font-size:13px;color-scheme:dark}
+input::placeholder{color:var(--ink3)}
+select option{background:var(--surface2);color:var(--ink)}
+
+/* ── BUTTONS ── */
+.btn{padding:10px 20px;border-radius:var(--radius);border:none;cursor:pointer;font-size:13px;font-weight:600;font-family:var(--font);transition:all .15s;display:inline-flex;align-items:center;gap:7px;letter-spacing:-.1px;position:relative;overflow:hidden}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0b0f;box-shadow:0 4px 16px rgba(0,212,170,.25)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(0,212,170,.4)}
+.btn-primary:active{transform:translateY(0)}
+.btn-secondary{background:var(--surface2);color:var(--ink2);border:1px solid var(--border-bright)}
+.btn-secondary:hover{background:var(--surface3);color:var(--ink);border-color:var(--border-bright)}
+.btn-danger{background:var(--danger-subtle);color:var(--danger);border:1px solid rgba(255,77,109,.2)}
+.btn-danger:hover{background:var(--danger);color:white}
+.btn-success{background:var(--success-subtle);color:var(--success);border:1px solid rgba(0,212,170,.2)}
+.btn-sm{padding:5px 12px;font-size:11.5px;border-radius:7px}
+.btn-icon{width:32px;height:32px;padding:0;border-radius:8px;border:1px solid var(--border);background:var(--surface2);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all .12s;flex-shrink:0;color:var(--ink3)}
+.btn-icon:hover{background:var(--danger-subtle);border-color:rgba(255,77,109,.3);color:var(--danger)}
+.btn-icon svg{width:13px;height:13px}
+
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto;border-radius:var(--radius-lg);border:1px solid var(--border);background:var(--surface)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{padding:11px 16px;background:var(--bg3);text-align:left;font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.8px;color:var(--ink3);border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:13px 16px;border-bottom:1px solid var(--border);color:var(--ink);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.tfoot td{background:var(--bg3);font-weight:600;font-size:13px;color:var(--ink);border-top:1px solid var(--border-bright)}
+.mono{font-family:var(--mono);font-size:13px;letter-spacing:-.2px}
+.amount-pos{color:var(--accent);font-family:var(--mono);font-weight:500}
+.amount-neg{color:var(--danger);font-family:var(--mono);font-weight:500}
+
+/* ── BADGE ── */
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:600;letter-spacing:.3px}
+.badge-green{background:rgba(0,212,170,.12);color:var(--accent);border:1px solid rgba(0,212,170,.2)}
+.badge-red{background:rgba(255,77,109,.12);color:var(--danger);border:1px solid rgba(255,77,109,.2)}
+.badge-blue{background:rgba(0,184,255,.12);color:var(--accent2);border:1px solid rgba(0,184,255,.2)}
+.badge-amber{background:rgba(245,158,11,.12);color:var(--warning);border:1px solid rgba(245,158,11,.2)}
+.badge-gray{background:var(--surface2);color:var(--ink2);border:1px solid var(--border)}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:52px 24px;color:var(--ink3)}
+.empty-icon{width:48px;height:48px;margin:0 auto 16px;display:block;opacity:.2}
+.empty p{font-size:14px;font-weight:500;color:var(--ink3)}
+.empty small{font-size:12px;opacity:.6}
+
+/* ── HOME / HERO ── */
+.hero{background:linear-gradient(135deg,#0d1117 0%,#0f1a2e 40%,#0a1628 100%);border:1px solid var(--border-bright);border-radius:var(--radius-2xl);padding:52px 56px;color:white;margin-bottom:28px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-100px;right:-80px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(0,212,170,.12) 0%,transparent 70%)}
+.hero::after{content:'';position:absolute;bottom:-80px;left:30%;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(0,184,255,.08) 0%,transparent 70%)}
+.hero-grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse 60% 80% at 80% 50%,black 20%,transparent 100%)}
+.hero-content{position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.25);border-radius:20px;padding:5px 14px;font-size:11.5px;margin-bottom:22px;color:var(--accent);font-weight:500}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.hero-title{font-family:var(--display);font-size:42px;font-weight:800;margin-bottom:14px;line-height:1.1;letter-spacing:-1px}
+.hero-title span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:15px;opacity:.65;margin-bottom:36px;max-width:520px;line-height:1.75;font-weight:300}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.hero-btn{padding:12px 26px;border-radius:var(--radius);font-size:13.5px;font-weight:600;font-family:var(--font);cursor:pointer;transition:all .2s;border:none;letter-spacing:-.1px}
+.hero-btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0b0f;box-shadow:0 4px 20px rgba(0,212,170,.3)}
+.hero-btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,212,170,.4)}
+.hero-btn-ghost{background:rgba(255,255,255,.07);color:white;border:1px solid rgba(255,255,255,.12)}
+.hero-btn-ghost:hover{background:rgba(255,255,255,.12)}
+
+/* ── FEATURE CARDS ── */
+.feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:28px}
+.feature-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:22px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.feature-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .2s;border-radius:var(--radius-xl)}
+.feature-card:hover{border-color:var(--border-bright);transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.feature-card:hover::before{opacity:1}
+.feature-card.fc-green:hover{box-shadow:0 12px 40px rgba(0,212,170,.15)}
+.feature-card.fc-blue:hover{box-shadow:0 12px 40px rgba(0,184,255,.15)}
+.feature-card.fc-red:hover{box-shadow:0 12px 40px rgba(255,77,109,.12)}
+.feature-card.fc-amber:hover{box-shadow:0 12px 40px rgba(245,158,11,.12)}
+.feature-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;border:1px solid var(--border)}
+.feature-name{font-family:var(--display);font-size:14px;font-weight:700;margin-bottom:7px;letter-spacing:-.2px}
+.feature-desc{font-size:12.5px;color:var(--ink3);line-height:1.6;font-weight:300}
+.feature-arrow{margin-top:16px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px;opacity:.7;transition:opacity .15s,gap .15s}
+.feature-card:hover .feature-arrow{opacity:1;gap:8px}
+
+/* ── MODALS ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border-bright);border-radius:var(--radius-2xl);padding:32px;max-width:560px;width:100%;box-shadow:var(--shadow-md),0 0 60px rgba(0,0,0,.5);max-height:90vh;overflow-y:auto;animation:modalIn .2s ease;position:relative}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,170,.3),transparent);border-radius:var(--radius-2xl) var(--radius-2xl) 0 0}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-title{font-family:var(--display);font-size:18px;font-weight:700;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;letter-spacing:-.3px}
+.modal-close{cursor:pointer;padding:6px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);color:var(--ink3);display:flex;transition:all .12s;line-height:0}
+.modal-close:hover{background:var(--surface3);color:var(--ink);border-color:var(--border-bright)}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:2px;margin-bottom:22px;border-bottom:1px solid var(--border);padding-bottom:0}
+.tab{padding:9px 16px;border-radius:8px 8px 0 0;cursor:pointer;font-size:13px;font-weight:500;color:var(--ink3);border:none;background:none;transition:all .15s;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:var(--font)}
+.tab:hover{color:var(--ink)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+
+/* ── ALERTS ── */
+.alert{padding:12px 16px;border-radius:var(--radius);font-size:13px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px;font-weight:500}
+.alert-success{background:var(--success-subtle);color:var(--success);border:1px solid rgba(0,212,170,.2)}
+.alert-danger{background:var(--danger-subtle);color:var(--danger);border:1px solid rgba(255,77,109,.2)}
+.alert-info{background:rgba(0,184,255,.08);color:var(--accent2);border:1px solid rgba(0,184,255,.2)}
+.alert-warning{background:var(--warning-subtle);color:var(--warning);border:1px solid rgba(245,158,11,.2)}
+
+/* ── CHARTS ── */
+.chart-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:24px}
+.chart-title{font-size:11px;font-weight:600;margin-bottom:18px;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px}
+.chart-wrap{position:relative;height:220px}
+
+/* ── SECTION ── */
+.section{margin-bottom:24px}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.section-title{font-family:var(--display);font-size:14px;font-weight:700;color:var(--ink);letter-spacing:-.2px}
+hr.divider{border:none;border-top:1px solid var(--border);margin:24px 0}
+
+/* ── SUMMARY ROWS ── */
+.summary-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)}
+.summary-row:last-child{border-bottom:none}
+.summary-key{font-size:13px;color:var(--ink2);font-weight:400}
+.summary-val{font-size:13.5px;font-weight:700;font-family:var(--mono);color:var(--ink);letter-spacing:-.2px}
+.summary-val.pos{color:var(--accent)}
+.summary-val.neg{color:var(--danger)}
+
+/* ── TOTAL PREVIEW BOX ── */
+.total-preview{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.total-preview-label{font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px}
+.total-preview-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;color:var(--accent);letter-spacing:-1px}
+
+/* ── FOOTER ── */
+footer{text-align:center;padding:20px;font-size:11.5px;color:var(--ink3);border-top:1px solid var(--border);background:var(--bg2);margin-top:auto;position:relative;z-index:1}
+footer a{color:var(--accent);text-decoration:none}
+
+/* ── NOTIFICATION ── */
+#notif{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.notif-item{background:var(--surface2);color:var(--ink);border:1px solid var(--border-bright);padding:13px 18px;border-radius:var(--radius-lg);font-size:13px;font-weight:500;box-shadow:var(--shadow-md);animation:slideUp .25s ease;display:flex;align-items:center;gap:9px;pointer-events:all;backdrop-filter:blur(12px)}
+.notif-item.success{background:rgba(0,212,170,.12);border-color:rgba(0,212,170,.3);color:var(--accent)}
+.notif-item.danger{background:rgba(255,77,109,.12);border-color:rgba(255,77,109,.3);color:var(--danger)}
+@keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── UTILS ── */
+.text-right{text-align:right}.text-center{text-align:center}
+.mt-4{margin-top:4px}.mb-16{margin-bottom:16px}
+.flex{display:flex}.flex-center{display:flex;align-items:center}
+.flex-between{display:flex;align-items:center;justify-content:space-between}
+.report-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:24px;margin-bottom:16px}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11.5px;font-weight:600}
+.kpi-change{font-size:12px;font-weight:600;margin-top:6px;display:inline-flex;align-items:center;gap:3px}
+.kpi-change.up{color:var(--accent)}.kpi-change.down{color:var(--danger)}
+.divider-label{display:flex;align-items:center;gap:10px;margin:18px 0;font-size:10.5px;color:var(--ink3);font-weight:600;text-transform:uppercase;letter-spacing:.7px}
+.divider-label::before,.divider-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(10,11,15,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--border);z-index:190;padding:8px 4px max(env(safe-area-inset-bottom,0px),8px);box-shadow:0 -8px 32px rgba(0,0,0,.4)}
+.bottom-nav-inner{display:flex;justify-content:space-around;align-items:center}
+.bottom-nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 8px;border-radius:10px;cursor:pointer;border:none;background:none;font-family:var(--font);flex:1;transition:all .15s;min-width:0;color:var(--ink3)}
+.bottom-nav-item svg{width:22px;height:22px;transition:all .2s;stroke:currentColor}
+.bottom-nav-item span{font-size:9.5px;font-weight:600;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:56px}
+.bottom-nav-item.active{color:var(--accent)}
+.bottom-nav-item.active svg{filter:drop-shadow(0 0 6px var(--accent))}
+.bottom-nav-more{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border-bright);box-shadow:0 -12px 40px rgba(0,0,0,.5);z-index:299;padding:16px 12px max(env(safe-area-inset-bottom,0px),16px);flex-direction:column;gap:2px;border-radius:var(--radius-2xl) var(--radius-2xl) 0 0;display:flex;transform:translateY(105%);transition:transform .3s cubic-bezier(.16,1,.3,1),visibility .3s;visibility:hidden;pointer-events:none}
+.bottom-nav-more.open{transform:translateY(0);visibility:visible;pointer-events:all}
+.bottom-nav-more-handle{width:36px;height:4px;background:var(--border-bright);border-radius:2px;margin:0 auto 16px;flex-shrink:0}
+.bottom-nav-more-item{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:var(--radius-lg);cursor:pointer;font-size:14px;font-weight:500;color:var(--ink2);transition:all .12s}
+.bottom-nav-more-item:hover,.bottom-nav-more-item:active{background:var(--surface2);color:var(--ink)}
+.bottom-nav-more-item.active{background:var(--accent-subtle);color:var(--accent)}
+.bottom-nav-more-item svg{width:20px;height:20px;flex-shrink:0;stroke:currentColor}
+.bottom-nav-more-divider{height:1px;background:var(--border);margin:6px 16px}
+
+/* ── PRINT ── */
+@media print{nav,footer,.no-print,#notif,.mobile-nav-toggle,.bottom-nav,.bottom-nav-more,.ambient{display:none!important}main{padding:0}body{background:white}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  :root{--nav-h:56px}
+  .nav-links,.nav-actions{display:none}
+  .mobile-nav-toggle{display:flex}
+  .nav-inner{padding:0 16px}
+  .nav-logo-tagline{display:none}
+  .bottom-nav{display:block}
+  main{padding:20px 16px calc(var(--bottom-h) + 20px)}
+  .page-title{font-size:22px}
+  .hero{padding:30px 24px}
+  .hero-title{font-size:28px}
+  .hero-sub{font-size:13.5px;margin-bottom:24px}
+  .stat-value{font-size:24px}
+  .card{padding:18px}
+  .modal{padding:24px 20px;max-height:95vh;border-radius:var(--radius-2xl) var(--radius-2xl) 0 0;margin:0;align-self:flex-end;max-width:100%;width:100%}
+  .modal-overlay{align-items:flex-end;padding:0}
+  .chart-wrap{height:180px}
+  #notif{bottom:calc(var(--bottom-h) + 12px);right:12px;left:12px}
+  .notif-item{font-size:12.5px;padding:11px 14px}
+  .page-header{flex-direction:column;gap:8px}
+  .section-header{flex-direction:column;align-items:flex-start;gap:8px}
+  .tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{white-space:nowrap}
+  .hero-btns{flex-direction:column}
+  .hero-btn{width:100%;justify-content:center;text-align:center}
+  .form-grid{grid-template-columns:1fr}
+  .btn{font-size:13px}
+  .ambient{display:none}
+}
+@media(max-width:480px){
+  main{padding:16px 12px calc(var(--bottom-h) + 16px)}
+  .hero{padding:24px 18px}
+  .hero-title{font-size:24px}
+  .stat-value{font-size:22px}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  .feature-grid{grid-template-columns:1fr 1fr}
+  .summary-row{flex-direction:column;align-items:flex-start;gap:3px}
+  .page-title{font-size:20px}
+  .total-preview{flex-direction:column;gap:6px;align-items:flex-start}
+  .total-preview-val{font-size:28px}
+}
+/* ── BALANCE LEDGER ── */
+.balance-ledger{padding:24px}
+.balance-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+@media(max-width:768px){.balance-grid{grid-template-columns:1fr}}
+.balance-col{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;display:flex;flex-direction:column;gap:0}
+.balance-col-total{border-color:var(--border-bright);background:var(--surface2)}
+.balance-col-header{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.balance-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
+.balance-row:last-child{border-bottom:none}
+.balance-row.balance-total{margin-top:6px;padding-top:12px;border-top:2px solid var(--border-bright);border-bottom:none}
+.balance-label{font-size:12.5px;color:var(--ink2);font-weight:400}
+.balance-amount{font-family:var(--mono);font-size:13.5px;font-weight:600}
+.balance-amount.pos{color:var(--accent)}
+.balance-amount.neg{color:var(--danger)}
+/* running balance in income/expense pages */
+.running-balance{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-top:14px}
+.running-balance-title{font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.rb-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)}
+.rb-row:last-child{border-bottom:none;padding-top:10px;margin-top:4px;border-top:1px solid var(--border-bright)}
+.rb-label{font-size:12px;color:var(--ink3)}
+.rb-val{font-family:var(--mono);font-size:13px;font-weight:600}
+@media print{
+  .balance-grid{grid-template-columns:1fr 1fr 1fr!important}
+  .balance-col{break-inside:avoid}
+}
+</style>
 </head>
 <body>
-    <header><h1 data-i18n="idx_title">Financial Management App</h1></header>
+<div class="ambient ambient-1"></div>
+<div class="ambient ambient-2"></div>
 
-    <nav>
-        <ul>
-            <li><a href="index.html" data-i18n="nav_home">Home</a></li>
-            <li><a href="income.html" data-i18n="nav_income">Daily Income</a></li>
-            <li><a href="expenses.html" data-i18n="nav_expenses">Daily Expenses</a></li>
-            <li><a href="suppliers.html" data-i18n="nav_suppliers">Suppliers</a></li>
-            <li><a href="payroll.html" data-i18n="nav_payroll">Payroll</a></li>
-            <li class="dropdown">
-                <a href="#" data-i18n="nav_reports">Reports ▼</a>
-                <ul class="dropdown-menu">
-                    <li><a href="daily-report.html" data-i18n="nav_daily">Daily Report</a></li>
-                    <li><a href="weekly-report.html" data-i18n="nav_weekly">Weekly Report</a></li>
-                    <li><a href="monthly-report.html" data-i18n="nav_monthly">Monthly Report</a></li>
-                    <li><a href="annual-report.html" data-i18n="nav_annual">Annual Report</a></li>
-                </ul>
-            </li>
-            <li><button id="lang-toggle-btn" class="lang-toggle-btn" onclick="toggleLang()">🇬🇷 Ελληνικά</button></li>
-        </ul>
-    </nav>
+<!-- NAV -->
+<nav>
+<div class="nav-inner">
+  <a class="nav-logo" onclick="nav('home')">
+    <div class="nav-logo-mark">
+      <svg viewBox="0 0 20 20"><path d="M2 4h16v2H2V4zm0 5h12v2H2V9zm0 5h14v2H2v-2z"/></svg>
+    </div>
+    <div class="nav-logo-text">
+      <span class="nav-logo-name">FinanceOS</span>
+      <span class="nav-logo-tagline" id="logo-tagline">Business Intelligence</span>
+    </div>
+  </a>
+  <div class="nav-links">
+    <button class="nav-link" onclick="nav('home')" id="nl-home" data-el="nav-home">Home</button>
+    <button class="nav-link" onclick="nav('income')" id="nl-income" data-el="nav-income">Revenue</button>
+    <button class="nav-link" onclick="nav('expenses')" id="nl-expenses" data-el="nav-expenses">Expenses</button>
+    <button class="nav-link" onclick="nav('suppliers')" id="nl-suppliers" data-el="nav-suppliers">Suppliers</button>
+    <button class="nav-link" onclick="nav('payroll')" id="nl-payroll" data-el="nav-payroll">Payroll</button>
+    <div class="nav-dropdown" id="dd-reports">
+      <button class="nav-link" onclick="toggleDD()" id="nl-reports">
+        <span data-el="nav-reports">Reports</span> ▾
+      </button>
+      <div class="nav-dropdown-menu">
+        <div class="nav-dropdown-item" onclick="nav('daily-report')"><span>📅</span> <span data-el="nav-daily">Daily Report</span></div>
+        <div class="nav-dropdown-item" onclick="nav('weekly-report')"><span>📆</span> <span data-el="nav-weekly">Weekly Report</span></div>
+        <div class="nav-dropdown-item" onclick="nav('monthly-report')"><span>🗓️</span> <span data-el="nav-monthly">Monthly Report</span></div>
+        <div class="nav-dropdown-item" onclick="nav('annual-report')"><span>📊</span> <span data-el="nav-annual">Annual Report</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-actions">
+    <button class="lang-btn" id="btn-currency" onclick="openModal('modal-currency')" title="Currency" style="font-weight:700;font-family:var(--mono);min-width:52px;justify-content:center" id="nav-currency-btn">€ EUR</button>
+    <button class="lang-btn" id="btn-lang-el" onclick="setLang('el')">🇬🇷 EL</button>
+    <button class="lang-btn active-lang" id="btn-lang-en" onclick="setLang('en')">🇬🇧 EN</button>
+  </div>
+  <button class="mobile-nav-toggle" id="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">
+    <div class="hamburger-line"></div>
+    <div class="hamburger-line"></div>
+    <div class="hamburger-line"></div>
+  </button>
+</div>
+</nav>
 
-    <main>
-        <section class="hero-section">
-            <h1 data-i18n="idx_hero_title">Welcome to the Financial Management App!</h1>
-            <p data-i18n="idx_hero_sub">Efficiently manage your business income, expenses, suppliers and payroll.</p>
-        </section>
-        <section class="features-section">
-            <h2 data-i18n="idx_features_h">Core Features</h2>
-            <div class="feature-grid">
-                <div class="feature-item">
-                    <h3 data-i18n="idx_f1_title">Income Recording</h3>
-                    <p data-i18n="idx_f1_desc">Quickly record daily business income, broken down by payment method.</p>
-                    <a href="income.html" class="button-small" data-i18n="idx_f1_btn">Manage Income</a>
-                </div>
-                <div class="feature-item">
-                    <h3 data-i18n="idx_f2_title">Expense Recording</h3>
-                    <p data-i18n="idx_f2_desc">Track expenses in detail, organized by category, supplier and payment method.</p>
-                    <a href="expenses.html" class="button-small" data-i18n="idx_f2_btn">Manage Expenses</a>
-                </div>
-                <div class="feature-item">
-                    <h3 data-i18n="idx_f3_title">Supplier Management</h3>
-                    <p data-i18n="idx_f3_desc">Organise your suppliers, record contact details and track expenses easily.</p>
-                    <a href="suppliers.html" class="button-small" data-i18n="idx_f3_btn">Manage Suppliers</a>
-                </div>
-                <div class="feature-item">
-                    <h3 data-i18n="idx_f4_title">Payroll</h3>
-                    <p data-i18n="idx_f4_desc">Record and track employee payroll details, gross salaries, deductions and net amounts.</p>
-                    <a href="payroll.html" class="button-small" data-i18n="idx_f4_btn">Manage Payroll</a>
-                </div>
-                <div class="feature-item">
-                    <h3 data-i18n="idx_f5_title">Detailed Reports</h3>
-                    <p data-i18n="idx_f5_desc">View daily, weekly, monthly and annual reports for a complete financial overview.</p>
-                    <a href="daily-report.html" class="button-small" data-i18n="idx_f5_btn">View Reports</a>
-                </div>
-            </div>
-        </section>
-        <section class="benefits-section">
-            <h2 data-i18n="idx_benefits_h">Why Choose This App?</h2>
-            <div class="benefit-grid">
-                <div class="benefit-item"><h3 data-i18n="idx_b1_title">Ease of Use</h3><p data-i18n="idx_b1_desc">Simple and intuitive interface that makes financial management effortless.</p></div>
-                <div class="benefit-item"><h3 data-i18n="idx_b2_title">Complete Overview</h3><p data-i18n="idx_b2_desc">Get instant access to all your financial data with detailed reports.</p></div>
-                <div class="benefit-item"><h3 data-i18n="idx_b3_title">Data Export</h3><p data-i18n="idx_b3_desc">Export your reports to PDF format for archiving or printing.</p></div>
-                <div class="benefit-item"><h3 data-i18n="idx_b4_title">Food Cost Tracking</h3><p data-i18n="idx_b4_desc">Automatically calculate Food Cost and make decisions to optimise.</p></div>
-            </div>
-        </section>
-        <section class="cta-section">
-            <h2 data-i18n="idx_cta_h">Start improving your financial management now!</h2>
-            <div class="button-container">
-                <a href="income.html" class="button" data-i18n="idx_cta_income">Record Income</a>
-                <a href="expenses.html" class="button" data-i18n="idx_cta_expenses">Record Expenses</a>
-            </div>
-        </section>
-    </main>
+<div class="mobile-overlay" id="mobile-overlay" onclick="closeMobileMenu()"></div>
+<div class="mobile-overlay" id="more-overlay" onclick="closeMobileMore()" style="z-index:298"></div>
 
-    <footer><p data-i18n="footer_copy">© 2023 My Application</p></footer>
+<!-- NOTIFICATIONS -->
+<div id="notif"></div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-    <script>
-      const firebaseConfig = { apiKey:"YOUR_API_KEY", authDomain:"YOUR_PROJECT_ID.firebaseapp.com", projectId:"YOUR_PROJECT_ID", appId:"YOUR_APP_ID" };
-      firebase.initializeApp(firebaseConfig);
-    </script>
-    <script>
-    async function startPayment() {
-        try {
-            const response = await fetch('/.netlify/functions/create-viva-payment', {
-                method:'POST', headers:{'Content-Type':'application/json'},
-                body: JSON.stringify({ amount: 1, customerEmail: 'example@email.com' })
-            });
-            const data = await response.json();
-            if (data.checkoutUrl) { window.location.href = data.checkoutUrl; }
-            else { alert('Payment error: ' + (data.message || 'Unknown error')); }
-        } catch (error) { alert('Server communication error.'); }
+<!-- MODAL: SUPPLIER TRANSACTIONS -->
+<div class="modal-overlay" id="modal-supplier">
+  <div class="modal">
+    <div class="modal-title">
+      <span id="modal-supplier-name">Supplier Transactions</span>
+      <button class="modal-close" onclick="closeModal('modal-supplier')">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l8 8M14 6l-8 8"/></svg>
+      </button>
+    </div>
+    <div id="modal-supplier-body"></div>
+    <div style="margin-top:18px;text-align:right">
+      <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-supplier')" data-el="btn-close">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CURRENCY -->
+<div class="modal-overlay" id="modal-currency">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-title">
+      <span>Currency Settings</span>
+      <button class="modal-close" onclick="closeModal('modal-currency')"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l8 8M14 6l-8 8"/></svg></button>
+    </div>
+    <div class="form-group" style="margin-bottom:18px">
+      <label>Select Currency</label>
+      <select id="currency-select" onchange="updateCurrencyPreview()">
+        <option value="EUR|€|el-GR">Euro (€) — EUR</option>
+        <option value="USD|$|en-US">US Dollar ($) — USD</option>
+        <option value="GBP|£|en-GB">British Pound (£) — GBP</option>
+        <option value="CHF|CHF|de-CH">Swiss Franc (CHF)</option>
+        <option value="JPY|¥|ja-JP">Japanese Yen (¥) — JPY</option>
+        <option value="CAD|CA$|en-CA">Canadian Dollar (CA$)</option>
+        <option value="AUD|A$|en-AU">Australian Dollar (A$)</option>
+        <option value="SEK|kr|sv-SE">Swedish Krona (kr)</option>
+        <option value="NOK|kr|nb-NO">Norwegian Krone (kr)</option>
+        <option value="DKK|kr|da-DK">Danish Krone (kr)</option>
+        <option value="PLN|zł|pl-PL">Polish Zloty (zł)</option>
+        <option value="CZK|Kč|cs-CZ">Czech Koruna (Kč)</option>
+        <option value="HUF|Ft|hu-HU">Hungarian Forint (Ft)</option>
+        <option value="RON|lei|ro-RO">Romanian Leu (lei)</option>
+        <option value="BGN|лв|bg-BG">Bulgarian Lev (лв)</option>
+        <option value="TRY|₺|tr-TR">Turkish Lira (₺)</option>
+        <option value="RUB|₽|ru-RU">Russian Ruble (₽)</option>
+        <option value="CNY|¥|zh-CN">Chinese Yuan (¥)</option>
+        <option value="INR|₹|en-IN">Indian Rupee (₹)</option>
+        <option value="BRL|R$|pt-BR">Brazilian Real (R$)</option>
+        <option value="MXN|MX$|es-MX">Mexican Peso (MX$)</option>
+        <option value="AED|د.إ|ar-AE">UAE Dirham (د.إ)</option>
+        <option value="SAR|﷼|ar-SA">Saudi Riyal (﷼)</option>
+        <option value="KWD|KD|ar-KW">Kuwaiti Dinar (KD)</option>
+        <option value="EGP|E£|ar-EG">Egyptian Pound (E£)</option>
+      </select>
+    </div>
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-bottom:18px;text-align:center">
+      <div style="font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Preview</div>
+      <div id="currency-preview" style="font-family:var(--mono);font-size:28px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums">1.234,56 €</div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px">
+      <button class="btn btn-secondary" onclick="closeModal('modal-currency')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCurrency()">Apply Currency</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: EDIT INCOME -->
+<div class="modal-overlay" id="modal-edit-income">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-title">
+      <span>Edit Revenue Entry</span>
+      <button class="modal-close" onclick="closeModal('modal-edit-income')"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l8 8M14 6l-8 8"/></svg></button>
+    </div>
+    <input type="hidden" id="edit-income-id"/>
+    <div class="form-grid">
+      <div class="form-group"><label>Date</label><input type="date" id="edit-inc-date"/></div>
+      <div class="form-group"><label>Description</label><input id="edit-inc-desc" placeholder="e.g. Daily sales"/></div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label>Total Register (Cash + Card)</label>
+        <input type="number" id="edit-inc-total-raw" step="0.01" min="0" placeholder="0.00" oninput="updateEditIncCalc()" style="font-size:16px;padding:12px;font-weight:700"/>
+      </div>
+      <div class="form-group">
+        <label>Card / POS</label>
+        <input type="number" id="edit-inc-card" step="0.01" min="0" placeholder="0.00" oninput="updateEditIncCalc()"/>
+      </div>
+      <div class="form-group">
+        <label>Cash (auto)</label>
+        <div style="padding:10px 13px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg3);font-family:var(--mono);font-size:14px;font-weight:600;color:var(--accent);min-height:42px;display:flex;align-items:center" id="edit-inc-cash-display">—</div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px">
+      <button class="btn btn-secondary" onclick="closeModal('modal-edit-income')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEditIncome()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: EDIT EXPENSE -->
+<div class="modal-overlay" id="modal-edit-expense">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-title">
+      <span>Edit Expense Entry</span>
+      <button class="modal-close" onclick="closeModal('modal-edit-expense')"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l8 8M14 6l-8 8"/></svg></button>
+    </div>
+    <input type="hidden" id="edit-expense-id"/>
+    <div class="form-grid">
+      <div class="form-group"><label>Date</label><input type="date" id="edit-exp-date"/></div>
+      <div class="form-group"><label>Supplier</label><select id="edit-exp-supplier"></select></div>
+      <div class="form-group"><label>Type</label>
+        <select id="edit-exp-type">
+          <option value="FC">Food Cost (FC)</option>
+          <option value="Λειτουργικά">Operational</option>
+          <option value="Ενέργεια">Energy</option>
+          <option value="Μισθοί">Salaries</option>
+          <option value="Συντήρηση">Maintenance</option>
+          <option value="Άλλο">Other</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Payment</label>
+        <select id="edit-exp-pay">
+          <option value="Μετρητά">Cash</option>
+          <option value="Κάρτα">Card</option>
+          <option value="Επί Πιστώσει">On Credit</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Invoice No.</label><input id="edit-exp-inv" placeholder="e.g. INV-00123"/></div>
+      <div class="form-group"><label>Amount</label><input type="number" id="edit-exp-amount" step="0.01" min="0" placeholder="0.00"/></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px">
+      <button class="btn btn-secondary" onclick="closeModal('modal-edit-expense')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEditExpense()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: EDIT EMPLOYEE -->
+<div class="modal-overlay" id="modal-edit-employee">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-title">
+      <span>Edit Employee</span>
+      <button class="modal-close" onclick="closeModal('modal-edit-employee')"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l8 8M14 6l-8 8"/></svg></button>
+    </div>
+    <input type="hidden" id="edit-emp-id"/>
+    <div class="form-grid">
+      <div class="form-group"><label>Full Name</label><input id="edit-emp-name" placeholder="e.g. John Smith"/></div>
+      <div class="form-group"><label>Role</label><input id="edit-emp-role" placeholder="e.g. Waiter"/></div>
+      <div class="form-group"><label>Phone</label><input id="edit-emp-phone" placeholder="+30 6901234567"/></div>
+      <div class="form-group">
+        <label>Pay Type</label>
+        <select id="edit-emp-pay-type" onchange="toggleEmpRateFields('edit')">
+          <option value="daily">Daily Rate (ημερομίσθιο)</option>
+          <option value="hourly">Hourly Rate (ωρομίσθιο)</option>
+        </select>
+      </div>
+      <div class="form-group" id="edit-emp-daily-wrap">
+        <label>Daily Rate</label>
+        <input id="edit-emp-rate" type="number" step="0.5" min="0" placeholder="50.00" oninput="autoCalcEmp('edit')"/>
+      </div>
+      <div class="form-group" id="edit-emp-hourly-wrap" style="display:none">
+        <label>Hourly Rate</label>
+        <input id="edit-emp-hourly-direct" type="number" step="0.25" min="0" placeholder="6.25"/>
+      </div>
+      <div id="edit-emp-info" style="grid-column:1/-1;background:var(--accent-subtle);border:1px solid rgba(0,212,170,.2);border-radius:var(--radius);padding:11px 14px;font-size:12.5px;color:var(--accent);display:none"></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px">
+      <button class="btn btn-secondary" onclick="closeModal('modal-edit-employee')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEditEmployee()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ADD EMPLOYEE -->
+<div class="modal-overlay" id="modal-employee">
+  <div class="modal">
+    <div class="modal-title">
+      <span>Add Employee</span>
+      <button class="modal-close" onclick="closeModal('modal-employee')">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l8 8M14 6l-8 8"/></svg>
+      </button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group"><label>Full Name</label><input id="emp-name" placeholder="e.g. John Smith"/></div>
+      <div class="form-group"><label>Role</label><input id="emp-role" placeholder="e.g. Waiter"/></div>
+      <div class="form-group"><label>Phone</label><input id="emp-phone" placeholder="+30 6901234567"/></div>
+      <div class="form-group">
+        <label>Pay Type</label>
+        <select id="emp-pay-type" onchange="toggleEmpRateFields('new')">
+          <option value="daily">Daily Rate (ημερομίσθιο)</option>
+          <option value="hourly">Hourly Rate (ωρομίσθιο)</option>
+        </select>
+      </div>
+      <div class="form-group" id="new-emp-daily-wrap">
+        <label>Daily Rate</label>
+        <input id="emp-rate" type="number" step="0.5" min="0" placeholder="50.00" oninput="autoCalcEmp('new')"/>
+      </div>
+      <div class="form-group" id="new-emp-hourly-wrap" style="display:none">
+        <label>Hourly Rate</label>
+        <input id="emp-hourly-direct" type="number" step="0.25" min="0" placeholder="6.25"/>
+      </div>
+      <div id="new-emp-info" style="grid-column:1/-1;background:var(--accent-subtle);border:1px solid rgba(0,212,170,.2);border-radius:var(--radius);padding:11px 14px;font-size:12.5px;color:var(--accent);display:none"></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px">
+      <button class="btn btn-secondary" onclick="closeModal('modal-employee')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEmployee()">Save Employee</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGES ===== -->
+<main>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-grid-bg"></div>
+    <div class="hero-content">
+      <div class="hero-badge"><div class="hero-badge-dot"></div><span data-el="hero-badge">Professional Business Suite</span></div>
+      <div class="hero-title" data-el="hero-title">Business Management<br><span>at a new level.</span></div>
+      <div class="hero-sub" data-el="hero-sub">Track revenue, expenses, suppliers and payroll in one unified platform. Real-time analytics and beautiful reports — built for modern businesses.</div>
+      <div class="hero-btns">
+        <button class="hero-btn hero-btn-primary" onclick="nav('income')" data-el="hero-btn1">Record Revenue</button>
+        <button class="hero-btn hero-btn-ghost" onclick="nav('daily-report')" data-el="hero-btn2">View Reports</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-4 section" id="home-stats">
+    <div class="stat green">
+      <div class="stat-glow"></div>
+      <div class="stat-icon green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg></div>
+      <div class="stat-label" data-el="hs-lbl-income">Today's Revenue</div>
+      <div class="stat-value green mono" id="hs-income">—</div>
+    </div>
+    <div class="stat red">
+      <div class="stat-glow"></div>
+      <div class="stat-icon red"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2.5" stroke-linecap="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/></svg></div>
+      <div class="stat-label" data-el="hs-lbl-expense">Today's Expenses</div>
+      <div class="stat-value red mono" id="hs-expense">—</div>
+    </div>
+    <div class="stat blue">
+      <div class="stat-glow"></div>
+      <div class="stat-icon blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="2.5" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+      <div class="stat-label" data-el="hs-lbl-cash">Cash Balance</div>
+      <div class="stat-value blue mono" id="hs-cash">—</div>
+    </div>
+    <div class="stat amber">
+      <div class="stat-glow"></div>
+      <div class="stat-icon amber"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+      <div class="stat-label" data-el="hs-lbl-suppliers">Suppliers</div>
+      <div class="stat-value amber mono" id="hs-suppliers">—</div>
+    </div>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-card fc-green" onclick="nav('income')">
+      <div class="feature-icon" style="background:rgba(0,212,170,.08);border-color:rgba(0,212,170,.15)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+      <div class="feature-name" data-el="fc-income-name">Daily Revenue</div>
+      <div class="feature-desc" data-el="fc-income-desc">Record cash and card receipts quickly and accurately.</div>
+      <div class="feature-arrow" style="color:var(--accent)" data-el="fc-manage">Manage <span>→</span></div>
+    </div>
+    <div class="feature-card fc-red" onclick="nav('expenses')">
+      <div class="feature-icon" style="background:rgba(255,77,109,.08);border-color:rgba(255,77,109,.15)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2" stroke-linecap="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg></div>
+      <div class="feature-name" data-el="fc-expenses-name">Daily Expenses</div>
+      <div class="feature-desc" data-el="fc-expenses-desc">Track expenses by category, supplier and payment method.</div>
+      <div class="feature-arrow" style="color:var(--danger)" data-el="fc-manage2">Manage <span>→</span></div>
+    </div>
+    <div class="feature-card fc-blue" onclick="nav('suppliers')">
+      <div class="feature-icon" style="background:rgba(0,184,255,.08);border-color:rgba(0,184,255,.15)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+      <div class="feature-name" data-el="fc-suppliers-name">Suppliers</div>
+      <div class="feature-desc" data-el="fc-suppliers-desc">Manage supplier contacts and track all transactions.</div>
+      <div class="feature-arrow" style="color:var(--accent2)" data-el="fc-manage3">Manage <span>→</span></div>
+    </div>
+    <div class="feature-card fc-amber" onclick="nav('payroll')">
+      <div class="feature-icon" style="background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.15)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg></div>
+      <div class="feature-name" data-el="fc-payroll-name">Payroll</div>
+      <div class="feature-desc" data-el="fc-payroll-desc">Record daily wages and run automated weekly payroll.</div>
+      <div class="feature-arrow" style="color:var(--warning)" data-el="fc-manage4">Manage <span>→</span></div>
+    </div>
+    <div class="feature-card" onclick="nav('daily-report')">
+      <div class="feature-icon" style="background:var(--surface2);border-color:var(--border)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ink2)" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 13h4M9 17h6"/></svg></div>
+      <div class="feature-name" data-el="fc-daily-report-name">Daily Report</div>
+      <div class="feature-desc" data-el="fc-daily-report-desc">Full financial analysis per day with beautiful charts.</div>
+      <div class="feature-arrow" style="color:var(--ink2)" data-el="fc-view">View report <span>→</span></div>
+    </div>
+    <div class="feature-card fc-green" onclick="nav('monthly-report')">
+      <div class="feature-icon" style="background:rgba(0,212,170,.08);border-color:rgba(0,212,170,.15)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+      <div class="feature-name" data-el="fc-monthly-report-name">Monthly Report</div>
+      <div class="feature-desc" data-el="fc-monthly-report-desc">Monthly revenue, expenses & Food Cost analysis.</div>
+      <div class="feature-arrow" style="color:var(--accent)" data-el="fc-view2">View report <span>→</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- INCOME PAGE -->
+<div class="page" id="page-income">
+  <div class="page-header">
+    <div><div class="page-title" data-el="pg-income-title">Daily Revenue</div><div class="page-sub" data-el="pg-income-sub">Enter total register and card amount</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title" data-el="card-new-entry">New Entry</div>
+      <div class="form-grid">
+        <div class="form-group"><label data-el="lbl-date">Date</label><input type="date" id="inc-date"/></div>
+        <div class="form-group"><label data-el="lbl-desc">Description</label><input id="inc-desc" data-placeholder-el="ph-inc-desc" placeholder="e.g. Daily sales"/></div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label>Total Register (Cash + Card)</label>
+          <input type="number" id="inc-total-raw" step="0.01" min="0" placeholder="0.00" oninput="updateIncCalc()" style="font-size:18px;padding:14px;font-weight:700"/>
+        </div>
+        <div class="form-group">
+          <label data-el="lbl-card-eur">Card / POS</label>
+          <input type="number" id="inc-card" step="0.01" min="0" placeholder="0.00" oninput="updateIncCalc()"/>
+        </div>
+        <div class="form-group">
+          <label>Cash (auto)</label>
+          <div style="padding:10px 13px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg3);font-family:var(--mono);font-size:14px;font-weight:600;color:var(--accent);min-height:42px;display:flex;align-items:center" id="inc-cash-display">—</div>
+        </div>
+      </div>
+      <!-- live breakdown -->
+      <div id="inc-breakdown" style="display:none;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px">Breakdown</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center">
+          <div>
+            <div style="font-size:10px;color:var(--ink3);font-weight:600;letter-spacing:.4px;margin-bottom:4px">REGISTER</div>
+            <div style="font-family:var(--mono);font-weight:700;font-size:15px;color:var(--ink)" id="bd-total">—</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--ink3);font-weight:600;letter-spacing:.4px;margin-bottom:4px">CARD</div>
+            <div style="font-family:var(--mono);font-weight:700;font-size:15px;color:var(--accent2)" id="bd-card">—</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--ink3);font-weight:600;letter-spacing:.4px;margin-bottom:4px">CASH</div>
+            <div style="font-family:var(--mono);font-weight:700;font-size:15px;color:var(--accent)" id="bd-cash">—</div>
+          </div>
+        </div>
+      </div>
+      <div class="total-preview">
+        <span class="total-preview-label" data-el="lbl-entry-total">Total Revenue</span>
+        <span class="total-preview-val" id="inc-total-preview">—</span>
+      </div>
+      <button class="btn btn-primary" onclick="addIncome()" style="width:100%" data-el="btn-add-income">+ Add Entry</button>
+    </div>
+    <div class="card">
+      <div class="card-title" data-el="card-day-summary">Day Summary</div>
+      <div id="inc-summary"><div class="empty"><svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 13h4"/></svg><p data-el="empty-select-date">Select a date</p></div></div>
+    </div>
+  </div>
+  <div class="section" style="margin-top:24px">
+    <div class="section-header">
+      <div class="section-title" data-el="section-entries">Entries</div>
+      <div class="flex" style="gap:8px;align-items:center">
+        <input type="date" id="inc-filter-date" onchange="renderIncomeTable()" style="width:auto"/>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table id="income-table">
+        <thead><tr>
+          <th data-el="th-time">Time</th><th data-el="th-desc">Description</th>
+          <th>Register</th><th data-el="th-card-eur">Card</th>
+          <th data-el="th-cash-eur">Cash</th><th style="width:80px"></th>
+        </tr></thead>
+        <tbody id="income-tbody"></tbody>
+        <tfoot><tr class="tfoot" id="income-tfoot">
+          <td colspan="2" data-el="tf-day-total">Day Total</td>
+          <td id="inc-tot-all" class="mono">0,00</td>
+          <td id="inc-tot-card" class="mono">0,00</td>
+          <td id="inc-tot-cash" class="mono">0,00</td>
+          <td></td>
+        </tr></tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- EXPENSES PAGE -->
+<div class="page" id="page-expenses">
+  <div class="page-header">
+    <div><div class="page-title" data-el="pg-expenses-title">Daily Expenses</div><div class="page-sub" data-el="pg-expenses-sub">Record expenses by category</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title" data-el="card-new-expense">New Expense</div>
+      <div class="form-grid">
+        <div class="form-group"><label data-el="lbl-date2">Date</label><input type="date" id="exp-date"/></div>
+        <div class="form-group"><label data-el="lbl-supplier">Supplier</label><select id="exp-supplier"><option value="" data-el="opt-select">— Select —</option></select></div>
+        <div class="form-group"><label data-el="lbl-type">Type</label>
+          <select id="exp-type">
+            <option value="" data-el="opt-select2">— Select —</option>
+            <option value="FC">Food Cost (FC)</option>
+            <option value="Λειτουργικά" data-el="opt-operational">Operational</option>
+            <option value="Ενέργεια" data-el="opt-energy">Energy</option>
+            <option value="Μισθοί" data-el="opt-salaries">Salaries</option>
+            <option value="Συντήρηση" data-el="opt-maintenance">Maintenance</option>
+            <option value="Άλλο" data-el="opt-other">Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label data-el="lbl-payment">Payment Method</label>
+          <select id="exp-pay">
+            <option value="" data-el="opt-select3">— Select —</option>
+            <option value="Μετρητά" data-el="opt-cash">Cash</option>
+            <option value="Κάρτα" data-el="opt-card">Card</option>
+            <option value="Επί Πιστώσει" data-el="opt-credit">On Credit</option>
+          </select>
+        </div>
+        <div class="form-group"><label data-el="lbl-invoice">Invoice No.</label><input id="exp-inv" data-placeholder-el="ph-invoice" placeholder="e.g. INV-00123"/></div>
+        <div class="form-group"><label data-el="lbl-amount-eur">Amount (€)</label><input type="number" id="exp-amount" step="0.01" min="0" placeholder="0.00"/></div>
+      </div>
+      <button class="btn btn-primary" onclick="addExpense()" style="width:100%" data-el="btn-add-expense">+ Add Expense</button>
+    </div>
+    <div class="card">
+      <div class="card-title" data-el="card-expenses-summary">Expense Summary</div>
+      <div id="exp-summary"><div class="empty"><svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/></svg><p data-el="empty-select-date2">Select a date</p></div></div>
+    </div>
+  </div>
+  <div class="section" style="margin-top:24px">
+    <div class="section-header">
+      <div class="section-title" data-el="section-entries2">Entries</div>
+      <div class="flex" style="gap:8px;align-items:center">
+        <input type="date" id="exp-filter-date" onchange="renderExpenseTable()" style="width:auto"/>
+        <button class="btn btn-secondary btn-sm" onclick="exportExpensePDF()">↓ PDF</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th data-el="th-time2">Time</th><th data-el="th-supplier">Supplier</th>
+          <th data-el="th-type">Type</th><th data-el="th-payment">Payment</th>
+          <th data-el="th-invoice">Invoice</th><th data-el="th-amount-eur">Amount</th><th style="width:80px"></th>
+        </tr></thead>
+        <tbody id="expense-tbody"></tbody>
+        <tfoot>
+          <tr class="tfoot"><td colspan="5" data-el="tf-total-cash">Total Cash</td><td id="exp-tot-cash" class="mono">0,00 €</td><td></td></tr>
+          <tr class="tfoot"><td colspan="5" data-el="tf-total-card">Total Card</td><td id="exp-tot-card" class="mono">0,00 €</td><td></td></tr>
+          <tr class="tfoot"><td colspan="5"><strong data-el="tf-total-cashcard">Total Cash + Card</strong></td><td id="exp-tot-cashcard" class="mono"><strong>0,00 €</strong></td><td></td></tr>
+          <tr class="tfoot"><td colspan="5" data-el="tf-credit">On Credit</td><td id="exp-tot-credit" class="mono">0,00 €</td><td></td></tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- SUPPLIERS PAGE -->
+<div class="page" id="page-suppliers">
+  <div class="page-header">
+    <div><div class="page-title" data-el="pg-suppliers-title">Suppliers</div><div class="page-sub" data-el="pg-suppliers-sub">Manage contacts and transactions</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title" data-el="card-new-supplier">New Supplier</div>
+      <div class="form-grid">
+        <div class="form-group"><label data-el="lbl-company">Company Name</label><input id="sup-name" data-placeholder-el="ph-sup-name" placeholder="e.g. Smith Bros."/></div>
+        <div class="form-group"><label data-el="lbl-phone2">Phone</label><input id="sup-phone" placeholder="+30 2101234567"/></div>
+        <div class="form-group"><label>Tax ID (ΑΦΜ)</label><input id="sup-afm" placeholder="123456789"/></div>
+        <div class="form-group"><label data-el="lbl-category">Category</label><input id="sup-type" data-placeholder-el="ph-sup-type" placeholder="e.g. Food, Services"/></div>
+      </div>
+      <button class="btn btn-primary" onclick="addSupplier()" style="width:100%" data-el="btn-add-supplier">+ Add Supplier</button>
+    </div>
+    <div class="card">
+      <div class="card-title" data-el="card-search">Search</div>
+      <input id="sup-search" data-placeholder-el="ph-sup-search" placeholder="Search supplier..." oninput="renderSuppliers()" style="margin-bottom:12px"/>
+      <div style="font-size:12px;color:var(--ink3);font-weight:500" id="sup-count">0 <span data-el="lbl-suppliers-count">suppliers</span></div>
+    </div>
+  </div>
+  <div class="section" style="margin-top:24px">
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th data-el="th-company">Company</th><th data-el="th-phone">Phone</th>
+          <th>Tax ID</th><th data-el="th-category">Category</th>
+          <th data-el="th-balance">Balance</th><th></th>
+        </tr></thead>
+        <tbody id="supplier-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- PAYROLL PAGE -->
+<div class="page" id="page-payroll">
+  <div class="page-header">
+    <div><div class="page-title" data-el="pg-payroll-title">Payroll</div><div class="page-sub" data-el="pg-payroll-sub">Daily & weekly wage recording</div></div>
+    <button class="btn btn-secondary" onclick="openModal('modal-employee')" data-el="btn-new-employee">+ New Employee</button>
+  </div>
+
+  <!-- Tabs: Daily Entry / Summary -->
+  <div class="tabs" style="margin-bottom:24px">
+    <button class="tab active" id="pay-tab-daily" onclick="switchPayTab('daily')">Daily Entry</button>
+    <button class="tab" id="pay-tab-weekly" onclick="switchPayTab('weekly')">Weekly View</button>
+    <button class="tab" id="pay-tab-summary" onclick="switchPayTab('summary')">Period Summary</button>
+  </div>
+
+  <!-- DAILY ENTRY TAB -->
+  <div id="pay-panel-daily">
+    <div class="grid-2 section">
+      <div class="card">
+        <div class="card-title">Daily Payroll Entry</div>
+        <div class="form-group" style="margin-bottom:14px"><label>Date</label><input type="date" id="pay-date"/></div>
+        <!-- Mode toggle -->
+        <div style="display:flex;gap:8px;margin-bottom:16px">
+          <button class="btn btn-secondary btn-sm" id="pay-mode-day" onclick="setPayMode('day')" style="flex:1">By Day</button>
+          <button class="btn btn-secondary btn-sm" id="pay-mode-hour" onclick="setPayMode('hour')" style="flex:1">By Hours</button>
+        </div>
+        <button class="btn btn-secondary" onclick="loadPayroll()" style="margin-bottom:16px;width:100%">Load Employees</button>
+        <div id="payroll-table-wrap">
+          <div class="empty"><p data-el="empty-select-week">Select date and load employees</p></div>
+        </div>
+        <div class="flex-between" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+          <span style="font-weight:700;font-size:13px">Total:</span>
+          <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:26px;font-weight:800;color:var(--accent);letter-spacing:-1px" id="pay-grand-total">—</span>
+        </div>
+        <button class="btn btn-primary" onclick="savePayroll()" style="width:100%;margin-top:14px">Save Payroll</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Today at a Glance</div>
+        <div id="pay-day-summary"><div class="empty"><p>Load employees to see summary</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEKLY VIEW TAB -->
+  <div id="pay-panel-weekly" style="display:none">
+    <div class="card section">
+      <div class="card-title">Weekly Overview</div>
+      <div class="form-grid" style="margin-bottom:16px">
+        <div class="form-group"><label>Any day of the week</label><input type="date" id="pay-week-date"/></div>
+        <div class="form-group" style="justify-content:flex-end"><label>&nbsp;</label><button class="btn btn-primary" onclick="loadWeeklyPayroll()" style="width:100%">Load Week</button></div>
+      </div>
+      <div id="weekly-payroll-content"><div class="empty"><p>Select a week to view payroll</p></div></div>
+    </div>
+  </div>
+
+  <!-- PERIOD SUMMARY TAB -->
+  <div id="pay-panel-summary" style="display:none">
+    <div class="grid-2 section">
+      <div class="card">
+        <div class="card-title">Period Summary</div>
+        <div class="form-grid">
+          <div class="form-group"><label>From</label><input type="date" id="pay-from"/></div>
+          <div class="form-group"><label>To</label><input type="date" id="pay-to"/></div>
+        </div>
+        <button class="btn btn-primary" onclick="loadPayrollSummary()" style="width:100%">Show Summary</button>
+      </div>
+      <div id="payroll-summary"><div class="empty"><p>Select a period</p></div></div>
+    </div>
+  </div>
+
+  <!-- EMPLOYEES TABLE -->
+  <div class="section" style="margin-top:8px">
+    <div class="section-header"><div class="section-title" data-el="section-employees">Employees</div></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Full Name</th><th>Role</th><th>Pay Type</th>
+          <th>Daily Rate</th><th>Hourly Rate</th><th>Phone</th><th></th>
+        </tr></thead>
+        <tbody id="employees-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- DAILY REPORT -->
+<div class="page" id="page-daily-report">
+  <div class="page-header">
+    <div><div class="page-title" data-el="pg-daily-title">Daily Report</div><div class="page-sub" data-el="pg-daily-sub">Full financial picture for a selected day</div></div>
+  </div>
+  <div class="flex" style="gap:12px;margin-bottom:24px;align-items:flex-end;flex-wrap:wrap">
+    <div class="form-group"><label data-el="lbl-date3">Date</label><input type="date" id="dr-date"/></div>
+    <button class="btn btn-primary" onclick="loadDailyReport()" data-el="btn-load">Load Report</button>
+    <button class="btn btn-secondary" onclick="printReport()">↓ PDF</button>
+  </div>
+  <div id="daily-report-content">
+    <div class="empty"><svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 13h4M9 17h6"/></svg><p data-el="empty-select-date3">Select a date and load the report</p></div>
+  </div>
+</div>
+
+<!-- WEEKLY REPORT -->
+<div class="page" id="page-weekly-report">
+  <div class="page-header">
+    <div><div class="page-title" data-el="pg-weekly-title">Weekly Report</div><div class="page-sub" data-el="pg-weekly-sub">Weekly financial data analysis</div></div>
+  </div>
+  <div class="flex" style="gap:12px;margin-bottom:24px;align-items:flex-end;flex-wrap:wrap">
+    <div class="form-group"><label data-el="lbl-week">Week (any day in the week)</label><input type="date" id="wr-date"/></div>
+    <button class="btn btn-primary" onclick="loadWeeklyReport()" data-el="btn-load2">Load Report</button>
+    <button class="btn btn-secondary" onclick="printReport()">↓ PDF</button>
+  </div>
+  <div id="weekly-report-content"><div class="empty"><p data-el="empty-select-week2">Select a week</p></div></div>
+</div>
+
+<!-- MONTHLY REPORT -->
+<div class="page" id="page-monthly-report">
+  <div class="page-header">
+    <div><div class="page-title" data-el="pg-monthly-title">Monthly Report</div><div class="page-sub" data-el="pg-monthly-sub">Monthly revenue, expenses & Food Cost analysis</div></div>
+  </div>
+  <div class="flex" style="gap:12px;margin-bottom:24px;align-items:flex-end;flex-wrap:wrap">
+    <div class="form-group"><label data-el="lbl-month">Month</label><input type="month" id="mr-month"/></div>
+    <button class="btn btn-primary" onclick="loadMonthlyReport()" data-el="btn-load3">Load Report</button>
+    <button class="btn btn-secondary" onclick="printReport()">↓ PDF</button>
+  </div>
+  <div id="monthly-report-content"><div class="empty"><p data-el="empty-select-month">Select a month</p></div></div>
+</div>
+
+<!-- ANNUAL REPORT -->
+<div class="page" id="page-annual-report">
+  <div class="page-header">
+    <div><div class="page-title" data-el="pg-annual-title">Annual Report</div><div class="page-sub" data-el="pg-annual-sub">Annual business performance analysis</div></div>
+  </div>
+  <div class="flex" style="gap:12px;margin-bottom:24px;align-items:flex-end;flex-wrap:wrap">
+    <div class="form-group"><label data-el="lbl-year">Year</label><input type="number" id="ar-year" min="2020" max="2040" placeholder="2025" style="width:130px"/></div>
+    <button class="btn btn-primary" onclick="loadAnnualReport()" data-el="btn-load4">Load Report</button>
+    <button class="btn btn-secondary" onclick="printReport()">↓ PDF</button>
+  </div>
+  <div id="annual-report-content"><div class="empty"><p data-el="empty-select-year">Select a year</p></div></div>
+</div>
+
+</main>
+
+<footer>© 2025 FinanceOS &mdash; <span data-el="footer-text">Professional Business Management</span></footer>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="bottom-nav-item active" id="bn-home" onclick="nav('home');closeMobileMore()">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg>
+      <span data-el="nav-home">Home</span>
+    </button>
+    <button class="bottom-nav-item" id="bn-income" onclick="nav('income');closeMobileMore()">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      <span data-el="nav-income">Revenue</span>
+    </button>
+    <button class="bottom-nav-item" id="bn-expenses" onclick="nav('expenses');closeMobileMore()">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+      <span data-el="nav-expenses">Expenses</span>
+    </button>
+    <button class="bottom-nav-item" id="bn-reports" onclick="toggleMobileMore()">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span data-el="nav-reports">Reports</span>
+    </button>
+    <button class="bottom-nav-item" id="bn-more" onclick="toggleMobileMore()">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+      <span>More</span>
+    </button>
+  </div>
+</div>
+
+<!-- MOBILE MORE MENU -->
+<div class="bottom-nav-more" id="mobile-more-menu">
+  <div class="bottom-nav-more-handle"></div>
+  <div class="bottom-nav-more-item" onclick="nav('suppliers');closeMobileMore()" id="bm-suppliers">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+    <span data-el="nav-suppliers">Suppliers</span>
+  </div>
+  <div class="bottom-nav-more-item" onclick="nav('payroll');closeMobileMore()" id="bm-payroll">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+    <span data-el="nav-payroll">Payroll</span>
+  </div>
+  <div class="bottom-nav-more-divider"></div>
+  <div class="bottom-nav-more-item" onclick="nav('daily-report');closeMobileMore()">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    <span data-el="nav-daily">Daily Report</span>
+  </div>
+  <div class="bottom-nav-more-item" onclick="nav('weekly-report');closeMobileMore()">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    <span data-el="nav-weekly">Weekly Report</span>
+  </div>
+  <div class="bottom-nav-more-item" onclick="nav('monthly-report');closeMobileMore()">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    <span data-el="nav-monthly">Monthly Report</span>
+  </div>
+  <div class="bottom-nav-more-item" onclick="nav('annual-report');closeMobileMore()">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    <span data-el="nav-annual">Annual Report</span>
+  </div>
+  <div class="bottom-nav-more-divider"></div>
+  <div style="display:flex;gap:8px;padding:6px 16px 4px">
+    <button class="lang-btn" id="btn-lang-el2" onclick="setLang('el');closeMobileMore()" style="flex:1;justify-content:center">🇬🇷 EL</button>
+    <button class="lang-btn active-lang" id="btn-lang-en2" onclick="setLang('en');closeMobileMore()" style="flex:1;justify-content:center">🇬🇧 EN</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  TRANSLATIONS
+// ══════════════════════════════════════════
+const T = {
+  el: {
+    'logo-tagline':'Διαχείριση Επιχείρησης',
+    'nav-home':'Αρχική','nav-income':'Έσοδα','nav-expenses':'Έξοδα','nav-suppliers':'Προμηθευτές','nav-payroll':'Μισθοδοσία','nav-reports':'Αναφορές',
+    'nav-daily':'Ημερήσια Αναφορά','nav-weekly':'Εβδομαδιαία Αναφορά','nav-monthly':'Μηνιαία Αναφορά','nav-annual':'Ετήσια Αναφορά',
+    'hero-badge':'Επαγγελματική Διαχείριση','hero-title':'Διαχείριση Επιχείρησης<br><span>στο επόμενο επίπεδο.</span>',
+    'hero-sub':'Καταγράψτε έσοδα, έξοδα, προμηθευτές και μισθοδοσία σε ένα ενιαίο σύστημα. Πλήρεις αναφορές σε πραγματικό χρόνο.',
+    'hero-btn1':'Καταχώρηση Εσόδων','hero-btn2':'Δες Αναφορές',
+    'hs-lbl-income':'Σήμερα Έσοδα','hs-lbl-expense':'Σήμερα Έξοδα','hs-lbl-cash':'Υπόλοιπο Μετρητά','hs-lbl-suppliers':'Προμηθευτές',
+    'fc-income-name':'Ημερήσια Έσοδα','fc-income-desc':'Καταχωρήστε ταμειακές και καρτικές εισπράξεις γρήγορα.',
+    'fc-expenses-name':'Ημερήσια Έξοδα','fc-expenses-desc':'Παρακολουθήστε έξοδα ανά κατηγορία και προμηθευτή.',
+    'fc-suppliers-name':'Προμηθευτές','fc-suppliers-desc':'Οργανώστε τους προμηθευτές και παρακολουθήστε συναλλαγές.',
+    'fc-payroll-name':'Μισθοδοσία','fc-payroll-desc':'Καταγράψτε ημερομίσθια υπαλλήλων, εβδομαδιαία μισθοδοσία.',
+    'fc-daily-report-name':'Ημερήσια Αναφορά','fc-daily-report-desc':'Πλήρης οικονομική ανάλυση για κάθε μέρα με γραφήματα.',
+    'fc-monthly-report-name':'Μηνιαία Αναφορά','fc-monthly-report-desc':'Μηνιαία ανάλυση εσόδων, εξόδων και Food Cost.',
+    'fc-manage':'Διαχείριση →','fc-manage2':'Διαχείριση →','fc-manage3':'Διαχείριση →','fc-manage4':'Διαχείριση →',
+    'fc-view':'Δες αναφορά →','fc-view2':'Δες αναφορά →',
+    'pg-income-title':'Ημερήσια Έσοδα','pg-income-sub':'Καταχωρήστε εισπράξεις ανά ημέρα',
+    'card-new-entry':'Νέα Καταχώρηση','card-day-summary':'Σύνοψη Ημέρας',
+    'lbl-date':'Ημερομηνία','lbl-desc':'Περιγραφή','lbl-cash-eur':'Μετρητά (€)','lbl-card-eur':'Κάρτα (€)',
+    'lbl-entry-total':'Σύνολο Καταχώρησης','btn-add-income':'+ Προσθήκη Εσόδου',
+    'section-entries':'Καταχωρήσεις','empty-select-date':'Επιλέξτε ημερομηνία',
+    'th-time':'Ώρα','th-desc':'Περιγραφή','th-cash-eur':'Μετρητά (€)','th-card-eur':'Κάρτα (€)','th-total-eur':'Σύνολο (€)',
+    'tf-day-total':'Σύνολο Ημέρας',
+    'pg-expenses-title':'Ημερήσια Έξοδα','pg-expenses-sub':'Καταγράψτε έξοδα ανά κατηγορία',
+    'card-new-expense':'Νέο Έξοδο','card-expenses-summary':'Σύνοψη Εξόδων',
+    'lbl-date2':'Ημερομηνία','lbl-supplier':'Προμηθευτής','lbl-type':'Τύπος','lbl-payment':'Τρόπος Πληρωμής',
+    'lbl-invoice':'Αρ. Τιμολογίου','lbl-amount-eur':'Ποσό (€)','btn-add-expense':'+ Προσθήκη Εξόδου',
+    'opt-select':'— Επιλογή —','opt-select2':'— Επιλογή —','opt-select3':'— Επιλογή —',
+    'opt-operational':'Λειτουργικά','opt-energy':'Ενέργεια','opt-salaries':'Μισθοί','opt-maintenance':'Συντήρηση','opt-other':'Άλλο',
+    'opt-cash':'Μετρητά','opt-card':'Κάρτα','opt-credit':'Επί Πιστώσει',
+    'empty-select-date2':'Επιλέξτε ημερομηνία','section-entries2':'Καταχωρήσεις',
+    'th-time2':'Ώρα','th-supplier':'Προμηθευτής','th-type':'Τύπος','th-payment':'Πληρωμή','th-invoice':'Τιμολόγιο','th-amount-eur':'Ποσό (€)',
+    'tf-total-cash':'Σύνολο Μετρητά','tf-total-card':'Σύνολο Κάρτα','tf-total-cashcard':'Σύνολο Μετρητά + Κάρτα','tf-credit':'Επί Πιστώσει',
+    'pg-suppliers-title':'Προμηθευτές','pg-suppliers-sub':'Διαχείριση επαφών και συναλλαγών',
+    'card-new-supplier':'Νέος Προμηθευτής','card-search':'Αναζήτηση',
+    'lbl-company':'Επωνυμία','lbl-phone2':'Τηλέφωνο','lbl-category':'Κατηγορία','btn-add-supplier':'+ Προσθήκη Προμηθευτή',
+    'lbl-suppliers-count':'προμηθευτές','th-company':'Επωνυμία','th-phone':'Τηλέφωνο','th-category':'Κατηγορία','th-balance':'Υπόλοιπο',
+    'pg-payroll-title':'Μισθοδοσία','pg-payroll-sub':'Εβδομαδιαία καταγραφή ημερομισθίων',
+    'btn-new-employee':'+ Νέος Υπάλληλος','card-payroll-entry':'Καταχώρηση Μισθοδοσίας',
+    'lbl-week-date':'Ημερομηνία Εβδομάδας','btn-load-employees':'Φόρτωση Υπαλλήλων',
+    'empty-select-week':'Επιλέξτε ημερομηνία και φορτώστε τους υπαλλήλους','lbl-total':'Σύνολο:',
+    'btn-save-payroll':'Αποθήκευση Μισθοδοσίας','card-period-summary':'Σύνοψη Περιόδου',
+    'lbl-from':'Από','lbl-to':'Έως','btn-show':'Εμφάνιση','empty-select-period':'Επιλέξτε περίοδο',
+    'section-employees':'Υπάλληλοι','th-fullname':'Ονοματεπώνυμο','th-role':'Ρόλος','th-daily-rate-eur':'Ημερομίσθιο (€)','th-phone2':'Τηλέφωνο',
+    'pg-daily-title':'Ημερήσια Αναφορά','pg-daily-sub':'Πλήρης οικονομική εικόνα για επιλεγμένη ημέρα',
+    'lbl-date3':'Ημερομηνία','btn-load':'Φόρτωση Αναφοράς','empty-select-date3':'Επιλέξτε ημερομηνία και φορτώστε την αναφορά',
+    'pg-weekly-title':'Εβδομαδιαία Αναφορά','pg-weekly-sub':'Ανάλυση εβδομαδιαίων οικονομικών δεδομένων',
+    'lbl-week':'Εβδομάδα','btn-load2':'Φόρτωση','empty-select-week2':'Επιλέξτε εβδομάδα',
+    'pg-monthly-title':'Μηνιαία Αναφορά','pg-monthly-sub':'Ανάλυση εσόδων, εξόδων & Food Cost',
+    'lbl-month':'Μήνας','btn-load3':'Φόρτωση','empty-select-month':'Επιλέξτε μήνα',
+    'pg-annual-title':'Ετήσια Αναφορά','pg-annual-sub':'Ετήσια ανάλυση απόδοσης επιχείρησης',
+    'lbl-year':'Έτος','btn-load4':'Φόρτωση','empty-select-year':'Επιλέξτε έτος',
+    'modal-add-employee':'Προσθήκη Υπαλλήλου',
+    'lbl-fullname':'Ονοματεπώνυμο','lbl-role':'Ρόλος','lbl-daily-rate':'Ημερομίσθιο (€)','lbl-phone':'Τηλέφωνο',
+    'btn-cancel':'Ακύρωση','btn-save':'Αποθήκευση Υπαλλήλου','btn-close':'Κλείσιμο',
+    'footer-text':'Επαγγελματική Διαχείριση Επιχείρησης',
+    'ph-emp-name':'π.χ. Γιώργος Παπαδόπουλος','ph-emp-role':'π.χ. Σερβιτόρος',
+    'ph-inc-desc':'π.χ. Πωλήσεις ημέρας','ph-invoice':'π.χ. ΤΔΑ-00123',
+    'ph-sup-name':'π.χ. Αφοί Γεωργίου','ph-sup-type':'π.χ. Τρόφιμα, Υπηρεσίες','ph-sup-search':'Αναζήτηση προμηθευτή...',
+    'Μετρητά':'Μετρητά','Κάρτα':'Κάρτα','Επί Πιστώσει':'Επί Πιστώσει',
+    'lbl-days':'Ημέρες','lbl-rate':'Ημερ.(€)','lbl-subtotal':'Σύνολο(€)',
+    'notify-income-added':'Έσοδο καταχωρήθηκε!','notify-expense-added':'Έξοδο καταχωρήθηκε!',
+    'notify-supplier-added':'Προμηθευτής προστέθηκε!','notify-employee-added':'Υπάλληλος προστέθηκε!',
+    'notify-payroll-saved':'Μισθοδοσία αποθηκεύτηκε!','notify-deleted':'Διαγράφηκε',
+    'notify-sel-date':'Επιλέξτε ημερομηνία','notify-fill-desc':'Συμπληρώστε περιγραφή',
+    'notify-fill-amount':'Συμπληρώστε ποσό','notify-sel-supplier':'Επιλέξτε προμηθευτή',
+    'notify-sel-type':'Επιλέξτε τύπο','notify-sel-pay':'Επιλέξτε τρόπο πληρωμής',
+    'notify-fill-company':'Εισάγετε επωνυμία','notify-sup-exists':'Ο προμηθευτής υπάρχει ήδη',
+    'notify-fill-name-rate':'Συμπληρώστε όνομα και ημερομίσθιο',
+    'notify-no-employees':'Δεν υπάρχουν υπάλληλοι','notify-sel-period':'Επιλέξτε περίοδο',
+    'notify-load-first':'Φορτώστε πρώτα τους υπαλλήλους',
+    'notify-sel-month':'Επιλέξτε μήνα','notify-enter-year':'Εισάγετε έτος',
+    'confirm-delete':'Διαγραφή;',
+    'empty-no-records':'Δεν βρέθηκαν εγγραφές','empty-no-suppliers':'Δεν βρέθηκαν προμηθευτές','empty-no-payroll':'Δεν βρέθηκε μισθοδοσία',
+    'btn-transactions':'Συναλλαγές','lbl-supplier-count-unit':'προμηθευτές',
+    'report-week-range':'Εβδομάδα:','report-to':'έως',
+    'stat-total-income':'Σύνολο Εσόδων','stat-total-expenses':'Σύνολο Εξόδων','stat-net-profit':'Καθαρό Κέρδος','stat-cash-register':'Ταμείο','stat-food-cost':'Food Cost %',
+    'chart-income-analysis':'Ανάλυση Εσόδων','chart-income-vs-expenses':'Έσοδα vs Έξοδα','chart-detail':'Λεπτομέρεια',
+    'col-income':'Έσοδα','col-expenses':'Έξοδα','col-profit':'Κέρδος','col-profit-pct':'Κέρδος %',
+    'annual-income':'Ετήσια Έσοδα','annual-expenses':'Ετήσια Έξοδα','annual-profit':'Ετήσιο Κέρδος',
+    'monthly-summary':'Μηνιαία Σύνοψη','col-month':'Μήνας','col-total':'Σύνολο',
+    'summary-cash-income':'Μετρητά Εσόδων','summary-card-income':'Κάρτα Εσόδων','summary-total-income':'Σύνολο Εσόδων',
+    'summary-cash-expense':'Μετρητά Εξόδων','summary-card-expense':'Κάρτα Εξόδων','summary-food-cost':'Food Cost (FC)',
+    'chart-weekly-trend':'Εβδομαδιαία Τάση','chart-expenses-by-cat':'Έξοδα ανά Κατηγορία','detailed-summary':'Αναλυτική Σύνοψη','chart-monthly-annual':'Μηνιαία Έσοδα & Έξοδα',
+    'income-badge':'Έσοδο','expense-badge':'Έξοδο',
+    'tbl-date':'Ημ/νία','tbl-time':'Ώρα','tbl-payment':'Πληρωμή','tbl-invoice':'Τιμολόγιο','tbl-amount':'Ποσό','tbl-balance':'Υπόλοιπο',
+    'tbl-supplier-total':'Σύνολο Τιμολογίων','tbl-credit-balance':'Υπόλοιπο (Επί Πιστώσει)',
+    'tbl-type':'Τύπος','tbl-desc-sup':'Περιγραφή/Προμ.','tbl-cash':'Μετρητά','tbl-card':'Κάρτα',
+    'empty-no-transactions':'Δεν υπάρχουν συναλλαγές','lbl-employee':'Υπάλληλος',
+    'mLabels':['Ιαν','Φεβ','Μαρ','Απρ','Μαΐ','Ιουν','Ιουλ','Αυγ','Σεπ','Οκτ','Νοε','Δεκ'],
+    'days-labels':['Δευ','Τρί','Τετ','Πέμ','Παρ','Σάβ','Κυρ'],'week-labels':['Εβδ.1','Εβδ.2','Εβδ.3','Εβδ.4'],
+  },
+  en: {
+    'logo-tagline':'Business Intelligence',
+    'nav-home':'Home','nav-income':'Revenue','nav-expenses':'Expenses','nav-suppliers':'Suppliers','nav-payroll':'Payroll','nav-reports':'Reports',
+    'nav-daily':'Daily Report','nav-weekly':'Weekly Report','nav-monthly':'Monthly Report','nav-annual':'Annual Report',
+    'hero-badge':'Professional Business Suite',
+    'hero-title':'Business Management<br><span>at a new level.</span>',
+    'hero-sub':'Track revenue, expenses, suppliers and payroll in one unified platform. Real-time analytics and beautiful reports — built for modern businesses.',
+    'hero-btn1':'Record Revenue','hero-btn2':'View Reports',
+    'hs-lbl-income':'Today\'s Revenue','hs-lbl-expense':'Today\'s Expenses','hs-lbl-cash':'Cash Balance','hs-lbl-suppliers':'Suppliers',
+    'fc-income-name':'Daily Revenue','fc-income-desc':'Record cash and card receipts quickly and accurately.',
+    'fc-expenses-name':'Daily Expenses','fc-expenses-desc':'Track expenses by category, supplier and payment method.',
+    'fc-suppliers-name':'Suppliers','fc-suppliers-desc':'Manage supplier contacts and track all transactions.',
+    'fc-payroll-name':'Payroll','fc-payroll-desc':'Record daily wages and run automated weekly payroll.',
+    'fc-daily-report-name':'Daily Report','fc-daily-report-desc':'Full financial analysis per day with beautiful charts.',
+    'fc-monthly-report-name':'Monthly Report','fc-monthly-report-desc':'Monthly revenue, expenses & Food Cost analysis.',
+    'fc-manage':'Manage →','fc-manage2':'Manage →','fc-manage3':'Manage →','fc-manage4':'Manage →',
+    'fc-view':'View report →','fc-view2':'View report →',
+    'pg-income-title':'Daily Revenue','pg-income-sub':'Record receipts per day',
+    'card-new-entry':'New Entry','card-day-summary':'Day Summary',
+    'lbl-date':'Date','lbl-desc':'Description','lbl-cash-eur':'Cash (€)','lbl-card-eur':'Card (€)',
+    'lbl-entry-total':'Entry Total','btn-add-income':'+ Add Revenue',
+    'section-entries':'Entries','empty-select-date':'Select a date',
+    'th-time':'Time','th-desc':'Description','th-cash-eur':'Cash (€)','th-card-eur':'Card (€)','th-total-eur':'Total (€)',
+    'tf-day-total':'Day Total',
+    'pg-expenses-title':'Daily Expenses','pg-expenses-sub':'Record expenses by category',
+    'card-new-expense':'New Expense','card-expenses-summary':'Expense Summary',
+    'lbl-date2':'Date','lbl-supplier':'Supplier','lbl-type':'Type','lbl-payment':'Payment Method',
+    'lbl-invoice':'Invoice No.','lbl-amount-eur':'Amount (€)','btn-add-expense':'+ Add Expense',
+    'opt-select':'— Select —','opt-select2':'— Select —','opt-select3':'— Select —',
+    'opt-operational':'Operational','opt-energy':'Energy','opt-salaries':'Salaries','opt-maintenance':'Maintenance','opt-other':'Other',
+    'opt-cash':'Cash','opt-card':'Card','opt-credit':'On Credit',
+    'empty-select-date2':'Select a date','section-entries2':'Entries',
+    'th-time2':'Time','th-supplier':'Supplier','th-type':'Type','th-payment':'Payment','th-invoice':'Invoice','th-amount-eur':'Amount (€)',
+    'tf-total-cash':'Total Cash','tf-total-card':'Total Card','tf-total-cashcard':'Total Cash + Card','tf-credit':'On Credit',
+    'pg-suppliers-title':'Suppliers','pg-suppliers-sub':'Manage contacts and transactions',
+    'card-new-supplier':'New Supplier','card-search':'Search',
+    'lbl-company':'Company Name','lbl-phone2':'Phone','lbl-category':'Category','btn-add-supplier':'+ Add Supplier',
+    'lbl-suppliers-count':'suppliers','th-company':'Company','th-phone':'Phone','th-category':'Category','th-balance':'Balance',
+    'pg-payroll-title':'Payroll','pg-payroll-sub':'Weekly daily wage recording',
+    'btn-new-employee':'+ New Employee','card-payroll-entry':'Payroll Entry',
+    'lbl-week-date':'Week Date','btn-load-employees':'Load Employees',
+    'empty-select-week':'Select date and load employees','lbl-total':'Total:',
+    'btn-save-payroll':'Save Payroll','card-period-summary':'Period Summary',
+    'lbl-from':'From','lbl-to':'To','btn-show':'Show Summary','empty-select-period':'Select a period',
+    'section-employees':'Employees','th-fullname':'Full Name','th-role':'Role','th-daily-rate-eur':'Daily Rate (€)','th-phone2':'Phone',
+    'pg-daily-title':'Daily Report','pg-daily-sub':'Full financial picture for a selected day',
+    'lbl-date3':'Date','btn-load':'Load Report','empty-select-date3':'Select a date and load the report',
+    'pg-weekly-title':'Weekly Report','pg-weekly-sub':'Weekly financial data analysis',
+    'lbl-week':'Week (any day)','btn-load2':'Load Report','empty-select-week2':'Select a week',
+    'pg-monthly-title':'Monthly Report','pg-monthly-sub':'Monthly revenue, expenses & Food Cost analysis',
+    'lbl-month':'Month','btn-load3':'Load Report','empty-select-month':'Select a month',
+    'pg-annual-title':'Annual Report','pg-annual-sub':'Annual business performance analysis',
+    'lbl-year':'Year','btn-load4':'Load Report','empty-select-year':'Select a year',
+    'modal-add-employee':'Add Employee',
+    'lbl-fullname':'Full Name','lbl-role':'Role','lbl-daily-rate':'Daily Rate (€)','lbl-phone':'Phone',
+    'btn-cancel':'Cancel','btn-save':'Save Employee','btn-close':'Close',
+    'footer-text':'Professional Business Management',
+    'ph-emp-name':'e.g. John Smith','ph-emp-role':'e.g. Waiter',
+    'ph-inc-desc':'e.g. Daily sales','ph-invoice':'e.g. INV-00123',
+    'ph-sup-name':'e.g. Smith Bros.','ph-sup-type':'e.g. Food, Services','ph-sup-search':'Search supplier...',
+    'Μετρητά':'Cash','Κάρτα':'Card','Επί Πιστώσει':'On Credit',
+    'lbl-days':'Days','lbl-rate':'Rate(€)','lbl-subtotal':'Total(€)',
+    'notify-income-added':'Revenue recorded!','notify-expense-added':'Expense recorded!',
+    'notify-supplier-added':'Supplier added!','notify-employee-added':'Employee added!',
+    'notify-payroll-saved':'Payroll saved!','notify-deleted':'Deleted',
+    'notify-sel-date':'Select a date','notify-fill-desc':'Enter description',
+    'notify-fill-amount':'Enter amount','notify-sel-supplier':'Select a supplier',
+    'notify-sel-type':'Select type','notify-sel-pay':'Select payment method',
+    'notify-fill-company':'Enter company name','notify-sup-exists':'Supplier already exists',
+    'notify-fill-name-rate':'Enter name and daily rate',
+    'notify-no-employees':'No employees found','notify-sel-period':'Select a period',
+    'notify-load-first':'Load employees first',
+    'notify-sel-month':'Select a month','notify-enter-year':'Enter year',
+    'confirm-delete':'Delete this entry?',
+    'empty-no-records':'No records found','empty-no-suppliers':'No suppliers found','empty-no-payroll':'No payroll found',
+    'btn-transactions':'Transactions','lbl-supplier-count-unit':'suppliers',
+    'report-week-range':'Week:','report-to':'to',
+    'stat-total-income':'Total Revenue','stat-total-expenses':'Total Expenses','stat-net-profit':'Net Profit','stat-cash-register':'Cash Register','stat-food-cost':'Food Cost %',
+    'chart-income-analysis':'Revenue Analysis','chart-income-vs-expenses':'Revenue vs Expenses','chart-detail':'Entry Details',
+    'col-income':'Revenue','col-expenses':'Expenses','col-profit':'Profit','col-profit-pct':'Profit %',
+    'annual-income':'Annual Revenue','annual-expenses':'Annual Expenses','annual-profit':'Annual Profit',
+    'monthly-summary':'Monthly Summary','col-month':'Month','col-total':'Total',
+    'summary-cash-income':'Cash Revenue','summary-card-income':'Card Revenue','summary-total-income':'Total Revenue',
+    'summary-cash-expense':'Cash Expenses','summary-card-expense':'Card Expenses','summary-food-cost':'Food Cost (FC)',
+    'chart-weekly-trend':'Weekly Trend','chart-expenses-by-cat':'Expenses by Category','detailed-summary':'Detailed Summary','chart-monthly-annual':'Monthly Revenue & Expenses',
+    'income-badge':'Revenue','expense-badge':'Expense',
+    'tbl-date':'Date','tbl-time':'Time','tbl-payment':'Payment','tbl-invoice':'Invoice','tbl-amount':'Amount','tbl-balance':'Balance',
+    'tbl-supplier-total':'Total Invoices','tbl-credit-balance':'Balance (On Credit)',
+    'tbl-type':'Type','tbl-desc-sup':'Desc./Supplier','tbl-cash':'Cash','tbl-card':'Card',
+    'empty-no-transactions':'No transactions found','lbl-employee':'Employee',
+    'mLabels':['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    'days-labels':['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],'week-labels':['Wk.1','Wk.2','Wk.3','Wk.4'],
+  }
+};
+
+let lang = 'en';
+function t(key){return(T[lang]&&T[lang][key])||(T['en']&&T['en'][key])||key;}
+function setLang(l){
+  lang=l;
+  ['btn-lang-el','btn-lang-el2'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('active-lang',l==='el');});
+  ['btn-lang-en','btn-lang-en2'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('active-lang',l==='en');});
+  applyTranslations();
+}
+function applyTranslations(){
+  document.querySelectorAll('[data-el]').forEach(el=>{
+    const key=el.getAttribute('data-el');const val=t(key);
+    if(val&&val!==key)el.innerHTML=val;
+  });
+  document.querySelectorAll('[data-placeholder-el]').forEach(el=>{
+    const key=el.getAttribute('data-placeholder-el');const val=t(key);
+    if(val&&val!==key)el.placeholder=val;
+  });
+  if(currentPage==='income'){renderIncomeTable();renderIncomeSummary();}
+  if(currentPage==='expenses'){renderExpenseTable();renderExpenseSummary();}
+  if(currentPage==='suppliers')renderSuppliers();
+  if(currentPage==='payroll')renderEmployees();
+}
+
+// ── DATA ──
+const DB={
+  get(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch{return null}},
+  set(k,v){localStorage.setItem(k,JSON.stringify(v))},
+  income(){return this.get('fos_income')||[]},saveIncome(d){this.set('fos_income',d)},
+  expenses(){return this.get('fos_expenses')||[]},saveExpenses(d){this.set('fos_expenses',d)},
+  suppliers(){return this.get('fos_suppliers')||[]},saveSuppliers(d){this.set('fos_suppliers',d)},
+  employees(){return this.get('fos_employees')||[]},saveEmployees(d){this.set('fos_employees',d)},
+  payroll(){return this.get('fos_payroll')||[]},savePayroll(d){this.set('fos_payroll',d)},
+};
+
+// ── CURRENCY ──
+let CURRENCY = {code:'EUR', symbol:'€', locale:'el-GR', decimals:2};
+function loadCurrency(){
+  const saved = localStorage.getItem('fos_currency');
+  if(saved) try { CURRENCY = JSON.parse(saved); } catch(e){}
+  updateCurrencyUI();
+}
+function saveCurrency(){
+  const sel = document.getElementById('currency-select').value;
+  const [code, symbol, locale] = sel.split('|');
+  CURRENCY = {code, symbol, locale, decimals: code==='JPY'||code==='KWD'?0:2};
+  localStorage.setItem('fos_currency', JSON.stringify(CURRENCY));
+  updateCurrencyUI();
+  closeModal('modal-currency');
+  notify(`Currency set to ${code} ${symbol}`);
+  // refresh current page
+  if(currentPage==='income'){renderIncomeTable();renderIncomeSummary();}
+  if(currentPage==='expenses'){renderExpenseTable();renderExpenseSummary();}
+  if(currentPage==='home')updateHomeStats();
+}
+function updateCurrencyUI(){
+  const btn = document.getElementById('btn-currency');
+  if(btn) btn.textContent = CURRENCY.symbol + ' ' + CURRENCY.code;
+  // sync select
+  const sel = document.getElementById('currency-select');
+  if(sel){
+    const val = `${CURRENCY.code}|${CURRENCY.symbol}|${CURRENCY.locale}`;
+    for(let i=0;i<sel.options.length;i++){if(sel.options[i].value===val){sel.selectedIndex=i;break;}}
+    updateCurrencyPreview();
+  }
+}
+function updateCurrencyPreview(){
+  const sel = document.getElementById('currency-select');
+  if(!sel) return;
+  const [code, symbol, locale] = sel.value.split('|');
+  const decimals = code==='JPY'?0:2;
+  const preview = (1234.56).toLocaleString(locale, {minimumFractionDigits:decimals,maximumFractionDigits:decimals});
+  document.getElementById('currency-preview').textContent = preview + ' ' + symbol;
+}
+const fmt = n => parseFloat(n||0).toLocaleString(CURRENCY.locale, {minimumFractionDigits:CURRENCY.decimals, maximumFractionDigits:CURRENCY.decimals});
+const fmtE = n => fmt(n) + ' ' + CURRENCY.symbol;
+const today=()=>new Date().toISOString().slice(0,10);
+const timeNow=()=>new Date().toLocaleTimeString('el-GR',{hour:'2-digit',minute:'2-digit'});
+const uid=()=>Math.random().toString(36).slice(2,9);
+let chartInst={};
+
+const CHART_DEFAULTS={
+  color:'rgba(255,255,255,.55)',
+  grid:'rgba(255,255,255,.04)',
+  plugins:{legend:{labels:{color:'rgba(255,255,255,.55)',font:{family:'Plus Jakarta Sans',size:11,weight:'500'}}}},
+};
+
+function notify(msg,type='success'){
+  const d=document.createElement('div');d.className='notif-item '+(type||'');
+  const icon=type==='success'?'✓':type==='danger'?'✕':'ℹ';
+  d.innerHTML=`<span style="font-size:15px;font-weight:700">${icon}</span> ${msg}`;
+  document.getElementById('notif').appendChild(d);
+  setTimeout(()=>{d.style.opacity='0';d.style.transition='opacity .3s';setTimeout(()=>d.remove(),300)},3000);
+}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.modal-overlay').forEach(m=>{
+    m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});
+  });
+});
+function toggleDD(){document.getElementById('dd-reports').classList.toggle('open');}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#dd-reports'))document.getElementById('dd-reports').classList.remove('open');
+});
+
+// ── NAV ──
+let currentPage='home';
+const pages=['home','income','expenses','suppliers','payroll','daily-report','weekly-report','monthly-report','annual-report'];
+function nav(page){
+  pages.forEach(p=>{
+    const el=document.getElementById('page-'+p);if(el)el.classList.toggle('active',p===page);
+    const nlId='nl-'+p.replace('-report','').replace('-','');
+    const nl=document.getElementById(nlId);if(nl)nl.classList.toggle('active',p===page);
+  });
+  const reports=['daily-report','weekly-report','monthly-report','annual-report'];
+  const nlRep=document.getElementById('nl-reports');
+  if(nlRep)nlRep.classList.toggle('active',reports.includes(page));
+  document.getElementById('dd-reports').classList.remove('open');
+  currentPage=page;window.scrollTo({top:0,behavior:'smooth'});
+  updateBottomNav(page);onPageEnter(page);
+}
+function onPageEnter(page){
+  const d=today();
+  if(page==='home')updateHomeStats();
+  if(page==='income'){
+    if(!document.getElementById('inc-date').value)document.getElementById('inc-date').value=d;
+    if(!document.getElementById('inc-filter-date').value)document.getElementById('inc-filter-date').value=d;
+    renderIncomeTable();renderIncomeSummary();
+  }
+  if(page==='expenses'){
+    if(!document.getElementById('exp-date').value)document.getElementById('exp-date').value=d;
+    if(!document.getElementById('exp-filter-date').value)document.getElementById('exp-filter-date').value=d;
+    populateSupplierSelect();renderExpenseTable();renderExpenseSummary();
+  }
+  if(page==='suppliers')renderSuppliers();
+  if(page==='payroll'){if(!document.getElementById('pay-date').value)document.getElementById('pay-date').value=d;renderEmployees();}
+  if(page==='daily-report'&&!document.getElementById('dr-date').value){document.getElementById('dr-date').value=d;loadDailyReport();}
+  if(page==='monthly-report'&&!document.getElementById('mr-month').value){document.getElementById('mr-month').value=d.slice(0,7);loadMonthlyReport();}
+  if(page==='annual-report'&&!document.getElementById('ar-year').value){document.getElementById('ar-year').value=new Date().getFullYear();loadAnnualReport();}
+}
+
+// ── HOME ──
+function updateHomeStats(){
+  const d=today();
+  const income=DB.income().filter(x=>x.date===d);const expenses=DB.expenses().filter(x=>x.date===d);
+  const totalInc=income.reduce((s,x)=>s+x.cash+x.card,0);const totalExp=expenses.reduce((s,x)=>s+x.amount,0);
+  // Running balance = ALL history up to and including today
+  const allIncome=DB.income();const allExpenses=DB.expenses();
+  const totalCash=allIncome.reduce((s,x)=>s+x.cash,0)-allExpenses.filter(x=>x.pay==='Μετρητά').reduce((s,x)=>s+x.amount,0);
+  const totalCard=allIncome.reduce((s,x)=>s+x.card,0)-allExpenses.filter(x=>x.pay==='Κάρτα').reduce((s,x)=>s+x.amount,0);
+  document.getElementById('hs-income').textContent=fmtE(totalInc);
+  document.getElementById('hs-expense').textContent=fmtE(totalExp);
+  document.getElementById('hs-cash').textContent=fmtE(totalCash+totalCard);
+  document.getElementById('hs-suppliers').textContent=DB.suppliers().length;
+  // Update label to show it's cumulative
+  const cashLabel=document.getElementById('hs-lbl-cash');
+  if(cashLabel)cashLabel.textContent=lang==='en'?'Total Balance':'Συνολικό Υπόλοιπο';
+}
+
+// ── INCOME ──
+function updateIncCalc(){
+  const total=parseFloat(document.getElementById('inc-total-raw').value)||0;
+  const card=parseFloat(document.getElementById('inc-card').value)||0;
+  const cash=Math.max(0,total-card);
+  const cashDisplay=document.getElementById('inc-cash-display');
+  const breakdown=document.getElementById('inc-breakdown');
+  if(total>0){
+    cashDisplay.textContent=fmtE(cash);
+    cashDisplay.style.color=cash>=0?'var(--accent)':'var(--danger)';
+    document.getElementById('inc-total-preview').textContent=fmtE(total);
+    breakdown.style.display='block';
+    document.getElementById('bd-total').textContent=fmtE(total);
+    document.getElementById('bd-card').textContent=fmtE(card);
+    document.getElementById('bd-cash').textContent=fmtE(cash);
+  } else {
+    cashDisplay.textContent='—';
+    document.getElementById('inc-total-preview').textContent='—';
+    breakdown.style.display='none';
+  }
+}
+// keep old name as alias for any lingering references
+function updateIncTotal(){updateIncCalc();}
+
+function addIncome(){
+  const d=document.getElementById('inc-date').value;
+  const desc=document.getElementById('inc-desc').value.trim();
+  const total=parseFloat(document.getElementById('inc-total-raw').value)||0;
+  const card=parseFloat(document.getElementById('inc-card').value)||0;
+  const cash=Math.max(0,total-card);
+  if(!d){notify(t('notify-sel-date'),'danger');return;}
+  if(!desc){notify(t('notify-fill-desc'),'danger');return;}
+  if(total<=0){notify(t('notify-fill-amount'),'danger');return;}
+  if(card>total){notify('Card amount cannot exceed total register','danger');return;}
+  const data=DB.income();data.push({id:uid(),date:d,time:timeNow(),desc,cash,card,total});
+  DB.saveIncome(data);
+  document.getElementById('inc-desc').value='';
+  document.getElementById('inc-total-raw').value='';
+  document.getElementById('inc-card').value='';
+  document.getElementById('inc-cash-display').textContent='—';
+  document.getElementById('inc-total-preview').textContent='—';
+  document.getElementById('inc-breakdown').style.display='none';
+  document.getElementById('inc-filter-date').value=d;renderIncomeTable();renderIncomeSummary();notify(t('notify-income-added'));
+}
+function deleteIncome(id){
+  if(!confirm(t('confirm-delete')))return;
+  DB.saveIncome(DB.income().filter(x=>x.id!==id));renderIncomeTable();renderIncomeSummary();notify(t('notify-deleted'),'danger');
+}
+function renderIncomeTable(){
+  const d=document.getElementById('inc-filter-date').value;
+  const rows=DB.income().filter(x=>x.date===d).sort((a,b)=>a.time.localeCompare(b.time));
+  const tb=document.getElementById('income-tbody');
+  if(!rows.length){
+    tb.innerHTML=`<tr><td colspan="6"><div class="empty"><p>${t('empty-no-records')}</p></div></td></tr>`;
+    ['inc-tot-cash','inc-tot-card','inc-tot-all'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='0,00';});return;
+  }
+  tb.innerHTML=rows.map(r=>{
+    const total=r.total!=null?r.total:(r.cash+r.card); // backwards compat
+    const card=r.card||0;
+    const cash=r.cash||0;
+    return`<tr>
+      <td class="mono">${r.time}</td><td><strong>${r.desc}</strong></td>
+      <td class="amount-pos mono" style="font-weight:700">${fmt(total)}</td>
+      <td class="mono" style="color:var(--accent2)">${fmt(card)}</td>
+      <td class="mono" style="color:var(--accent)">${fmt(cash)}</td>
+      <td style="display:flex;gap:4px">
+        <button class="btn-icon" style="color:var(--accent2)" onclick="openEditIncome('${r.id}')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 5H6a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-5"/><path d="M15.5 2.5a2 2 0 013 3L11 13l-4 1 1-4 7.5-7.5z"/></svg></button>
+        <button class="btn-icon" onclick="deleteIncome('${r.id}')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 17 6"/><path d="M8 6V4h4v2M19 6l-1 12a2 2 0 01-2 2H4a2 2 0 01-2-2L1 6"/></svg></button>
+      </td>
+    </tr>`;
+  }).join('');
+  const totTotal=rows.reduce((s,x)=>s+(x.total!=null?x.total:(x.cash+x.card)),0);
+  const totCard=rows.reduce((s,x)=>s+x.card,0);
+  const totCash=rows.reduce((s,x)=>s+x.cash,0);
+  document.getElementById('inc-tot-all').textContent=fmt(totTotal);
+  document.getElementById('inc-tot-card').textContent=fmt(totCard);
+  document.getElementById('inc-tot-cash').textContent=fmt(totCash);
+  renderIncomeSummary();
+}
+function renderIncomeSummary(){
+  const d=document.getElementById('inc-filter-date').value||today();
+  const rows=DB.income().filter(x=>x.date===d);
+  const cash=rows.reduce((s,x)=>s+x.cash,0);const card=rows.reduce((s,x)=>s+x.card,0);
+  const{cashBefore,cardBefore}=getBalanceBefore(d);
+  // expenses for this day (cash/card only, not credit)
+  const expRows=DB.expenses().filter(x=>x.date===d);
+  const cashExp=expRows.filter(x=>x.pay==='Μετρητά').reduce((s,x)=>s+x.amount,0);
+  const cardExp=expRows.filter(x=>x.pay==='Κάρτα').reduce((s,x)=>s+x.amount,0);
+  const cashAfter=cashBefore+cash-cashExp;
+  const cardAfter=cardBefore+card-cardExp;
+  document.getElementById('inc-summary').innerHTML=`
+    <div class="summary-row"><span class="summary-key">Register (total)</span><span class="summary-val pos" style="font-size:22px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;letter-spacing:-1px">${fmtE(cash+card)}</span></div>
+    <div class="summary-row"><span class="summary-key">Card / POS</span><span class="summary-val" style="color:var(--accent2)">${fmtE(card)}</span></div>
+    <div class="summary-row"><span class="summary-key" style="font-weight:700">Cash</span><span class="summary-val pos">${fmtE(cash)}</span></div>
+    <div style="margin-top:14px;font-size:12px;color:var(--ink3);margin-bottom:10px">${rows.length} ${lang==='en'?'entries':'καταχωρήσεις'}</div>
+    <div class="running-balance">
+      <div class="running-balance-title">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        Running Balance
+      </div>
+      <div class="rb-row"><span class="rb-label">Cash opening</span><span class="rb-val ${cashBefore>=0?'amount-pos':'amount-neg'}">${fmtE(cashBefore)}</span></div>
+      <div class="rb-row"><span class="rb-label">Card opening</span><span class="rb-val ${cardBefore>=0?'amount-pos':'amount-neg'}">${fmtE(cardBefore)}</span></div>
+      <div class="rb-row"><span class="rb-label">Cash closing</span><span class="rb-val ${cashAfter>=0?'amount-pos':'amount-neg'}">${fmtE(cashAfter)}</span></div>
+      <div class="rb-row"><span class="rb-label">Card closing</span><span class="rb-val ${cardAfter>=0?'amount-pos':'amount-neg'}">${fmtE(cardAfter)}</span></div>
+      <div class="rb-row"><span class="rb-label" style="font-weight:700">Total closing</span><span class="rb-val ${(cashAfter+cardAfter)>=0?'amount-pos':'amount-neg'}" style="font-size:15px;font-weight:700">${fmtE(cashAfter+cardAfter)}</span></div>
+    </div>`;
+}
+
+// ── EXPENSES ──
+function populateSupplierSelect(){
+  const sel=document.getElementById('exp-supplier');const cur=sel.value;
+  sel.innerHTML=`<option value="">${t('opt-select')}</option>`+DB.suppliers().map(s=>`<option value="${s.name}" ${s.name===cur?'selected':''}>${s.name}</option>`).join('');
+}
+function addExpense(){
+  const d=document.getElementById('exp-date').value;const supplier=document.getElementById('exp-supplier').value;
+  const type=document.getElementById('exp-type').value;const pay=document.getElementById('exp-pay').value;
+  const inv=document.getElementById('exp-inv').value.trim();const amount=parseFloat(document.getElementById('exp-amount').value)||0;
+  if(!d){notify(t('notify-sel-date'),'danger');return;}
+  if(!supplier){notify(t('notify-sel-supplier'),'danger');return;}
+  if(!type){notify(t('notify-sel-type'),'danger');return;}
+  if(!pay){notify(t('notify-sel-pay'),'danger');return;}
+  if(amount<=0){notify(t('notify-fill-amount'),'danger');return;}
+  const data=DB.expenses();data.push({id:uid(),date:d,time:timeNow(),supplier,type,pay,inv,amount});
+  DB.saveExpenses(data);
+  ['exp-inv','exp-amount'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('exp-filter-date').value=d;renderExpenseTable();renderExpenseSummary();notify(t('notify-expense-added'));
+}
+function deleteExpense(id){
+  if(!confirm(t('confirm-delete')))return;
+  DB.saveExpenses(DB.expenses().filter(x=>x.id!==id));renderExpenseTable();renderExpenseSummary();notify(t('notify-deleted'),'danger');
+}
+function renderExpenseTable(){
+  const d=document.getElementById('exp-filter-date').value;
+  const rows=DB.expenses().filter(x=>x.date===d).sort((a,b)=>a.time.localeCompare(b.time));
+  const tb=document.getElementById('expense-tbody');
+  const payBadge={'Μετρητά':'badge-gray','Κάρτα':'badge-blue','Επί Πιστώσει':'badge-amber'};
+  if(!rows.length){
+    tb.innerHTML=`<tr><td colspan="7"><div class="empty"><p>${t('empty-no-records')}</p></div></td></tr>`;
+  }else{
+    tb.innerHTML=rows.map(r=>`<tr>
+      <td class="mono">${r.time}</td><td><strong>${r.supplier}</strong></td>
+      <td><span class="badge badge-blue">${r.type}</span></td>
+      <td><span class="badge ${payBadge[r.pay]||'badge-gray'}">${t(r.pay)}</span></td>
+      <td class="mono">${r.inv||'—'}</td>
+      <td class="amount-neg mono" style="font-weight:700">${fmt(r.amount)}</td>
+      <td style="display:flex;gap:4px">
+        <button class="btn-icon" style="color:var(--accent2)" onclick="openEditExpense('${r.id}')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 5H6a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-5"/><path d="M15.5 2.5a2 2 0 013 3L11 13l-4 1 1-4 7.5-7.5z"/></svg></button>
+        <button class="btn-icon" onclick="deleteExpense('${r.id}')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 17 6"/><path d="M8 6V4h4v2M19 6l-1 12a2 2 0 01-2 2H4a2 2 0 01-2-2L1 6"/></svg></button>
+      </td>
+    </tr>`).join('');
+  }
+  const cash=rows.filter(x=>x.pay==='Μετρητά').reduce((s,x)=>s+x.amount,0);
+  const card=rows.filter(x=>x.pay==='Κάρτα').reduce((s,x)=>s+x.amount,0);
+  const credit=rows.filter(x=>x.pay==='Επί Πιστώσει').reduce((s,x)=>s+x.amount,0);
+  document.getElementById('exp-tot-cash').textContent=fmtE(cash);
+  document.getElementById('exp-tot-card').textContent=fmtE(card);
+  document.getElementById('exp-tot-cashcard').innerHTML=`<strong>${fmtE(cash+card)}</strong>`;
+  document.getElementById('exp-tot-credit').textContent=fmtE(credit);
+  renderExpenseSummary();
+}
+function renderExpenseSummary(){
+  const d=document.getElementById('exp-filter-date').value||today();
+  const rows=DB.expenses().filter(x=>x.date===d);
+  const cash=rows.filter(x=>x.pay==='Μετρητά').reduce((s,x)=>s+x.amount,0);
+  const card=rows.filter(x=>x.pay==='Κάρτα').reduce((s,x)=>s+x.amount,0);
+  const credit=rows.filter(x=>x.pay==='Επί Πιστώσει').reduce((s,x)=>s+x.amount,0);
+  const fc=rows.filter(x=>x.type==='FC').reduce((s,x)=>s+x.amount,0);
+  const{cashBefore,cardBefore}=getBalanceBefore(d);
+  const incRows=DB.income().filter(x=>x.date===d);
+  const cashInc=incRows.reduce((s,x)=>s+x.cash,0);
+  const cardInc=incRows.reduce((s,x)=>s+x.card,0);
+  const cashAfter=cashBefore+cashInc-cash;
+  const cardAfter=cardBefore+cardInc-card;
+  document.getElementById('exp-summary').innerHTML=`
+    <div class="summary-row"><span class="summary-key">${t('opt-cash')} expenses</span><span class="summary-val neg">${fmtE(cash)}</span></div>
+    <div class="summary-row"><span class="summary-key">${t('opt-card')} expenses</span><span class="summary-val neg">${fmtE(card)}</span></div>
+    <div class="summary-row"><span class="summary-key">${t('opt-credit')}</span><span class="summary-val" style="color:var(--warning)">${fmtE(credit)}</span></div>
+    <div class="summary-row"><span class="summary-key" style="font-weight:700">${t('stat-total-expenses')}</span><span class="summary-val neg" style="font-size:22px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;letter-spacing:-1px">${fmtE(cash+card)}</span></div>
+    <div class="summary-row"><span class="summary-key">Food Cost (FC)</span><span class="summary-val">${fmtE(fc)}</span></div>
+    <div style="margin-top:14px;font-size:12px;color:var(--ink3);margin-bottom:10px">${rows.length} ${lang==='en'?'entries':'καταχωρήσεις'}</div>
+    <div class="running-balance">
+      <div class="running-balance-title">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        Running Balance
+      </div>
+      <div class="rb-row"><span class="rb-label">Cash opening</span><span class="rb-val ${cashBefore>=0?'amount-pos':'amount-neg'}">${fmtE(cashBefore)}</span></div>
+      <div class="rb-row"><span class="rb-label">Card opening</span><span class="rb-val ${cardBefore>=0?'amount-pos':'amount-neg'}">${fmtE(cardBefore)}</span></div>
+      <div class="rb-row"><span class="rb-label">Cash closing</span><span class="rb-val ${cashAfter>=0?'amount-pos':'amount-neg'}">${fmtE(cashAfter)}</span></div>
+      <div class="rb-row"><span class="rb-label">Card closing</span><span class="rb-val ${cardAfter>=0?'amount-pos':'amount-neg'}">${fmtE(cardAfter)}</span></div>
+      <div class="rb-row"><span class="rb-label" style="font-weight:700">Total closing</span><span class="rb-val ${(cashAfter+cardAfter)>=0?'amount-pos':'amount-neg'}" style="font-size:15px;font-weight:700">${fmtE(cashAfter+cardAfter)}</span></div>
+    </div>`;
+}
+function exportExpensePDF(){window.print();}
+
+// ── SUPPLIERS ──
+function addSupplier(){
+  const name=document.getElementById('sup-name').value.trim();
+  const phone=document.getElementById('sup-phone').value.trim();
+  const afm=document.getElementById('sup-afm').value.trim();
+  const type=document.getElementById('sup-type').value.trim();
+  if(!name){notify(t('notify-fill-company'),'danger');return;}
+  const data=DB.suppliers();
+  if(data.find(s=>s.name.toLowerCase()===name.toLowerCase())){notify(t('notify-sup-exists'),'danger');return;}
+  data.push({id:uid(),name,phone,afm,type});DB.saveSuppliers(data);
+  ['sup-name','sup-phone','sup-afm','sup-type'].forEach(id=>document.getElementById(id).value='');
+  renderSuppliers();populateSupplierSelect();notify(t('notify-supplier-added'));
+}
+function deleteSupplier(id){
+  if(!confirm(t('confirm-delete')))return;
+  DB.saveSuppliers(DB.suppliers().filter(s=>s.id!==id));renderSuppliers();populateSupplierSelect();notify(t('notify-deleted'),'danger');
+}
+function renderSuppliers(){
+  const q=(document.getElementById('sup-search').value||'').toLowerCase();
+  const data=DB.suppliers().filter(s=>!q||s.name.toLowerCase().includes(q)||(s.type||'').toLowerCase().includes(q));
+  document.getElementById('sup-count').innerHTML=`${data.length} <span data-el="lbl-suppliers-count">${t('lbl-suppliers-count')}</span>`;
+  const tb=document.getElementById('supplier-tbody');
+  if(!data.length){tb.innerHTML=`<tr><td colspan="6"><div class="empty"><p>${t('empty-no-suppliers')}</p></div></td></tr>`;return;}
+  tb.innerHTML=data.map(s=>{
+    const exp=DB.expenses().filter(x=>x.supplier===s.name);
+    const total=exp.reduce((a,x)=>a+x.amount,0);const paid=exp.filter(x=>x.pay!=='Επί Πιστώσει').reduce((a,x)=>a+x.amount,0);
+    const balance=total-paid;
+    return `<tr>
+      <td><strong>${s.name}</strong></td><td class="mono">${s.phone||'—'}</td><td class="mono">${s.afm||'—'}</td>
+      <td><span class="badge badge-blue">${s.type||'—'}</span></td>
+      <td class="mono ${balance>0?'amount-neg':''}">${fmtE(balance)}</td>
+      <td style="display:flex;gap:6px">
+        <button class="btn btn-secondary btn-sm" onclick="showSupplierTransactions('${s.id}')">${t('btn-transactions')}</button>
+        <button class="btn-icon" onclick="deleteSupplier('${s.id}')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 17 6"/><path d="M8 6V4h4v2M19 6l-1 12a2 2 0 01-2 2H4a2 2 0 01-2-2L1 6"/></svg></button>
+      </td></tr>`;
+  }).join('');
+}
+function showSupplierTransactions(id){
+  const s=DB.suppliers().find(x=>x.id===id);if(!s)return;
+  document.getElementById('modal-supplier-name').textContent=(lang==='en'?'Transactions: ':'Συναλλαγές: ')+s.name;
+  const exp=DB.expenses().filter(x=>x.supplier===s.name).sort((a,b)=>a.date.localeCompare(b.date));
+  let balance=0;
+  const rows=exp.map(r=>{
+    const onCredit=r.pay==='Επί Πιστώσει';balance+=onCredit?r.amount:0;
+    const payBadge={'Μετρητά':'badge-gray','Κάρτα':'badge-blue','Επί Πιστώσει':'badge-amber'};
+    return `<tr><td>${r.date}</td><td class="mono">${r.time}</td><td><span class="badge ${payBadge[r.pay]||'badge-gray'}">${t(r.pay)}</span></td><td class="mono">${r.inv||'—'}</td><td class="mono">${fmtE(r.amount)}</td><td class="mono">${onCredit?fmtE(balance):'—'}</td></tr>`;
+  }).join('');
+  const total=exp.reduce((s,x)=>s+x.amount,0);const creditTotal=exp.filter(x=>x.pay==='Επί Πιστώσει').reduce((s,x)=>s+x.amount,0);
+  document.getElementById('modal-supplier-body').innerHTML=`
+    <div class="table-wrap" style="margin-bottom:12px">
+      <table><thead><tr><th>${t('tbl-date')}</th><th>${t('tbl-time')}</th><th>${t('tbl-payment')}</th><th>${t('tbl-invoice')}</th><th>${t('tbl-amount')}</th><th>${t('tbl-balance')}</th></tr></thead>
+      <tbody>${rows||`<tr><td colspan="6"><div class="empty"><p>${t('empty-no-transactions')}</p></div></td></tr>`}</tbody>
+      <tfoot>
+        <tr class="tfoot"><td colspan="4">${t('tbl-supplier-total')}</td><td>${fmtE(total)}</td><td></td></tr>
+        <tr class="tfoot"><td colspan="4">${t('tbl-credit-balance')}</td><td>${fmtE(creditTotal)}</td><td></td></tr>
+      </tfoot></table>
+    </div>`;
+  openModal('modal-supplier');
+}
+
+// ── PAYROLL ──
+function saveEmployee(){
+  const name=document.getElementById('emp-name').value.trim();const role=document.getElementById('emp-role').value.trim();
+  const rate=parseFloat(document.getElementById('emp-rate').value)||0;
+  const hourly=parseFloat(document.getElementById('emp-hourly').value)||0;
+  const phone=document.getElementById('emp-phone').value.trim();
+  if(!name||(!rate&&!hourly)){notify('Enter name and at least one rate','danger');return;}
+  const data=DB.employees();data.push({id:uid(),name,role,rate,hourly,phone});
+  DB.saveEmployees(data);['emp-name','emp-role','emp-rate','emp-hourly','emp-phone'].forEach(id=>document.getElementById(id).value='');
+  closeModal('modal-employee');renderEmployees();notify(t('notify-employee-added'));
+}
+function deleteEmployee(id){
+  if(!confirm(t('confirm-delete')))return;
+  DB.saveEmployees(DB.employees().filter(e=>e.id!==id));renderEmployees();notify(t('notify-deleted'),'danger');
+}
+function renderEmployees(){
+  const tb=document.getElementById('employees-tbody');const emps=DB.employees();
+  if(!emps.length){tb.innerHTML=`<tr><td colspan="6"><div class="empty"><p>No employees yet. Add your first employee →</p></div></td></tr>`;return;}
+  tb.innerHTML=emps.map(e=>{
+    const isHourly=e.payType==='hourly';
+    const dailyRate=e.rate||(e.hourly*8)||0;
+    const hourlyRate=e.hourly||(e.rate/8)||0;
+    return`<tr>
+      <td><strong>${e.name}</strong></td>
+      <td><span class="badge badge-gray">${e.role||'—'}</span></td>
+      <td><span class="badge ${isHourly?'badge-blue':'badge-amber'}">${isHourly?'Hourly':'Daily'}</span></td>
+      <td class="mono">${fmtE(dailyRate)}/day</td>
+      <td class="mono" style="color:var(--ink3)">${fmtE(hourlyRate)}/hr</td>
+      <td class="mono">${e.phone||'—'}</td>
+      <td style="display:flex;gap:4px">
+        <button class="btn-icon" style="color:var(--accent2)" onclick="openEditEmployee('${e.id}')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 5H6a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-5"/><path d="M15.5 2.5a2 2 0 013 3L11 13l-4 1 1-4 7.5-7.5z"/></svg></button>
+        <button class="btn-icon" onclick="deleteEmployee('${e.id}')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 17 6"/><path d="M8 6V4h4v2M19 6l-1 12a2 2 0 01-2 2H4a2 2 0 01-2-2L1 6"/></svg></button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+function openEditEmployee(id){
+  const e=DB.employees().find(x=>x.id===id);if(!e)return;
+  document.getElementById('edit-emp-id').value=id;
+  document.getElementById('edit-emp-name').value=e.name;
+  document.getElementById('edit-emp-role').value=e.role||'';
+  document.getElementById('edit-emp-rate').value=e.rate||'';
+  document.getElementById('edit-emp-hourly').value=e.hourly||'';
+  document.getElementById('edit-emp-phone').value=e.phone||'';
+  openModal('modal-edit-employee');
+}
+function saveEditEmployee(){
+  const id=document.getElementById('edit-emp-id').value;
+  const name=document.getElementById('edit-emp-name').value.trim();
+  const role=document.getElementById('edit-emp-role').value.trim();
+  const rate=parseFloat(document.getElementById('edit-emp-rate').value)||0;
+  const hourly=parseFloat(document.getElementById('edit-emp-hourly').value)||0;
+  const phone=document.getElementById('edit-emp-phone').value.trim();
+  if(!name){notify('Enter employee name','danger');return;}
+  const data=DB.employees().map(x=>x.id===id?{...x,name,role,rate,hourly,phone}:x);
+  DB.saveEmployees(data);closeModal('modal-edit-employee');renderEmployees();notify('Employee updated');
+}
+function loadPayroll(){
+  const emps=DB.employees();if(!emps.length){notify(t('notify-no-employees'),'danger');return;}
+  const d=document.getElementById('pay-date').value;if(!d){notify(t('notify-sel-date'),'danger');return;}
+  const existing=DB.payroll().filter(p=>p.date===d);
+  const isHourMode=payMode==='hour';
+  const html=`<div class="table-wrap"><table>
+    <thead><tr>
+      <th>Employee</th>
+      <th>${isHourMode?'Hours Worked':'Days Worked'}</th>
+      <th>Rate</th>
+      <th>Total</th>
+    </tr></thead>
+    <tbody>${emps.map(e=>{
+      // If hour mode: use hourly rate. If day mode: use daily rate.
+      // But respect employee's payType: if payType=hourly, always show hourly
+      const useHourly = isHourMode || e.payType==='hourly';
+      const rate = useHourly ? (e.hourly||e.rate/8||0) : (e.rate||e.hourly*8||0);
+      const ex=existing.find(p=>p.empId===e.id);
+      const val=ex?(ex.qty||ex.days||0):0;
+      const rateLabel=useHourly?`${fmtE(rate)}/hr`:`${fmtE(rate)}/day`;
+      return `<tr>
+        <td>
+          <strong>${e.name}</strong>
+          ${e.role?`<br><span style="font-size:11px;color:var(--ink3);margin-top:2px;display:block">${e.role}</span>`:''}
+          <span class="badge ${e.payType==='hourly'?'badge-blue':'badge-amber'}" style="margin-top:4px;font-size:9.5px">${e.payType==='hourly'?'hourly':'daily'}</span>
+        </td>
+        <td><input type="number" min="0" step="${useHourly?'0.25':'0.5'}" value="${val}" style="width:80px" id="pd-${e.id}" oninput="calcPayTotal()"/></td>
+        <td class="mono" style="font-size:12px;color:var(--ink3)">${rateLabel}</td>
+        <td class="mono amount-pos" style="font-weight:600" id="pt-${e.id}">${val>0?fmtE(val*rate):'—'}</td>
+      </tr>`;
+    }).join('')}</tbody></table></div>`;
+  document.getElementById('payroll-table-wrap').innerHTML=html;
+  calcPayTotal();
+  // Day summary panel
+  const sumEl=document.getElementById('pay-day-summary');
+  if(sumEl){
+    const dayTotal=existing.reduce((s,r)=>s+r.total,0);
+    sumEl.innerHTML=existing.length?`
+      ${existing.map(r=>{
+        const e=emps.find(x=>x.id===r.empId);
+        if(!e)return'';
+        const modeLabel=r.mode==='hour'?`${r.qty||r.days}h`:`${r.qty||r.days}d`;
+        return`<div class="summary-row">
+          <span class="summary-key">${e.name} <span style="opacity:.5;font-size:11px">(${modeLabel})</span></span>
+          <span class="summary-val pos">${fmtE(r.total)}</span>
+        </div>`;
+      }).join('')}
+      <div class="summary-row" style="margin-top:4px">
+        <span class="summary-key" style="font-weight:700">Day Total</span>
+        <span class="summary-val pos" style="font-size:20px">${fmtE(dayTotal)}</span>
+      </div>
+    `:`<div class="empty"><p>No payroll saved for this date yet</p></div>`;
+  }
+}
+function calcPayTotal(){
+  const emps=DB.employees();let total=0;
+  const isHourMode=payMode==='hour';
+  emps.forEach(e=>{
+    const inp=document.getElementById('pd-'+e.id);const pt=document.getElementById('pt-'+e.id);
+    if(inp&&pt){
+      const useHourly=isHourMode||e.payType==='hourly';
+      const rate=useHourly?(e.hourly||e.rate/8||0):(e.rate||e.hourly*8||0);
+      const qty=parseFloat(inp.value)||0;
+      const v=qty*rate;
+      pt.textContent=v>0?fmtE(v):'—';total+=v;
     }
-    </script>
-    <script src="i18n.js"></script>
+  });
+  document.getElementById('pay-grand-total').textContent=total>0?fmtE(total):'—';
+}
+function savePayroll(){
+  const d=document.getElementById('pay-date').value;const emps=DB.employees();
+  if(!d||!emps.length){notify(t('notify-load-first'),'danger');return;}
+  const isHourMode=payMode==='hour';
+  let data=DB.payroll().filter(p=>p.date!==d);
+  emps.forEach(e=>{
+    const inp=document.getElementById('pd-'+e.id);if(!inp)return;
+    const qty=parseFloat(inp.value)||0;if(qty<=0)return;
+    const useHourly=isHourMode||e.payType==='hourly';
+    const rate=useHourly?(e.hourly||e.rate/8||0):(e.rate||e.hourly*8||0);
+    data.push({id:uid(),date:d,empId:e.id,empName:e.name,qty,mode:useHourly?'hour':'day',rate,total:qty*rate});
+  });
+  DB.savePayroll(data);notify(t('notify-payroll-saved'));
+  loadPayroll();
+}
+function loadPayrollSummary(){
+  const from=document.getElementById('pay-from').value;const to=document.getElementById('pay-to').value;
+  if(!from||!to){notify(t('notify-sel-period'),'danger');return;}
+  const rows=DB.payroll().filter(p=>p.date>=from&&p.date<=to);
+  if(!rows.length){document.getElementById('payroll-summary').innerHTML=`<div class="empty"><p>${t('empty-no-payroll')}</p></div>`;return;}
+  const byEmp={};rows.forEach(r=>{byEmp[r.empName]=(byEmp[r.empName]||0)+r.total;});
+  const total=Object.values(byEmp).reduce((s,v)=>s+v,0);
+  document.getElementById('payroll-summary').innerHTML=`
+    <div class="table-wrap"><table>
+      <thead><tr><th>${t('lbl-employee')}</th><th>${t('col-total')} (€)</th></tr></thead>
+      <tbody>${Object.entries(byEmp).map(([n,v])=>`<tr><td><strong>${n}</strong></td><td class="mono amount-pos">${fmtE(v)}</td></tr>`).join('')}</tbody>
+      <tfoot><tr class="tfoot"><td><strong>${t('col-total')}</strong></td><td class="mono"><strong>${fmtE(total)}</strong></td></tr></tfoot>
+    </table></div>`;
+}
+
+// ── REPORTS ──
+function getDateRange(from,to){const dates=[];let d=new Date(from);const end=new Date(to);while(d<=end){dates.push(d.toISOString().slice(0,10));d.setDate(d.getDate()+1);}return dates;}
+
+// Returns {cashBefore, cardBefore} = cumulative balances up to (not including) the given date
+function getBalanceBefore(date){
+  const allIncome=DB.income().filter(x=>x.date<date);
+  const allExpenses=DB.expenses().filter(x=>x.date<date);
+  const cashBefore=allIncome.reduce((s,x)=>s+x.cash,0)-allExpenses.filter(x=>x.pay==='Μετρητά').reduce((s,x)=>s+x.amount,0);
+  const cardBefore=allIncome.reduce((s,x)=>s+x.card,0)-allExpenses.filter(x=>x.pay==='Κάρτα').reduce((s,x)=>s+x.amount,0);
+  return{cashBefore,cardBefore};
+}
+
+// Builds the balance ledger HTML block used in reports and summaries
+function balanceLedgerHTML(date,s){
+  const{cashBefore,cardBefore}=getBalanceBefore(date);
+  const cashAfter=cashBefore+s.cashInc-s.cashExp;
+  const cardAfter=cardBefore+s.cardInc-s.cardExp;
+  const sym=CURRENCY.symbol;
+  const arrow=(v)=>v>=0
+    ?`<span style="color:var(--accent)">▲</span>`
+    :`<span style="color:var(--danger)">▼</span>`;
+  return `<div class="report-section balance-ledger">
+    <div class="card-title" style="margin-bottom:20px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="margin-right:6px"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Balance Ledger
+    </div>
+    <div class="balance-grid">
+      <div class="balance-col">
+        <div class="balance-col-header">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
+          Cash
+        </div>
+        <div class="balance-row">
+          <span class="balance-label">Opening balance</span>
+          <span class="balance-amount ${cashBefore>=0?'pos':'neg'}">${fmtE(cashBefore)}</span>
+        </div>
+        <div class="balance-row">
+          <span class="balance-label">+ Revenue</span>
+          <span class="balance-amount pos">+${fmtE(s.cashInc)}</span>
+        </div>
+        <div class="balance-row">
+          <span class="balance-label">− Expenses</span>
+          <span class="balance-amount neg">−${fmtE(s.cashExp)}</span>
+        </div>
+        <div class="balance-row balance-total">
+          <span class="balance-label">Closing balance ${arrow(cashAfter)}</span>
+          <span class="balance-amount ${cashAfter>=0?'pos':'neg'}" style="font-size:17px;font-weight:800">${fmtE(cashAfter)}</span>
+        </div>
+      </div>
+      <div class="balance-col">
+        <div class="balance-col-header">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Card / Bank
+        </div>
+        <div class="balance-row">
+          <span class="balance-label">Opening balance</span>
+          <span class="balance-amount ${cardBefore>=0?'pos':'neg'}">${fmtE(cardBefore)}</span>
+        </div>
+        <div class="balance-row">
+          <span class="balance-label">+ Revenue</span>
+          <span class="balance-amount pos">+${fmtE(s.cardInc)}</span>
+        </div>
+        <div class="balance-row">
+          <span class="balance-label">− Expenses</span>
+          <span class="balance-amount neg">−${fmtE(s.cardExp)}</span>
+        </div>
+        <div class="balance-row balance-total">
+          <span class="balance-label">Closing balance ${arrow(cardAfter)}</span>
+          <span class="balance-amount ${cardAfter>=0?'pos':'neg'}" style="font-size:17px;font-weight:800">${fmtE(cardAfter)}</span>
+        </div>
+      </div>
+      <div class="balance-col balance-col-total">
+        <div class="balance-col-header" style="color:var(--ink2)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+          Combined Total
+        </div>
+        <div class="balance-row">
+          <span class="balance-label">Opening balance</span>
+          <span class="balance-amount ${(cashBefore+cardBefore)>=0?'pos':'neg'}">${fmtE(cashBefore+cardBefore)}</span>
+        </div>
+        <div class="balance-row">
+          <span class="balance-label">Net movement</span>
+          <span class="balance-amount ${s.totalBal>=0?'pos':'neg'}">${s.totalBal>=0?'+':''}${fmtE(s.totalBal)}</span>
+        </div>
+        <div class="balance-row balance-total">
+          <span class="balance-label">Closing balance ${arrow(cashAfter+cardAfter)}</span>
+          <span class="balance-amount ${(cashAfter+cardAfter)>=0?'pos':'neg'}" style="font-size:20px;font-weight:800">${fmtE(cashAfter+cardAfter)}</span>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function reportSummaryHTML(income,expenses){
+  const cashInc=income.reduce((s,x)=>s+x.cash,0);const cardInc=income.reduce((s,x)=>s+x.card,0);const totalInc=cashInc+cardInc;
+  const cashExp=expenses.filter(x=>x.pay==='Μετρητά').reduce((s,x)=>s+x.amount,0);
+  const cardExp=expenses.filter(x=>x.pay==='Κάρτα').reduce((s,x)=>s+x.amount,0);
+  const creditExp=expenses.filter(x=>x.pay==='Επί Πιστώσει').reduce((s,x)=>s+x.amount,0);
+  const totalExp=cashExp+cardExp;const cashBal=cashInc-cashExp;const cardBal=cardInc-cardExp;const totalBal=cashBal+cardBal;
+  const fc=expenses.filter(x=>x.type==='FC').reduce((s,x)=>s+x.amount,0);
+  const fcPct=totalInc>0?(fc/totalInc*100).toFixed(1):0;
+  return{cashInc,cardInc,totalInc,cashExp,cardExp,creditExp,totalExp,cashBal,cardBal,totalBal,fc,fcPct};
+}
+
+const chartColors={income:'rgba(0,212,170,0.8)',income2:'rgba(0,212,170,0.4)',expenses:'rgba(255,77,109,0.8)',expenses2:'rgba(255,77,109,0.4)'};
+const chartOpts=(extra={})=>({responsive:true,maintainAspectRatio:false,plugins:{...CHART_DEFAULTS.plugins,...(extra.plugins||{})},scales:{x:{grid:{color:CHART_DEFAULTS.grid},ticks:{color:CHART_DEFAULTS.color}},y:{grid:{color:CHART_DEFAULTS.grid},ticks:{color:CHART_DEFAULTS.color}}},...extra});
+
+function loadDailyReport(){
+  const d=document.getElementById('dr-date').value;if(!d){notify(t('notify-sel-date'),'danger');return;}
+  const income=DB.income().filter(x=>x.date===d);const expenses=DB.expenses().filter(x=>x.date===d);
+  const s=reportSummaryHTML(income,expenses);
+  const el=document.getElementById('daily-report-content');
+  el.innerHTML=`
+    <div class="grid-4 section">
+      <div class="stat green"><div class="stat-glow"></div><div class="stat-icon green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg></div><div class="stat-label">${t('stat-total-income')}</div><div class="stat-value green">${fmtE(s.totalInc)}</div></div>
+      <div class="stat red"><div class="stat-glow"></div><div class="stat-icon red"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2.5" stroke-linecap="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/></svg></div><div class="stat-label">${t('stat-total-expenses')}</div><div class="stat-value red">${fmtE(s.totalExp)}</div></div>
+      <div class="stat blue"><div class="stat-glow"></div><div class="stat-icon blue"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="2.5" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div class="stat-label">${t('stat-cash-register')}</div><div class="stat-value ${s.cashBal>=0?'blue':'red'}">${fmtE(s.cashBal)}</div></div>
+      <div class="stat amber"><div class="stat-glow"></div><div class="stat-icon amber"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div class="stat-label">${t('stat-food-cost')}</div><div class="stat-value">${s.fcPct}%</div></div>
+    </div>
+    ${balanceLedgerHTML(d,s)}
+    <div class="grid-2 section" style="margin-top:20px">
+      <div class="report-section"><div class="card-title">${t('col-income')}</div>
+        <div class="summary-row"><span class="summary-key">${t('opt-cash')}</span><span class="summary-val pos">${fmtE(s.cashInc)}</span></div>
+        <div class="summary-row"><span class="summary-key">${t('opt-card')}</span><span class="summary-val pos">${fmtE(s.cardInc)}</span></div>
+        <div class="summary-row"><span class="summary-key" style="font-weight:700">${t('col-total')}</span><span class="summary-val pos" style="font-size:18px">${fmtE(s.totalInc)}</span></div>
+      </div>
+      <div class="report-section"><div class="card-title">${t('col-expenses')}</div>
+        <div class="summary-row"><span class="summary-key">${t('opt-cash')}</span><span class="summary-val neg">${fmtE(s.cashExp)}</span></div>
+        <div class="summary-row"><span class="summary-key">${t('opt-card')}</span><span class="summary-val neg">${fmtE(s.cardExp)}</span></div>
+        <div class="summary-row"><span class="summary-key">${t('opt-credit')}</span><span class="summary-val" style="color:var(--warning)">${fmtE(s.creditExp)}</span></div>
+        <div class="summary-row"><span class="summary-key" style="font-weight:700">${t('col-total')}</span><span class="summary-val neg" style="font-size:18px">${fmtE(s.totalExp)}</span></div>
+      </div>
+    </div>
+    <div class="grid-2 section">
+      <div class="chart-box"><div class="chart-title">${t('chart-income-analysis')}</div><div class="chart-wrap"><canvas id="dr-chart1"></canvas></div></div>
+      <div class="chart-box"><div class="chart-title">${t('chart-income-vs-expenses')}</div><div class="chart-wrap"><canvas id="dr-chart2"></canvas></div></div>
+    </div>
+    ${income.length||expenses.length?`<div class="report-section"><div class="card-title">${t('chart-detail')}</div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>${t('tbl-time')}</th><th>${t('tbl-type')}</th><th>${t('tbl-desc-sup')}</th><th>${t('tbl-cash')}</th><th>${t('tbl-card')}</th><th>${t('col-total')}</th></tr></thead>
+        <tbody>${[...income.map(r=>`<tr><td class="mono">${r.time}</td><td><span class="badge badge-green">${t('income-badge')}</span></td><td>${r.desc}</td><td class="amount-pos mono">${fmt(r.cash)}</td><td class="amount-pos mono">${fmt(r.card)}</td><td class="amount-pos mono">${fmt(r.cash+r.card)}</td></tr>`),
+          ...expenses.map(r=>`<tr><td class="mono">${r.time}</td><td><span class="badge badge-red">${t('expense-badge')}</span></td><td>${r.supplier} (${r.type})</td><td class="amount-neg mono">${r.pay==='Μετρητά'?fmt(r.amount):'—'}</td><td class="amount-neg mono">${r.pay==='Κάρτα'?fmt(r.amount):'—'}</td><td class="amount-neg mono">${fmt(r.amount)}</td></tr>`)
+        ].join('')}</tbody></table></div></div>`:''}`;
+  setTimeout(()=>{
+    const ctx1=document.getElementById('dr-chart1');if(chartInst['dr-chart1'])chartInst['dr-chart1'].destroy();
+    chartInst['dr-chart1']=new Chart(ctx1,{type:'doughnut',data:{labels:[t('opt-cash'),t('opt-card')],datasets:[{data:[s.cashInc,s.cardInc],backgroundColor:['rgba(0,212,170,.8)','rgba(0,212,170,.35)'],borderWidth:0,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{...CHART_DEFAULTS.plugins},cutout:'65%'}});
+    const ctx2=document.getElementById('dr-chart2');if(chartInst['dr-chart2'])chartInst['dr-chart2'].destroy();
+    chartInst['dr-chart2']=new Chart(ctx2,{type:'bar',data:{labels:[`${t('opt-cash')} ${t('col-income')}`,`${t('opt-card')} ${t('col-income')}`,`${t('opt-cash')} ${t('col-expenses')}`,`${t('opt-card')} ${t('col-expenses')}`],datasets:[{data:[s.cashInc,s.cardInc,s.cashExp,s.cardExp],backgroundColor:['rgba(0,212,170,.8)','rgba(0,212,170,.5)','rgba(255,77,109,.8)','rgba(255,77,109,.5)'],borderRadius:6,borderWidth:0}]},options:chartOpts({plugins:{legend:{display:false}}})});
+  },50);
+}
+
+function loadWeeklyReport(){
+  const d=document.getElementById('wr-date').value;if(!d){notify(t('notify-sel-date'),'danger');return;}
+  const date=new Date(d);const day=date.getDay();
+  const mon=new Date(date);mon.setDate(date.getDate()-(day===0?6:day-1));
+  const sun=new Date(mon);sun.setDate(mon.getDate()+6);
+  const from=mon.toISOString().slice(0,10);const to=sun.toISOString().slice(0,10);
+  const dates=getDateRange(from,to);
+  const income=DB.income().filter(x=>x.date>=from&&x.date<=to);
+  const expenses=DB.expenses().filter(x=>x.date>=from&&x.date<=to);
+  const s=reportSummaryHTML(income,expenses);const days=t('days-labels');
+  const dailyInc=dates.map(d=>DB.income().filter(x=>x.date===d).reduce((s,x)=>s+x.cash+x.card,0));
+  const dailyExp=dates.map(d=>DB.expenses().filter(x=>x.date===d&&x.pay!=='Επί Πιστώσει').reduce((s,x)=>s+x.amount,0));
+  const el=document.getElementById('weekly-report-content');
+  el.innerHTML=`
+    <div class="alert alert-info">${t('report-week-range')} <strong>${from}</strong> ${t('report-to')} <strong>${to}</strong></div>
+    <div class="grid-4 section">
+      <div class="stat green"><div class="stat-glow"></div><div class="stat-label">${t('stat-total-income')}</div><div class="stat-value green">${fmtE(s.totalInc)}</div></div>
+      <div class="stat red"><div class="stat-glow"></div><div class="stat-label">${t('stat-total-expenses')}</div><div class="stat-value red">${fmtE(s.totalExp)}</div></div>
+      <div class="stat blue"><div class="stat-glow"></div><div class="stat-label">${t('stat-net-profit')}</div><div class="stat-value ${s.totalBal>=0?'blue':'red'}">${fmtE(s.totalBal)}</div></div>
+      <div class="stat amber"><div class="stat-glow"></div><div class="stat-label">${t('stat-food-cost')}</div><div class="stat-value">${s.fcPct}%</div></div>
+    </div>
+    ${balanceLedgerHTML(from,s)}
+    <div class="chart-box section" style="margin-top:20px"><div class="chart-title">${t('chart-income-vs-expenses')}</div><div class="chart-wrap" style="height:240px"><canvas id="wr-chart"></canvas></div></div>`;
+  setTimeout(()=>{
+    const ctx=document.getElementById('wr-chart');if(chartInst['wr-chart'])chartInst['wr-chart'].destroy();
+    chartInst['wr-chart']=new Chart(ctx,{type:'bar',data:{labels:days,datasets:[
+      {label:t('col-income'),data:dailyInc,backgroundColor:'rgba(0,212,170,.75)',borderRadius:6,borderWidth:0},
+      {label:t('col-expenses'),data:dailyExp,backgroundColor:'rgba(255,77,109,.7)',borderRadius:6,borderWidth:0}
+    ]},options:chartOpts()});
+  },50);
+}
+
+function loadMonthlyReport(){
+  const m=document.getElementById('mr-month').value;if(!m){notify(t('notify-sel-month'),'danger');return;}
+  const from=m+'-01';const last=new Date(m.split('-')[0],m.split('-')[1],0).getDate();
+  const to=m+'-'+String(last).padStart(2,'0');
+  const income=DB.income().filter(x=>x.date>=from&&x.date<=to);
+  const expenses=DB.expenses().filter(x=>x.date>=from&&x.date<=to);
+  const s=reportSummaryHTML(income,expenses);const weeks=Math.ceil(last/7);
+  const weeklyInc=Array(weeks).fill(0);const weeklyExp=Array(weeks).fill(0);
+  income.forEach(r=>{const day=parseInt(r.date.slice(8,10));const w=Math.min(Math.ceil(day/7)-1,weeks-1);weeklyInc[w]+=r.cash+r.card;});
+  expenses.forEach(r=>{if(r.pay!=='Επί Πιστώσει'){const day=parseInt(r.date.slice(8,10));const w=Math.min(Math.ceil(day/7)-1,weeks-1);weeklyExp[w]+=r.amount;}});
+  const expByType={};expenses.forEach(r=>{expByType[r.type]=(expByType[r.type]||0)+r.amount;});
+  const el=document.getElementById('monthly-report-content');
+  el.innerHTML=`
+    <div class="grid-4 section">
+      <div class="stat green"><div class="stat-glow"></div><div class="stat-label">${t('stat-total-income')}</div><div class="stat-value green">${fmtE(s.totalInc)}</div></div>
+      <div class="stat red"><div class="stat-glow"></div><div class="stat-label">${t('stat-total-expenses')}</div><div class="stat-value red">${fmtE(s.totalExp)}</div></div>
+      <div class="stat blue"><div class="stat-glow"></div><div class="stat-label">${t('stat-net-profit')}</div><div class="stat-value ${s.totalBal>=0?'blue':'red'}">${fmtE(s.totalBal)}</div></div>
+      <div class="stat amber"><div class="stat-glow"></div><div class="stat-label">${t('stat-food-cost')}</div><div class="stat-value">${s.fcPct}%</div></div>
+    </div>
+    ${balanceLedgerHTML(from,s)}
+    <div class="grid-2 section" style="margin-top:20px">
+      <div class="chart-box"><div class="chart-title">${t('chart-weekly-trend')}</div><div class="chart-wrap"><canvas id="mr-chart1"></canvas></div></div>
+      <div class="chart-box"><div class="chart-title">${t('chart-expenses-by-cat')}</div><div class="chart-wrap"><canvas id="mr-chart2"></canvas></div></div>
+    </div>
+    <div class="report-section"><div class="card-title">${t('detailed-summary')}</div>
+      <div class="grid-2">
+        <div>
+          <div class="summary-row"><span class="summary-key">${t('summary-cash-income')}</span><span class="summary-val pos">${fmtE(s.cashInc)}</span></div>
+          <div class="summary-row"><span class="summary-key">${t('summary-card-income')}</span><span class="summary-val pos">${fmtE(s.cardInc)}</span></div>
+          <div class="summary-row"><span class="summary-key" style="font-weight:700">${t('summary-total-income')}</span><span class="summary-val pos">${fmtE(s.totalInc)}</span></div>
+        </div>
+        <div>
+          <div class="summary-row"><span class="summary-key">${t('summary-cash-expense')}</span><span class="summary-val neg">${fmtE(s.cashExp)}</span></div>
+          <div class="summary-row"><span class="summary-key">${t('summary-card-expense')}</span><span class="summary-val neg">${fmtE(s.cardExp)}</span></div>
+          <div class="summary-row"><span class="summary-key">${t('summary-food-cost')}</span><span class="summary-val">${fmtE(s.fc)} (${s.fcPct}%)</span></div>
+        </div>
+      </div>
+    </div>`;
+  setTimeout(()=>{
+    const wlabels=Array.from({length:weeks},(_,i)=>(t('week-labels')[i]||`Wk.${i+1}`));
+    const ctx1=document.getElementById('mr-chart1');if(chartInst['mr-chart1'])chartInst['mr-chart1'].destroy();
+    chartInst['mr-chart1']=new Chart(ctx1,{type:'line',data:{labels:wlabels,datasets:[
+      {label:t('col-income'),data:weeklyInc,borderColor:'rgba(0,212,170,1)',backgroundColor:'rgba(0,212,170,.08)',fill:true,tension:.4,borderWidth:2,pointBackgroundColor:'rgba(0,212,170,1)',pointRadius:4},
+      {label:t('col-expenses'),data:weeklyExp,borderColor:'rgba(255,77,109,1)',backgroundColor:'rgba(255,77,109,.05)',fill:true,tension:.4,borderWidth:2,pointBackgroundColor:'rgba(255,77,109,1)',pointRadius:4}
+    ]},options:chartOpts()});
+    const ctx2=document.getElementById('mr-chart2');if(chartInst['mr-chart2'])chartInst['mr-chart2'].destroy();
+    const colors=['rgba(0,212,170,.85)','rgba(0,184,255,.85)','rgba(255,77,109,.85)','rgba(245,158,11,.85)','rgba(168,85,247,.85)','rgba(236,72,153,.85)'];
+    chartInst['mr-chart2']=new Chart(ctx2,{type:'doughnut',data:{labels:Object.keys(expByType),datasets:[{data:Object.values(expByType),backgroundColor:colors,borderWidth:0,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{...CHART_DEFAULTS.plugins},cutout:'60%'}});
+  },50);
+}
+
+function loadAnnualReport(){
+  const yr=document.getElementById('ar-year').value;if(!yr){notify(t('notify-enter-year'),'danger');return;}
+  const months=Array.from({length:12},(_,i)=>yr+'-'+String(i+1).padStart(2,'0'));
+  const mLabels=t('mLabels');
+  const mInc=months.map(m=>DB.income().filter(x=>x.date.startsWith(m)).reduce((s,x)=>s+x.cash+x.card,0));
+  const mExp=months.map(m=>DB.expenses().filter(x=>x.date.startsWith(m)&&x.pay!=='Επί Πιστώσει').reduce((s,x)=>s+x.amount,0));
+  const totalInc=mInc.reduce((s,x)=>s+x,0);const totalExp=mExp.reduce((s,x)=>s+x,0);
+  const fc=months.reduce((s,m)=>s+DB.expenses().filter(x=>x.date.startsWith(m)&&x.type==='FC').reduce((a,x)=>a+x.amount,0),0);
+  const fcPct=totalInc>0?(fc/totalInc*100).toFixed(1):0;
+  const el=document.getElementById('annual-report-content');
+  const yearFrom=yr+'-01-01';
+  const allInc=DB.income().filter(x=>x.date.startsWith(yr));
+  const allExp=DB.expenses().filter(x=>x.date.startsWith(yr));
+  const annualS=reportSummaryHTML(allInc,allExp);
+  el.innerHTML=`
+    <div class="grid-4 section">
+      <div class="stat green"><div class="stat-glow"></div><div class="stat-label">${t('annual-income')}</div><div class="stat-value green">${fmtE(totalInc)}</div></div>
+      <div class="stat red"><div class="stat-glow"></div><div class="stat-label">${t('annual-expenses')}</div><div class="stat-value red">${fmtE(totalExp)}</div></div>
+      <div class="stat blue"><div class="stat-glow"></div><div class="stat-label">${t('annual-profit')}</div><div class="stat-value ${totalInc-totalExp>=0?'blue':'red'}">${fmtE(totalInc-totalExp)}</div></div>
+      <div class="stat amber"><div class="stat-glow"></div><div class="stat-label">${t('stat-food-cost')}</div><div class="stat-value">${fcPct}%</div></div>
+    </div>
+    ${balanceLedgerHTML(yearFrom,annualS)}
+    <div class="chart-box section" style="margin-top:20px"><div class="chart-title">${t('chart-monthly-annual')} ${yr}</div><div class="chart-wrap" style="height:260px"><canvas id="ar-chart"></canvas></div></div>
+    <div class="report-section"><div class="card-title">${t('monthly-summary')}</div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>${t('col-month')}</th><th>${t('col-income')}</th><th>${t('col-expenses')}</th><th>${t('col-profit')}</th><th>${t('col-profit-pct')}</th></tr></thead>
+        <tbody>${mLabels.map((l,i)=>{const bal=mInc[i]-mExp[i];const pct=mInc[i]>0?(bal/mInc[i]*100).toFixed(1)+'%':'—';
+          return`<tr><td><strong>${l}</strong></td><td class="mono amount-pos">${fmt(mInc[i])}</td><td class="mono amount-neg">${fmt(mExp[i])}</td><td class="mono ${bal>=0?'amount-pos':'amount-neg'}">${fmt(bal)}</td><td class="mono">${pct}</td></tr>`;}).join('')}</tbody>
+        <tfoot><tr class="tfoot"><td><strong>${t('col-total')}</strong></td><td class="mono">${fmt(totalInc)}</td><td class="mono">${fmt(totalExp)}</td><td class="mono ${totalInc-totalExp>=0?'amount-pos':'amount-neg'}">${fmt(totalInc-totalExp)}</td><td class="mono">${totalInc>0?((totalInc-totalExp)/totalInc*100).toFixed(1)+'%':'—'}</td></tr></tfoot>
+      </table></div>
+    </div>`;
+  setTimeout(()=>{
+    const ctx=document.getElementById('ar-chart');if(chartInst['ar-chart'])chartInst['ar-chart'].destroy();
+    chartInst['ar-chart']=new Chart(ctx,{type:'bar',data:{labels:mLabels,datasets:[
+      {label:t('col-income'),data:mInc,backgroundColor:'rgba(0,212,170,.75)',borderRadius:6,borderWidth:0},
+      {label:t('col-expenses'),data:mExp,backgroundColor:'rgba(255,77,109,.7)',borderRadius:6,borderWidth:0}
+    ]},options:chartOpts()});
+  },50);
+}
+
+function renderChart(id,type,labels,data,colors){
+  const ctx=document.getElementById(id);if(!ctx)return;
+  if(chartInst[id])chartInst[id].destroy();
+  chartInst[id]=new Chart(ctx,{type,data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:0,borderRadius:type==='bar'?6:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{...CHART_DEFAULTS.plugins}}});
+}
+function printReport(){window.print();}
+
+// ── MOBILE NAV ──
+function toggleMobileMenu(){
+  const btn=document.getElementById('mobile-menu-btn');const overlay=document.getElementById('mobile-overlay');
+  if(btn.classList.contains('open')){closeMobileMenu();}
+  else{btn.classList.add('open');overlay.classList.add('open');}
+}
+function closeMobileMenu(){document.getElementById('mobile-menu-btn').classList.remove('open');document.getElementById('mobile-overlay').classList.remove('open');}
+function toggleMobileMore(){
+  const menu=document.getElementById('mobile-more-menu');
+  const ov=document.getElementById('more-overlay');
+  const isOpen=menu.classList.contains('open');
+  if(isOpen){menu.classList.remove('open');ov.classList.remove('open');}
+  else{menu.classList.add('open');ov.classList.add('open');}
+}
+function closeMobileMore(){
+  const m=document.getElementById('mobile-more-menu');if(m)m.classList.remove('open');
+  const ov=document.getElementById('more-overlay');if(ov)ov.classList.remove('open');
+}
+// click outside more menu handled by overlay
+function updateBottomNav(page){
+  const map={home:'bn-home',income:'bn-income',expenses:'bn-expenses'};
+  document.querySelectorAll('.bottom-nav-item').forEach(b=>b.classList.remove('active'));
+  if(map[page])document.getElementById(map[page])?.classList.add('active');
+  const reports=['daily-report','weekly-report','monthly-report','annual-report'];
+  if(reports.includes(page))document.getElementById('bn-reports')?.classList.add('active');
+  if(['suppliers','payroll'].includes(page))document.getElementById('bn-more')?.classList.add('active');
+}
+
+// ── PAY TYPE HELPERS ──
+function toggleEmpRateFields(ctx){
+  const prefix = ctx==='edit'?'edit-emp':'new-emp';
+  const type = document.getElementById(ctx==='edit'?'edit-emp-pay-type':'emp-pay-type').value;
+  const isHourly = type==='hourly';
+  document.getElementById(prefix+'-daily-wrap').style.display = isHourly?'none':'block';
+  document.getElementById(prefix+'-hourly-wrap').style.display = isHourly?'block':'none';
+  document.getElementById(prefix+'-info').style.display='none';
+}
+function autoCalcEmp(ctx){
+  const rateEl = document.getElementById(ctx==='edit'?'edit-emp-rate':'emp-rate');
+  const infoEl = document.getElementById((ctx==='edit'?'edit':'new')+'-emp-info');
+  const daily = parseFloat(rateEl.value)||0;
+  if(daily>0){
+    const hourly = daily/8;
+    infoEl.textContent = `Hourly rate = ${fmtE(daily)} ÷ 8 = ${fmtE(hourly)}/hr`;
+    infoEl.style.display='block';
+  } else {
+    infoEl.style.display='none';
+  }
+}
+
+function saveEmployee(){
+  const name=document.getElementById('emp-name').value.trim();
+  const role=document.getElementById('emp-role').value.trim();
+  const phone=document.getElementById('emp-phone').value.trim();
+  const payType=document.getElementById('emp-pay-type').value;
+  let rate=0, hourly=0;
+  if(payType==='daily'){
+    rate=parseFloat(document.getElementById('emp-rate').value)||0;
+    hourly=rate/8;
+  } else {
+    hourly=parseFloat(document.getElementById('emp-hourly-direct').value)||0;
+    rate=hourly*8;
+  }
+  if(!name){notify('Enter employee name','danger');return;}
+  if(rate<=0&&hourly<=0){notify('Enter a rate','danger');return;}
+  const data=DB.employees();
+  data.push({id:uid(),name,role,phone,payType,rate,hourly});
+  DB.saveEmployees(data);
+  ['emp-name','emp-role','emp-phone','emp-rate','emp-hourly-direct'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('new-emp-info').style.display='none';
+  closeModal('modal-employee');renderEmployees();notify(t('notify-employee-added'));
+}
+
+function openEditEmployee(id){
+  const e=DB.employees().find(x=>x.id===id);if(!e)return;
+  document.getElementById('edit-emp-id').value=id;
+  document.getElementById('edit-emp-name').value=e.name;
+  document.getElementById('edit-emp-role').value=e.role||'';
+  document.getElementById('edit-emp-phone').value=e.phone||'';
+  const payType=e.payType||'daily';
+  document.getElementById('edit-emp-pay-type').value=payType;
+  if(payType==='hourly'){
+    document.getElementById('edit-emp-hourly-direct').value=e.hourly||'';
+    document.getElementById('edit-emp-daily-wrap').style.display='none';
+    document.getElementById('edit-emp-hourly-wrap').style.display='block';
+  } else {
+    document.getElementById('edit-emp-rate').value=e.rate||'';
+    document.getElementById('edit-emp-daily-wrap').style.display='block';
+    document.getElementById('edit-emp-hourly-wrap').style.display='none';
+    autoCalcEmp('edit');
+  }
+  openModal('modal-edit-employee');
+}
+function saveEditEmployee(){
+  const id=document.getElementById('edit-emp-id').value;
+  const name=document.getElementById('edit-emp-name').value.trim();
+  const role=document.getElementById('edit-emp-role').value.trim();
+  const phone=document.getElementById('edit-emp-phone').value.trim();
+  const payType=document.getElementById('edit-emp-pay-type').value;
+  let rate=0,hourly=0;
+  if(payType==='daily'){
+    rate=parseFloat(document.getElementById('edit-emp-rate').value)||0;
+    hourly=rate/8;
+  } else {
+    hourly=parseFloat(document.getElementById('edit-emp-hourly-direct').value)||0;
+    rate=hourly*8;
+  }
+  if(!name){notify('Enter employee name','danger');return;}
+  const data=DB.employees().map(x=>x.id===id?{...x,name,role,phone,payType,rate,hourly}:x);
+  DB.saveEmployees(data);closeModal('modal-edit-employee');renderEmployees();notify('Employee updated');
+}
+function updateEditIncCalc(){
+  const total=parseFloat(document.getElementById('edit-inc-total-raw').value)||0;
+  const card=parseFloat(document.getElementById('edit-inc-card').value)||0;
+  const cash=Math.max(0,total-card);
+  const el=document.getElementById('edit-inc-cash-display');
+  el.textContent=total>0?fmtE(cash):'—';
+  el.style.color=cash>=0?'var(--accent)':'var(--danger)';
+}
+function openEditIncome(id){
+  const r=DB.income().find(x=>x.id===id);if(!r)return;
+  document.getElementById('edit-income-id').value=id;
+  document.getElementById('edit-inc-date').value=r.date;
+  document.getElementById('edit-inc-desc').value=r.desc;
+  const total=r.total!=null?r.total:(r.cash+r.card);
+  document.getElementById('edit-inc-total-raw').value=total;
+  document.getElementById('edit-inc-card').value=r.card||0;
+  updateEditIncCalc();
+  openModal('modal-edit-income');
+}
+function saveEditIncome(){
+  const id=document.getElementById('edit-income-id').value;
+  const d=document.getElementById('edit-inc-date').value;
+  const desc=document.getElementById('edit-inc-desc').value.trim();
+  const total=parseFloat(document.getElementById('edit-inc-total-raw').value)||0;
+  const card=parseFloat(document.getElementById('edit-inc-card').value)||0;
+  const cash=Math.max(0,total-card);
+  if(!d||!desc||total<=0){notify('Fill all fields','danger');return;}
+  if(card>total){notify('Card cannot exceed total register','danger');return;}
+  const data=DB.income().map(x=>x.id===id?{...x,date:d,desc,cash,card,total}:x);
+  DB.saveIncome(data);closeModal('modal-edit-income');
+  renderIncomeTable();renderIncomeSummary();notify('Entry updated');
+}
+
+// ── EDIT EXPENSE ──
+function openEditExpense(id){
+  const r=DB.expenses().find(x=>x.id===id);if(!r)return;
+  // populate supplier select
+  const sel=document.getElementById('edit-exp-supplier');
+  sel.innerHTML=DB.suppliers().map(s=>`<option value="${s.name}" ${s.name===r.supplier?'selected':''}>${s.name}</option>`).join('');
+  document.getElementById('edit-expense-id').value=id;
+  document.getElementById('edit-exp-date').value=r.date;
+  document.getElementById('edit-exp-type').value=r.type;
+  document.getElementById('edit-exp-pay').value=r.pay;
+  document.getElementById('edit-exp-inv').value=r.inv||'';
+  document.getElementById('edit-exp-amount').value=r.amount;
+  openModal('modal-edit-expense');
+}
+function saveEditExpense(){
+  const id=document.getElementById('edit-expense-id').value;
+  const d=document.getElementById('edit-exp-date').value;
+  const supplier=document.getElementById('edit-exp-supplier').value;
+  const type=document.getElementById('edit-exp-type').value;
+  const pay=document.getElementById('edit-exp-pay').value;
+  const inv=document.getElementById('edit-exp-inv').value.trim();
+  const amount=parseFloat(document.getElementById('edit-exp-amount').value)||0;
+  if(!d||!supplier||!type||!pay||amount<=0){notify('Fill all fields','danger');return;}
+  const data=DB.expenses().map(x=>x.id===id?{...x,date:d,supplier,type,pay,inv,amount}:x);
+  DB.saveExpenses(data);closeModal('modal-edit-expense');
+  renderExpenseTable();renderExpenseSummary();notify('Expense updated');
+}
+
+// ── PAYROLL TABS ──
+let payMode='day';
+function switchPayTab(tab){
+  ['daily','weekly','summary'].forEach(t=>{
+    document.getElementById('pay-panel-'+t).style.display=t===tab?'block':'none';
+    document.getElementById('pay-tab-'+t).classList.toggle('active',t===tab);
+  });
+}
+function setPayMode(mode){
+  payMode=mode;
+  document.getElementById('pay-mode-day').classList.toggle('btn-primary',mode==='day');
+  document.getElementById('pay-mode-day').classList.toggle('btn-secondary',mode!=='day');
+  document.getElementById('pay-mode-hour').classList.toggle('btn-primary',mode==='hour');
+  document.getElementById('pay-mode-hour').classList.toggle('btn-secondary',mode!=='day');
+  loadPayroll();
+}
+function loadWeeklyPayroll(){
+  const d=document.getElementById('pay-week-date').value;
+  if(!d){notify('Select a date','danger');return;}
+  const date=new Date(d);const day=date.getDay();
+  const mon=new Date(date);mon.setDate(date.getDate()-(day===0?6:day-1));
+  const days=Array.from({length:7},(_,i)=>{const dt=new Date(mon);dt.setDate(mon.getDate()+i);return dt.toISOString().slice(0,10);});
+  const dayLabels=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const emps=DB.employees();const payroll=DB.payroll();
+  if(!emps.length){document.getElementById('weekly-payroll-content').innerHTML=`<div class="empty"><p>No employees found</p></div>`;return;}
+  let html=`<div class="table-wrap"><table><thead><tr><th>Employee</th>`;
+  days.forEach((d,i)=>html+=`<th>${dayLabels[i]}<br><span style="font-weight:400;font-size:10px;opacity:.6">${d.slice(5)}</span></th>`);
+  html+=`<th>Total</th></tr></thead><tbody>`;
+  emps.forEach(e=>{
+    html+=`<tr><td><strong>${e.name}</strong><br><span class="badge badge-gray" style="margin-top:4px">${e.role||''}</span></td>`;
+    let empTotal=0;
+    days.forEach(date=>{
+      const rec=payroll.find(p=>p.date===date&&p.empId===e.id);
+      const val=rec?rec.total:0;empTotal+=val;
+      html+=`<td class="mono ${val>0?'amount-pos':''}">${val>0?fmtE(val):'—'}</td>`;
+    });
+    html+=`<td class="mono amount-pos" style="font-weight:700">${empTotal>0?fmtE(empTotal):'—'}</td></tr>`;
+  });
+  const grandTotal=emps.reduce((sum,e)=>sum+days.reduce((s,date)=>{const r=payroll.find(p=>p.date===date&&p.empId===e.id);return s+(r?r.total:0);},0),0);
+  html+=`</tbody><tfoot><tr class="tfoot"><td><strong>Week Total</strong></td>`;
+  days.forEach(date=>{const dayTotal=payroll.filter(p=>p.date===date).reduce((s,r)=>s+r.total,0);html+=`<td class="mono">${dayTotal>0?fmtE(dayTotal):'—'}</td>`;});
+  html+=`<td class="mono amount-pos" style="font-weight:700">${fmtE(grandTotal)}</td></tr></tfoot></table></div>`;
+  document.getElementById('weekly-payroll-content').innerHTML=html;
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded',()=>{
+  loadCurrency();
+  setLang('en');
+  nav('home');
+});
+</script>
 </body>
 </html>
