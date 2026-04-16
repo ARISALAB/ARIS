@@ -565,16 +565,30 @@ footer a{color:var(--accent);text-decoration:none}
           <div style="font-size:12.5px;color:var(--ink3);margin-top:2px">Interface, reports and PDFs will use this language.</div>
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div id="ob-lang-el" onclick="selectObLang('el')" style="padding:18px;border:2px solid var(--accent);border-radius:var(--radius-lg);cursor:pointer;text-align:center;background:var(--accent-subtle)">
-          <div style="font-size:28px;margin-bottom:8px">🇬🇷</div>
-          <div style="font-weight:700">Ελληνικά</div>
-          <div style="font-size:11.5px;color:var(--ink3);margin-top:3px">Greek</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div id="ob-lang-el" onclick="selectObLang('el')" style="padding:14px;border:2px solid var(--accent);border-radius:var(--radius-lg);cursor:pointer;text-align:center;background:var(--accent-subtle)">
+          <div style="font-size:22px;margin-bottom:6px">🇬🇷</div>
+          <div style="font-weight:700;font-size:12px">Ελληνικά</div>
         </div>
-        <div id="ob-lang-en" onclick="selectObLang('en')" style="padding:18px;border:1.5px solid var(--border);border-radius:var(--radius-lg);cursor:pointer;text-align:center">
-          <div style="font-size:28px;margin-bottom:8px">🇬🇧</div>
-          <div style="font-weight:700">English</div>
-          <div style="font-size:11.5px;color:var(--ink3);margin-top:3px">English</div>
+        <div id="ob-lang-en" onclick="selectObLang('en')" style="padding:14px;border:1.5px solid var(--border);border-radius:var(--radius-lg);cursor:pointer;text-align:center">
+          <div style="font-size:22px;margin-bottom:6px">🇬🇧</div>
+          <div style="font-weight:700;font-size:12px">English</div>
+        </div>
+        <div id="ob-lang-es" onclick="selectObLang('es')" style="padding:14px;border:1.5px solid var(--border);border-radius:var(--radius-lg);cursor:pointer;text-align:center">
+          <div style="font-size:22px;margin-bottom:6px">🇪🇸</div>
+          <div style="font-weight:700;font-size:12px">Español</div>
+        </div>
+        <div id="ob-lang-it" onclick="selectObLang('it')" style="padding:14px;border:1.5px solid var(--border);border-radius:var(--radius-lg);cursor:pointer;text-align:center">
+          <div style="font-size:22px;margin-bottom:6px">🇮🇹</div>
+          <div style="font-weight:700;font-size:12px">Italiano</div>
+        </div>
+        <div id="ob-lang-fr" onclick="selectObLang('fr')" style="padding:14px;border:1.5px solid var(--border);border-radius:var(--radius-lg);cursor:pointer;text-align:center">
+          <div style="font-size:22px;margin-bottom:6px">🇫🇷</div>
+          <div style="font-weight:700;font-size:12px">Français</div>
+        </div>
+        <div id="ob-lang-de" onclick="selectObLang('de')" style="padding:14px;border:1.5px solid var(--border);border-radius:var(--radius-lg);cursor:pointer;text-align:center">
+          <div style="font-size:22px;margin-bottom:6px">🇩🇪</div>
+          <div style="font-weight:700;font-size:12px">Deutsch</div>
         </div>
       </div>
     </div>
@@ -674,8 +688,17 @@ footer a{color:var(--accent);text-decoration:none}
       <span id="nav-biz-name" style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Settings</span>
     </button>
     <button class="lang-btn" id="btn-currency" onclick="openModal('modal-currency')" title="Currency" style="font-weight:700;font-family:var(--mono);min-width:52px;justify-content:center">€ EUR</button>
-    <button class="lang-btn" id="btn-lang-el" onclick="setLang('el')">🇬🇷 EL</button>
-    <button class="lang-btn active-lang" id="btn-lang-en" onclick="setLang('en')">🇬🇧 EN</button>
+    <div class="nav-dropdown" id="dd-lang" style="position:relative">
+      <button class="lang-btn" onclick="toggleLangDD()" id="btn-lang-current" style="gap:4px;min-width:60px">🇬🇧 EN ▾</button>
+      <div id="lang-dropdown-menu" style="display:none;position:absolute;right:0;top:calc(100% + 6px);background:var(--surface);border:1px solid var(--border-bright);border-radius:var(--radius-lg);padding:4px;min-width:140px;z-index:300;box-shadow:0 8px 24px rgba(0,0,0,.4)">
+        <div class="nav-dropdown-item" onclick="setLang('el');closeLangDD()">🇬🇷 Ελληνικά</div>
+        <div class="nav-dropdown-item" onclick="setLang('en');closeLangDD()">🇬🇧 English</div>
+        <div class="nav-dropdown-item" onclick="setLang('es');closeLangDD()">🇪🇸 Español</div>
+        <div class="nav-dropdown-item" onclick="setLang('it');closeLangDD()">🇮🇹 Italiano</div>
+        <div class="nav-dropdown-item" onclick="setLang('fr');closeLangDD()">🇫🇷 Français</div>
+        <div class="nav-dropdown-item" onclick="setLang('de');closeLangDD()">🇩🇪 Deutsch</div>
+      </div>
+    </div>
   </div>
   <button class="mobile-nav-toggle" id="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">
     <div class="hamburger-line"></div>
@@ -1649,9 +1672,13 @@ footer a{color:var(--accent);text-decoration:none}
     <span>Compare Periods</span>
   </div>
   <div class="bottom-nav-more-divider"></div>
-  <div style="display:flex;gap:8px;padding:6px 16px 4px">
-    <button class="lang-btn" id="btn-lang-el2" onclick="setLang('el');closeMobileMore()" style="flex:1;justify-content:center">🇬🇷 EL</button>
-    <button class="lang-btn active-lang" id="btn-lang-en2" onclick="setLang('en');closeMobileMore()" style="flex:1;justify-content:center">🇬🇧 EN</button>
+  <div style="display:flex;gap:6px;padding:6px 16px 4px;flex-wrap:wrap">
+    <button class="lang-btn" onclick="setLang('el');closeMobileMore()" style="flex:1;justify-content:center;min-width:60px">🇬🇷 EL</button>
+    <button class="lang-btn" onclick="setLang('en');closeMobileMore()" style="flex:1;justify-content:center;min-width:60px">🇬🇧 EN</button>
+    <button class="lang-btn" onclick="setLang('es');closeMobileMore()" style="flex:1;justify-content:center;min-width:60px">🇪🇸 ES</button>
+    <button class="lang-btn" onclick="setLang('it');closeMobileMore()" style="flex:1;justify-content:center;min-width:60px">🇮🇹 IT</button>
+    <button class="lang-btn" onclick="setLang('fr');closeMobileMore()" style="flex:1;justify-content:center;min-width:60px">🇫🇷 FR</button>
+    <button class="lang-btn" onclick="setLang('de');closeMobileMore()" style="flex:1;justify-content:center;min-width:60px">🇩🇪 DE</button>
   </div>
   <div class="bottom-nav-more-divider"></div>
   <div style="display:flex;gap:8px;padding:4px 16px 8px">
@@ -1859,15 +1886,294 @@ const T = {
     'empty-no-transactions':'No transactions found','lbl-employee':'Employee',
     'mLabels':['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
     'days-labels':['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],'week-labels':['Wk.1','Wk.2','Wk.3','Wk.4'],
+  },
+  es: {
+    'logo-tagline':'Gestión Empresarial',
+    'nav-home':'Inicio','nav-income':'Ingresos','nav-expenses':'Gastos','nav-suppliers':'Proveedores','nav-payroll':'Nóminas','nav-reports':'Informes',
+    'nav-daily':'Informe Diario','nav-weekly':'Informe Semanal','nav-monthly':'Informe Mensual','nav-annual':'Informe Anual',
+    'hero-badge':'Suite Profesional de Negocio',
+    'hero-title':'Gestión Empresarial<br><span>al siguiente nivel.</span>',
+    'hero-sub':'Registre ingresos, gastos, proveedores y nóminas en una plataforma unificada. Análisis en tiempo real e informes profesionales.',
+    'hero-btn1':'Registrar Ingresos','hero-btn2':'Ver Informes',
+    'hs-lbl-income':'Ingresos Hoy','hs-lbl-expense':'Gastos Hoy','hs-lbl-cash':'Saldo Total','hs-lbl-suppliers':'Proveedores',
+    'fc-income-name':'Ingresos Diarios','fc-income-desc':'Registre cobros en efectivo y tarjeta rápidamente.',
+    'fc-expenses-name':'Gastos Diarios','fc-expenses-desc':'Controle gastos por categoría, proveedor y forma de pago.',
+    'fc-suppliers-name':'Proveedores','fc-suppliers-desc':'Gestione contactos y controle todas las transacciones.',
+    'fc-payroll-name':'Nóminas','fc-payroll-desc':'Registre salarios diarios y calcule nóminas semanales.',
+    'fc-daily-report-name':'Informe Diario','fc-daily-report-desc':'Análisis financiero completo por día con gráficos.',
+    'fc-monthly-report-name':'Informe Mensual','fc-monthly-report-desc':'Análisis mensual de ingresos, gastos y Food Cost.',
+    'fc-manage':'Gestionar →','fc-manage2':'Gestionar →','fc-manage3':'Gestionar →','fc-manage4':'Gestionar →',
+    'fc-view':'Ver informe →','fc-view2':'Ver informe →',
+    'pg-income-title':'Ingresos Diarios','pg-income-sub':'Registre cobros por día',
+    'card-new-entry':'Nueva Entrada','card-day-summary':'Resumen del Día',
+    'lbl-date':'Fecha','lbl-desc':'Descripción','lbl-cash-eur':'Efectivo','lbl-card-eur':'Tarjeta',
+    'lbl-entry-total':'Total Entrada','btn-add-income':'+ Añadir Ingreso',
+    'section-entries':'Entradas','empty-select-date':'Seleccione una fecha',
+    'th-time':'Hora','th-desc':'Descripción','th-cash-eur':'Efectivo','th-card-eur':'Tarjeta','th-total-eur':'Total',
+    'tf-day-total':'Total del Día',
+    'pg-expenses-title':'Gastos Diarios','pg-expenses-sub':'Registre gastos por categoría',
+    'card-new-expense':'Nuevo Gasto','card-expenses-summary':'Resumen de Gastos',
+    'lbl-date2':'Fecha','lbl-supplier':'Proveedor','lbl-type':'Tipo','lbl-payment':'Forma de Pago',
+    'lbl-invoice':'Nº Factura','lbl-amount-eur':'Importe','btn-add-expense':'+ Añadir Gasto',
+    'opt-select':'— Seleccionar —','opt-select2':'— Seleccionar —','opt-select3':'— Seleccionar —',
+    'opt-operational':'Operacional','opt-energy':'Energía','opt-salaries':'Salarios','opt-maintenance':'Mantenimiento','opt-other':'Otro',
+    'opt-cash':'Efectivo','opt-card':'Tarjeta','opt-credit':'A crédito',
+    'pg-suppliers-title':'Proveedores','pg-suppliers-sub':'Gestión de contactos y transacciones',
+    'card-new-supplier':'Nuevo Proveedor','lbl-company':'Empresa','btn-add-supplier':'+ Añadir Proveedor',
+    'lbl-suppliers-count':'proveedores','th-company':'Empresa','th-phone':'Teléfono','th-category':'Categoría','th-balance':'Saldo',
+    'pg-payroll-title':'Nóminas','pg-payroll-sub':'Registro diario y semanal de salarios',
+    'btn-new-employee':'+ Nuevo Empleado',
+    'lbl-from':'Desde','lbl-to':'Hasta','btn-show':'Mostrar',
+    'section-employees':'Empleados','th-fullname':'Nombre','th-role':'Rol','th-daily-rate-eur':'Salario Diario',
+    'pg-daily-title':'Informe Diario','lbl-date3':'Fecha','btn-load':'Cargar Informe',
+    'pg-weekly-title':'Informe Semanal','lbl-week':'Semana','btn-load2':'Cargar',
+    'pg-monthly-title':'Informe Mensual','lbl-month':'Mes','btn-load3':'Cargar',
+    'pg-annual-title':'Informe Anual','lbl-year':'Año','btn-load4':'Cargar',
+    'btn-cancel':'Cancelar','btn-save':'Guardar','btn-close':'Cerrar',
+    'footer-text':'Gestión Profesional de Negocio',
+    'Μετρητά':'Efectivo','Κάρτα':'Tarjeta','Επί Πιστώσει':'A crédito',
+    'notify-income-added':'¡Ingreso registrado!','notify-expense-added':'¡Gasto registrado!',
+    'notify-supplier-added':'¡Proveedor añadido!','notify-deleted':'Eliminado',
+    'notify-sel-date':'Seleccione una fecha','notify-fill-amount':'Ingrese importe',
+    'notify-sel-supplier':'Seleccione proveedor','notify-sel-type':'Seleccione tipo',
+    'notify-sel-pay':'Seleccione forma de pago','notify-fill-company':'Ingrese nombre de empresa',
+    'notify-sel-month':'Seleccione un mes','notify-enter-year':'Ingrese año',
+    'confirm-delete':'¿Eliminar esta entrada?',
+    'empty-no-records':'No se encontraron registros','empty-no-suppliers':'No se encontraron proveedores',
+    'btn-transactions':'Transacciones','lbl-supplier-count-unit':'proveedores',
+    'lbl-inc-category':'Categoría','cat-dine-in':'🍽 Comedor','cat-takeaway':'🥡 Para llevar','cat-events':'🎉 Eventos','cat-other':'📦 Otro',
+    'stat-total-income':'Total Ingresos','stat-total-expenses':'Total Gastos','stat-net-profit':'Beneficio Neto','stat-food-cost':'Food Cost %',
+    'col-income':'Ingresos','col-expenses':'Gastos','col-total':'Total','col-month':'Mes',
+    'chart-weekly-trend':'Tendencia Semanal','chart-expenses-by-cat':'Gastos por Categoría','detailed-summary':'Resumen Detallado',
+    'income-badge':'Ingreso','expense-badge':'Gasto',
+    'tbl-date':'Fecha','tbl-time':'Hora','tbl-payment':'Pago','tbl-invoice':'Factura','tbl-amount':'Importe','tbl-balance':'Saldo',
+    'tbl-supplier-total':'Total Facturas','tbl-credit-balance':'Saldo (A crédito)',
+    'empty-no-transactions':'No se encontraron transacciones',
+    'mLabels':['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+    'days-labels':['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],'week-labels':['Sem.1','Sem.2','Sem.3','Sem.4'],
+  },
+  it: {
+    'logo-tagline':'Gestione Aziendale',
+    'nav-home':'Home','nav-income':'Ricavi','nav-expenses':'Spese','nav-suppliers':'Fornitori','nav-payroll':'Paghe','nav-reports':'Report',
+    'nav-daily':'Report Giornaliero','nav-weekly':'Report Settimanale','nav-monthly':'Report Mensile','nav-annual':'Report Annuale',
+    'hero-badge':'Suite Professionale per Aziende',
+    'hero-title':'Gestione Aziendale<br><span>al prossimo livello.</span>',
+    'hero-sub':'Registra ricavi, spese, fornitori e stipendi in un\'unica piattaforma. Analisi in tempo reale e report professionali.',
+    'hero-btn1':'Registra Ricavi','hero-btn2':'Vedi Report',
+    'hs-lbl-income':'Ricavi Oggi','hs-lbl-expense':'Spese Oggi','hs-lbl-cash':'Saldo Totale','hs-lbl-suppliers':'Fornitori',
+    'fc-income-name':'Ricavi Giornalieri','fc-income-desc':'Registra incassi in contanti e carta rapidamente.',
+    'fc-expenses-name':'Spese Giornaliere','fc-expenses-desc':'Tieni traccia delle spese per categoria e fornitore.',
+    'fc-suppliers-name':'Fornitori','fc-suppliers-desc':'Gestisci i contatti e monitora tutte le transazioni.',
+    'fc-payroll-name':'Paghe','fc-payroll-desc':'Registra i salari giornalieri e calcola le paghe settimanali.',
+    'fc-daily-report-name':'Report Giornaliero','fc-daily-report-desc':'Analisi finanziaria completa per giorno con grafici.',
+    'fc-monthly-report-name':'Report Mensile','fc-monthly-report-desc':'Analisi mensile di ricavi, spese e Food Cost.',
+    'fc-manage':'Gestisci →','fc-manage2':'Gestisci →','fc-manage3':'Gestisci →','fc-manage4':'Gestisci →',
+    'fc-view':'Vedi report →','fc-view2':'Vedi report →',
+    'pg-income-title':'Ricavi Giornalieri','pg-income-sub':'Registra gli incassi per giorno',
+    'card-new-entry':'Nuova Voce','card-day-summary':'Riepilogo Giornata',
+    'lbl-date':'Data','lbl-desc':'Descrizione','lbl-cash-eur':'Contanti','lbl-card-eur':'Carta',
+    'lbl-entry-total':'Totale Voce','btn-add-income':'+ Aggiungi Ricavo',
+    'section-entries':'Voci','empty-select-date':'Seleziona una data',
+    'th-time':'Ora','th-desc':'Descrizione','th-cash-eur':'Contanti','th-card-eur':'Carta','th-total-eur':'Totale',
+    'tf-day-total':'Totale Giorno',
+    'pg-expenses-title':'Spese Giornaliere','pg-expenses-sub':'Registra le spese per categoria',
+    'card-new-expense':'Nuova Spesa','card-expenses-summary':'Riepilogo Spese',
+    'lbl-date2':'Data','lbl-supplier':'Fornitore','lbl-type':'Tipo','lbl-payment':'Metodo di Pagamento',
+    'lbl-invoice':'N. Fattura','lbl-amount-eur':'Importo','btn-add-expense':'+ Aggiungi Spesa',
+    'opt-select':'— Seleziona —','opt-select2':'— Seleziona —','opt-select3':'— Seleziona —',
+    'opt-operational':'Operativo','opt-energy':'Energia','opt-salaries':'Stipendi','opt-maintenance':'Manutenzione','opt-other':'Altro',
+    'opt-cash':'Contanti','opt-card':'Carta','opt-credit':'A credito',
+    'pg-suppliers-title':'Fornitori','pg-suppliers-sub':'Gestione contatti e transazioni',
+    'card-new-supplier':'Nuovo Fornitore','lbl-company':'Azienda','btn-add-supplier':'+ Aggiungi Fornitore',
+    'lbl-suppliers-count':'fornitori','th-company':'Azienda','th-phone':'Telefono','th-category':'Categoria','th-balance':'Saldo',
+    'pg-payroll-title':'Paghe','pg-payroll-sub':'Registrazione giornaliera e settimanale degli stipendi',
+    'btn-new-employee':'+ Nuovo Dipendente',
+    'lbl-from':'Da','lbl-to':'A','btn-show':'Mostra',
+    'section-employees':'Dipendenti','th-fullname':'Nome','th-role':'Ruolo','th-daily-rate-eur':'Paga Giornaliera',
+    'pg-daily-title':'Report Giornaliero','lbl-date3':'Data','btn-load':'Carica Report',
+    'pg-weekly-title':'Report Settimanale','lbl-week':'Settimana','btn-load2':'Carica',
+    'pg-monthly-title':'Report Mensile','lbl-month':'Mese','btn-load3':'Carica',
+    'pg-annual-title':'Report Annuale','lbl-year':'Anno','btn-load4':'Carica',
+    'btn-cancel':'Annulla','btn-save':'Salva','btn-close':'Chiudi',
+    'footer-text':'Gestione Professionale Aziendale',
+    'Μετρητά':'Contanti','Κάρτα':'Carta','Επί Πιστώσει':'A credito',
+    'notify-income-added':'Ricavo registrato!','notify-expense-added':'Spesa registrata!',
+    'notify-supplier-added':'Fornitore aggiunto!','notify-deleted':'Eliminato',
+    'notify-sel-date':'Seleziona una data','notify-fill-amount':'Inserisci importo',
+    'notify-sel-supplier':'Seleziona fornitore','notify-sel-type':'Seleziona tipo',
+    'notify-sel-pay':'Seleziona metodo di pagamento','notify-fill-company':'Inserisci nome azienda',
+    'notify-sel-month':'Seleziona un mese','notify-enter-year':'Inserisci anno',
+    'confirm-delete':'Eliminare questa voce?',
+    'empty-no-records':'Nessun record trovato','empty-no-suppliers':'Nessun fornitore trovato',
+    'btn-transactions':'Transazioni','lbl-supplier-count-unit':'fornitori',
+    'lbl-inc-category':'Categoria','cat-dine-in':'🍽 Sala','cat-takeaway':'🥡 Da asporto','cat-events':'🎉 Eventi','cat-other':'📦 Altro',
+    'stat-total-income':'Totale Ricavi','stat-total-expenses':'Totale Spese','stat-net-profit':'Utile Netto','stat-food-cost':'Food Cost %',
+    'col-income':'Ricavi','col-expenses':'Spese','col-total':'Totale','col-month':'Mese',
+    'chart-weekly-trend':'Tendenza Settimanale','chart-expenses-by-cat':'Spese per Categoria','detailed-summary':'Riepilogo Dettagliato',
+    'income-badge':'Ricavo','expense-badge':'Spesa',
+    'tbl-date':'Data','tbl-time':'Ora','tbl-payment':'Pagamento','tbl-invoice':'Fattura','tbl-amount':'Importo','tbl-balance':'Saldo',
+    'tbl-supplier-total':'Totale Fatture','tbl-credit-balance':'Saldo (A credito)',
+    'empty-no-transactions':'Nessuna transazione trovata',
+    'mLabels':['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'],
+    'days-labels':['Lun','Mar','Mer','Gio','Ven','Sab','Dom'],'week-labels':['Sett.1','Sett.2','Sett.3','Sett.4'],
+  },
+  fr: {
+    'logo-tagline':'Gestion d\'Entreprise',
+    'nav-home':'Accueil','nav-income':'Revenus','nav-expenses':'Dépenses','nav-suppliers':'Fournisseurs','nav-payroll':'Paie','nav-reports':'Rapports',
+    'nav-daily':'Rapport Journalier','nav-weekly':'Rapport Hebdomadaire','nav-monthly':'Rapport Mensuel','nav-annual':'Rapport Annuel',
+    'hero-badge':'Suite Professionnelle de Gestion',
+    'hero-title':'Gestion d\'Entreprise<br><span>au niveau supérieur.</span>',
+    'hero-sub':'Enregistrez vos revenus, dépenses, fournisseurs et paies sur une plateforme unifiée. Analyses en temps réel et rapports professionnels.',
+    'hero-btn1':'Enregistrer Revenus','hero-btn2':'Voir Rapports',
+    'hs-lbl-income':'Revenus Aujourd\'hui','hs-lbl-expense':'Dépenses Aujourd\'hui','hs-lbl-cash':'Solde Total','hs-lbl-suppliers':'Fournisseurs',
+    'fc-income-name':'Revenus Journaliers','fc-income-desc':'Enregistrez les encaissements en espèces et par carte rapidement.',
+    'fc-expenses-name':'Dépenses Journalières','fc-expenses-desc':'Suivez les dépenses par catégorie et fournisseur.',
+    'fc-suppliers-name':'Fournisseurs','fc-suppliers-desc':'Gérez vos contacts et suivez toutes les transactions.',
+    'fc-payroll-name':'Paie','fc-payroll-desc':'Enregistrez les salaires journaliers et calculez les paies hebdomadaires.',
+    'fc-daily-report-name':'Rapport Journalier','fc-daily-report-desc':'Analyse financière complète par jour avec graphiques.',
+    'fc-monthly-report-name':'Rapport Mensuel','fc-monthly-report-desc':'Analyse mensuelle des revenus, dépenses et Food Cost.',
+    'fc-manage':'Gérer →','fc-manage2':'Gérer →','fc-manage3':'Gérer →','fc-manage4':'Gérer →',
+    'fc-view':'Voir rapport →','fc-view2':'Voir rapport →',
+    'pg-income-title':'Revenus Journaliers','pg-income-sub':'Enregistrez les encaissements par jour',
+    'card-new-entry':'Nouvelle Entrée','card-day-summary':'Résumé du Jour',
+    'lbl-date':'Date','lbl-desc':'Description','lbl-cash-eur':'Espèces','lbl-card-eur':'Carte',
+    'lbl-entry-total':'Total Entrée','btn-add-income':'+ Ajouter Revenu',
+    'section-entries':'Entrées','empty-select-date':'Sélectionnez une date',
+    'th-time':'Heure','th-desc':'Description','th-cash-eur':'Espèces','th-card-eur':'Carte','th-total-eur':'Total',
+    'tf-day-total':'Total du Jour',
+    'pg-expenses-title':'Dépenses Journalières','pg-expenses-sub':'Enregistrez les dépenses par catégorie',
+    'card-new-expense':'Nouvelle Dépense','card-expenses-summary':'Résumé des Dépenses',
+    'lbl-date2':'Date','lbl-supplier':'Fournisseur','lbl-type':'Type','lbl-payment':'Mode de Paiement',
+    'lbl-invoice':'N° Facture','lbl-amount-eur':'Montant','btn-add-expense':'+ Ajouter Dépense',
+    'opt-select':'— Sélectionner —','opt-select2':'— Sélectionner —','opt-select3':'— Sélectionner —',
+    'opt-operational':'Opérationnel','opt-energy':'Énergie','opt-salaries':'Salaires','opt-maintenance':'Maintenance','opt-other':'Autre',
+    'opt-cash':'Espèces','opt-card':'Carte','opt-credit':'À crédit',
+    'pg-suppliers-title':'Fournisseurs','pg-suppliers-sub':'Gestion des contacts et transactions',
+    'card-new-supplier':'Nouveau Fournisseur','lbl-company':'Entreprise','btn-add-supplier':'+ Ajouter Fournisseur',
+    'lbl-suppliers-count':'fournisseurs','th-company':'Entreprise','th-phone':'Téléphone','th-category':'Catégorie','th-balance':'Solde',
+    'pg-payroll-title':'Paie','pg-payroll-sub':'Enregistrement journalier et hebdomadaire des salaires',
+    'btn-new-employee':'+ Nouvel Employé',
+    'lbl-from':'Du','lbl-to':'Au','btn-show':'Afficher',
+    'section-employees':'Employés','th-fullname':'Nom','th-role':'Rôle','th-daily-rate-eur':'Salaire Journalier',
+    'pg-daily-title':'Rapport Journalier','lbl-date3':'Date','btn-load':'Charger Rapport',
+    'pg-weekly-title':'Rapport Hebdomadaire','lbl-week':'Semaine','btn-load2':'Charger',
+    'pg-monthly-title':'Rapport Mensuel','lbl-month':'Mois','btn-load3':'Charger',
+    'pg-annual-title':'Rapport Annuel','lbl-year':'Année','btn-load4':'Charger',
+    'btn-cancel':'Annuler','btn-save':'Enregistrer','btn-close':'Fermer',
+    'footer-text':'Gestion Professionnelle d\'Entreprise',
+    'Μετρητά':'Espèces','Κάρτα':'Carte','Επί Πιστώσει':'À crédit',
+    'notify-income-added':'Revenu enregistré !','notify-expense-added':'Dépense enregistrée !',
+    'notify-supplier-added':'Fournisseur ajouté !','notify-deleted':'Supprimé',
+    'notify-sel-date':'Sélectionnez une date','notify-fill-amount':'Saisissez un montant',
+    'notify-sel-supplier':'Sélectionnez un fournisseur','notify-sel-type':'Sélectionnez un type',
+    'notify-sel-pay':'Sélectionnez un mode de paiement','notify-fill-company':'Saisissez le nom de l\'entreprise',
+    'notify-sel-month':'Sélectionnez un mois','notify-enter-year':'Saisissez l\'année',
+    'confirm-delete':'Supprimer cette entrée ?',
+    'empty-no-records':'Aucun enregistrement trouvé','empty-no-suppliers':'Aucun fournisseur trouvé',
+    'btn-transactions':'Transactions','lbl-supplier-count-unit':'fournisseurs',
+    'lbl-inc-category':'Catégorie','cat-dine-in':'🍽 Salle','cat-takeaway':'🥡 À emporter','cat-events':'🎉 Événements','cat-other':'📦 Autre',
+    'stat-total-income':'Total Revenus','stat-total-expenses':'Total Dépenses','stat-net-profit':'Bénéfice Net','stat-food-cost':'Food Cost %',
+    'col-income':'Revenus','col-expenses':'Dépenses','col-total':'Total','col-month':'Mois',
+    'chart-weekly-trend':'Tendance Hebdomadaire','chart-expenses-by-cat':'Dépenses par Catégorie','detailed-summary':'Résumé Détaillé',
+    'income-badge':'Revenu','expense-badge':'Dépense',
+    'tbl-date':'Date','tbl-time':'Heure','tbl-payment':'Paiement','tbl-invoice':'Facture','tbl-amount':'Montant','tbl-balance':'Solde',
+    'tbl-supplier-total':'Total Factures','tbl-credit-balance':'Solde (À crédit)',
+    'empty-no-transactions':'Aucune transaction trouvée',
+    'mLabels':['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'],
+    'days-labels':['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'],'week-labels':['Sem.1','Sem.2','Sem.3','Sem.4'],
+  },
+  de: {
+    'logo-tagline':'Unternehmensführung',
+    'nav-home':'Start','nav-income':'Einnahmen','nav-expenses':'Ausgaben','nav-suppliers':'Lieferanten','nav-payroll':'Lohnabrechnung','nav-reports':'Berichte',
+    'nav-daily':'Tagesbericht','nav-weekly':'Wochenbericht','nav-monthly':'Monatsbericht','nav-annual':'Jahresbericht',
+    'hero-badge':'Professionelle Unternehmens-Suite',
+    'hero-title':'Unternehmensführung<br><span>auf dem nächsten Level.</span>',
+    'hero-sub':'Erfassen Sie Einnahmen, Ausgaben, Lieferanten und Löhne auf einer einheitlichen Plattform. Echtzeit-Analysen und professionelle Berichte.',
+    'hero-btn1':'Einnahmen erfassen','hero-btn2':'Berichte anzeigen',
+    'hs-lbl-income':'Einnahmen Heute','hs-lbl-expense':'Ausgaben Heute','hs-lbl-cash':'Gesamtguthaben','hs-lbl-suppliers':'Lieferanten',
+    'fc-income-name':'Tageseinnahmen','fc-income-desc':'Erfassen Sie Bar- und Kartenzahlungen schnell und präzise.',
+    'fc-expenses-name':'Tagesausgaben','fc-expenses-desc':'Verfolgen Sie Ausgaben nach Kategorie und Lieferant.',
+    'fc-suppliers-name':'Lieferanten','fc-suppliers-desc':'Verwalten Sie Kontakte und verfolgen Sie alle Transaktionen.',
+    'fc-payroll-name':'Lohnabrechnung','fc-payroll-desc':'Erfassen Sie Tageslöhne und berechnen Sie Wochenlöhne.',
+    'fc-daily-report-name':'Tagesbericht','fc-daily-report-desc':'Vollständige Finanzanalyse pro Tag mit Diagrammen.',
+    'fc-monthly-report-name':'Monatsbericht','fc-monthly-report-desc':'Monatliche Analyse von Einnahmen, Ausgaben und Food Cost.',
+    'fc-manage':'Verwalten →','fc-manage2':'Verwalten →','fc-manage3':'Verwalten →','fc-manage4':'Verwalten →',
+    'fc-view':'Bericht ansehen →','fc-view2':'Bericht ansehen →',
+    'pg-income-title':'Tageseinnahmen','pg-income-sub':'Einnahmen pro Tag erfassen',
+    'card-new-entry':'Neuer Eintrag','card-day-summary':'Tagesübersicht',
+    'lbl-date':'Datum','lbl-desc':'Beschreibung','lbl-cash-eur':'Bargeld','lbl-card-eur':'Karte',
+    'lbl-entry-total':'Eintrag Gesamt','btn-add-income':'+ Einnahme hinzufügen',
+    'section-entries':'Einträge','empty-select-date':'Datum auswählen',
+    'th-time':'Uhrzeit','th-desc':'Beschreibung','th-cash-eur':'Bargeld','th-card-eur':'Karte','th-total-eur':'Gesamt',
+    'tf-day-total':'Tagesgesamt',
+    'pg-expenses-title':'Tagesausgaben','pg-expenses-sub':'Ausgaben nach Kategorie erfassen',
+    'card-new-expense':'Neue Ausgabe','card-expenses-summary':'Ausgabenübersicht',
+    'lbl-date2':'Datum','lbl-supplier':'Lieferant','lbl-type':'Typ','lbl-payment':'Zahlungsmethode',
+    'lbl-invoice':'Rechnungsnr.','lbl-amount-eur':'Betrag','btn-add-expense':'+ Ausgabe hinzufügen',
+    'opt-select':'— Auswählen —','opt-select2':'— Auswählen —','opt-select3':'— Auswählen —',
+    'opt-operational':'Betrieblich','opt-energy':'Energie','opt-salaries':'Gehälter','opt-maintenance':'Wartung','opt-other':'Sonstiges',
+    'opt-cash':'Bargeld','opt-card':'Karte','opt-credit':'Auf Kredit',
+    'pg-suppliers-title':'Lieferanten','pg-suppliers-sub':'Kontakt- und Transaktionsverwaltung',
+    'card-new-supplier':'Neuer Lieferant','lbl-company':'Unternehmen','btn-add-supplier':'+ Lieferant hinzufügen',
+    'lbl-suppliers-count':'Lieferanten','th-company':'Unternehmen','th-phone':'Telefon','th-category':'Kategorie','th-balance':'Saldo',
+    'pg-payroll-title':'Lohnabrechnung','pg-payroll-sub':'Tägliche und wöchentliche Lohnerfassung',
+    'btn-new-employee':'+ Neuer Mitarbeiter',
+    'lbl-from':'Von','lbl-to':'Bis','btn-show':'Anzeigen',
+    'section-employees':'Mitarbeiter','th-fullname':'Name','th-role':'Rolle','th-daily-rate-eur':'Tageslohn',
+    'pg-daily-title':'Tagesbericht','lbl-date3':'Datum','btn-load':'Bericht laden',
+    'pg-weekly-title':'Wochenbericht','lbl-week':'Woche','btn-load2':'Laden',
+    'pg-monthly-title':'Monatsbericht','lbl-month':'Monat','btn-load3':'Laden',
+    'pg-annual-title':'Jahresbericht','lbl-year':'Jahr','btn-load4':'Laden',
+    'btn-cancel':'Abbrechen','btn-save':'Speichern','btn-close':'Schließen',
+    'footer-text':'Professionelle Unternehmensführung',
+    'Μετρητά':'Bargeld','Κάρτα':'Karte','Επί Πιστώσει':'Auf Kredit',
+    'notify-income-added':'Einnahme erfasst!','notify-expense-added':'Ausgabe erfasst!',
+    'notify-supplier-added':'Lieferant hinzugefügt!','notify-deleted':'Gelöscht',
+    'notify-sel-date':'Datum auswählen','notify-fill-amount':'Betrag eingeben',
+    'notify-sel-supplier':'Lieferant auswählen','notify-sel-type':'Typ auswählen',
+    'notify-sel-pay':'Zahlungsmethode auswählen','notify-fill-company':'Unternehmensname eingeben',
+    'notify-sel-month':'Monat auswählen','notify-enter-year':'Jahr eingeben',
+    'confirm-delete':'Diesen Eintrag löschen?',
+    'empty-no-records':'Keine Einträge gefunden','empty-no-suppliers':'Keine Lieferanten gefunden',
+    'btn-transactions':'Transaktionen','lbl-supplier-count-unit':'Lieferanten',
+    'lbl-inc-category':'Kategorie','cat-dine-in':'🍽 Gastraum','cat-takeaway':'🥡 Zum Mitnehmen','cat-events':'🎉 Veranstaltungen','cat-other':'📦 Sonstiges',
+    'stat-total-income':'Gesamteinnahmen','stat-total-expenses':'Gesamtausgaben','stat-net-profit':'Nettogewinn','stat-food-cost':'Food Cost %',
+    'col-income':'Einnahmen','col-expenses':'Ausgaben','col-total':'Gesamt','col-month':'Monat',
+    'chart-weekly-trend':'Wöchentlicher Trend','chart-expenses-by-cat':'Ausgaben nach Kategorie','detailed-summary':'Detaillierte Übersicht',
+    'income-badge':'Einnahme','expense-badge':'Ausgabe',
+    'tbl-date':'Datum','tbl-time':'Uhrzeit','tbl-payment':'Zahlung','tbl-invoice':'Rechnung','tbl-amount':'Betrag','tbl-balance':'Saldo',
+    'tbl-supplier-total':'Rechnungen Gesamt','tbl-credit-balance':'Saldo (Auf Kredit)',
+    'empty-no-transactions':'Keine Transaktionen gefunden',
+    'mLabels':['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'],
+    'days-labels':['Mo','Di','Mi','Do','Fr','Sa','So'],'week-labels':['Wo.1','Wo.2','Wo.3','Wo.4'],
   }
 };
 
 let lang = 'en';
 function t(key){return(T[lang]&&T[lang][key])||(T['en']&&T['en'][key])||key;}
+
+const LANG_FLAGS={el:'🇬🇷',en:'🇬🇧',es:'🇪🇸',it:'🇮🇹',fr:'🇫🇷',de:'🇩🇪'};
+const LANG_CODES={el:'EL',en:'EN',es:'ES',it:'IT',fr:'FR',de:'DE'};
+
+function toggleLangDD(){
+  const m=document.getElementById('lang-dropdown-menu');
+  m.style.display=m.style.display==='none'?'block':'none';
+}
+function closeLangDD(){
+  const m=document.getElementById('lang-dropdown-menu');
+  if(m)m.style.display='none';
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#dd-lang'))closeLangDD();
+});
+
 function setLang(l){
   lang=l;
-  ['btn-lang-el','btn-lang-el2'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('active-lang',l==='el');});
-  ['btn-lang-en','btn-lang-en2'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('active-lang',l==='en');});
+  localStorage.setItem('fos_lang',l);
+  // Update nav button
+  const btn=document.getElementById('btn-lang-current');
+  if(btn)btn.textContent=`${LANG_FLAGS[l]||'🌐'} ${LANG_CODES[l]||l.toUpperCase()} ▾`;
+  closeLangDD();
   applyTranslations();
 }
 function applyTranslations(){
@@ -3964,10 +4270,13 @@ function showOnboarding(){
 }
 function selectObLang(l){
   _obLang=l;
-  document.getElementById('ob-lang-el').style.borderColor=l==='el'?'var(--accent)':'var(--border)';
-  document.getElementById('ob-lang-el').style.background=l==='el'?'var(--accent-subtle)':'transparent';
-  document.getElementById('ob-lang-en').style.borderColor=l==='en'?'var(--accent)':'var(--border)';
-  document.getElementById('ob-lang-en').style.background=l==='en'?'var(--accent-subtle)':'transparent';
+  ['el','en','es','it','fr','de'].forEach(code=>{
+    const el=document.getElementById('ob-lang-'+code);
+    if(!el)return;
+    el.style.borderWidth=code===l?'2px':'1.5px';
+    el.style.borderColor=code===l?'var(--accent)':'var(--border)';
+    el.style.background=code===l?'var(--accent-subtle)':'transparent';
+  });
 }
 function obStep(dir){
   _obStep+=dir;
@@ -4505,7 +4814,9 @@ document.addEventListener('DOMContentLoaded',()=>{
   loadBIZ();
   loadCurrency();
   loadGoals();
-  setLang('en');
+  // Load saved language
+  const savedLang=localStorage.getItem('fos_lang')||'en';
+  setLang(savedLang);
   updateBizUI();
 
   if(!BIZ.mode){
