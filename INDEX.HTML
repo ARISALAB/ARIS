@@ -3587,23 +3587,120 @@ function formatLicenseInput(el){
   el.value=v;
 }
 
-function activateLicense(){
-  const key=document.getElementById('license-key-input').value.trim();
+// ── SUPABASE CONFIG ──
+const SB_URL='https://frydjlifgcyywfliskkb.supabase.co';
+const SB_KEY='sb_publishable_FA6IuESx-TioUrKzQC3jpA_V0XjVPcp';
+
+async function sbFetch(path,opts={}){
+  const res=await fetch(SB_URL+path,{
+    ...opts,
+    headers:{
+      'apikey':SB_KEY,
+      'Authorization':'Bearer '+SB_KEY,
+      'Content-Type':'application/json',
+      'Prefer':'return=representation',
+      ...(opts.headers||{})
+    }
+  });
+  const data=await res.json().catch(()=>({}));
+  return{ok:res.ok,status:res.status,data};
+}
+
+async function activateLicense(){
+  const key=document.getElementById('license-key-input').value.trim().toUpperCase();
   const errEl=document.getElementById('license-error');
-  if(isValidKey(key)){
-    // Bind to this machine on first activation
+  const btn=document.querySelector('#license-screen .btn-primary');
+
+  // 1. Local format check first (fast)
+  if(!isValidKey(key)){
+    errEl.textContent='Invalid key format. Check and try again.';
+    errEl.style.display='block';
+    document.getElementById('license-key-input').classList.add('error');
+    setTimeout(()=>document.getElementById('license-key-input').classList.remove('error'),400);
+    return;
+  }
+
+  // 2. Show loading state
+  btn.textContent='Verifying…';btn.disabled=true;
+  errEl.style.display='none';
+
+  try{
+    const machineId=getMachineId();
+
+    // 3. Look up key in Supabase
+    const {ok,data}=await sbFetch(
+      `/rest/v1/licenses?license_key=eq.${encodeURIComponent(key)}&select=*&limit=1`
+    );
+
+    if(!ok||!Array.isArray(data)||data.length===0){
+      // Key not found in database — not issued by you
+      errEl.textContent='This key was not found in our system. Contact your FinanceOS provider.';
+      errEl.style.display='block';
+      btn.textContent='Activate License';btn.disabled=false;
+      return;
+    }
+
+    const record=data[0];
+
+    // 4. Check if key is disabled
+    if(!record.is_active){
+      errEl.textContent='This license has been deactivated. Contact your FinanceOS provider.';
+      errEl.style.display='block';
+      btn.textContent='Activate License';btn.disabled=false;
+      return;
+    }
+
+    // 5. Check machine binding
+    if(record.machine_id && record.machine_id!==machineId){
+      // Already bound to a different device
+      errEl.textContent='This key is already active on another device. Contact your FinanceOS provider to transfer your license.';
+      errEl.style.display='block';
+      btn.textContent='Activate License';btn.disabled=false;
+      return;
+    }
+
+    // 6. Bind to this machine (first activation or same machine)
+    if(!record.machine_id){
+      const {ok:upOk}=await sbFetch(
+        `/rest/v1/licenses?license_key=eq.${encodeURIComponent(key)}`,
+        {
+          method:'PATCH',
+          body:JSON.stringify({
+            machine_id:machineId,
+            activated_at:new Date().toISOString(),
+            business_name:record.business_name||BIZ.name||''
+          })
+        }
+      );
+      if(!upOk){
+        errEl.textContent='Activation failed. Check your internet connection and try again.';
+        errEl.style.display='block';
+        btn.textContent='Activate License';btn.disabled=false;
+        return;
+      }
+    }
+
+    // 7. All good — activate locally
     BIZ.license=key;
     BIZ.mode='active';
     BIZ.fingerprint=getFingerprint();
+    if(record.business_name)BIZ.name=BIZ.name||record.business_name;
     saveBIZ();
     document.getElementById('license-screen').style.display='none';
     errEl.style.display='none';
     notify('License activated! Welcome to FinanceOS ✓');
     if(!BIZ.name)showOnboarding();
-  } else {
-    errEl.style.display='block';
-    document.getElementById('license-key-input').classList.add('error');
-    setTimeout(()=>document.getElementById('license-key-input').classList.remove('error'),400);
+
+  }catch(e){
+    // Network error — allow offline activation if key format is valid
+    // (prevents locking out clients with no internet)
+    console.warn('Supabase check failed, allowing offline activation:',e);
+    BIZ.license=key;BIZ.mode='active';BIZ.fingerprint=getFingerprint();saveBIZ();
+    document.getElementById('license-screen').style.display='none';
+    notify('Activated offline. Connect to internet for full verification.');
+    if(!BIZ.name)showOnboarding();
+  }finally{
+    if(btn){btn.textContent='Activate License';btn.disabled=false;}
   }
 }
 
