@@ -6,6 +6,7 @@
 <title>FinanceOS — Business Management</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -310,8 +311,69 @@ footer a{color:var(--accent);text-decoration:none}
 .bottom-nav-more-item svg{width:20px;height:20px;flex-shrink:0;stroke:currentColor}
 .bottom-nav-more-divider{height:1px;background:var(--border);margin:6px 16px}
 
-/* ── PRINT ── */
-@media print{nav,footer,.no-print,#notif,.mobile-nav-toggle,.bottom-nav,.bottom-nav-more,.ambient{display:none!important}main{padding:0}body{background:white}}
+/* ── PRINT / PDF ── */
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  body{background:#fff!important;color:#111!important;font-family:'Plus Jakarta Sans',Arial,sans-serif!important;font-size:11pt}
+  nav,footer,.no-print,#notif,.mobile-nav-toggle,.bottom-nav,.bottom-nav-more,.ambient,
+  .btn,.btn-icon,.modal-overlay,.hero,.feature-grid,
+  #page-income,#page-expenses,#page-suppliers,#page-payroll,
+  #page-weekly-report,#page-monthly-report:not(.active),
+  #page-annual-report:not(.active),#page-daily-report:not(.active),
+  #page-home{display:none!important}
+  main{padding:0!important;max-width:100%!important}
+  .page.active{display:block!important}
+  /* Report header */
+  .page.active::before{
+    content:'FinanceOS — Business Report';
+    display:block;font-size:20pt;font-weight:800;
+    color:#0a0b0f;margin-bottom:6pt;
+  }
+  .page.active::after{
+    content:'Generated: ' attr(data-date);
+    display:block;font-size:9pt;color:#666;margin-bottom:20pt;
+  }
+  /* Stats */
+  .stat{background:#f8f9fb!important;border:1px solid #ddd!important;border-radius:8pt!important;padding:12pt!important;break-inside:avoid}
+  .stat-value{font-size:18pt!important;color:#111!important;font-weight:800!important}
+  .stat-value.green{color:#059669!important}
+  .stat-value.red{color:#dc2626!important}
+  .stat-value.blue{color:#1d4ed8!important}
+  .stat-value.amber{color:#d97706!important}
+  .stat-label{color:#555!important}
+  /* Grid */
+  .grid-4{grid-template-columns:repeat(4,1fr)!important;gap:8pt!important}
+  .grid-2{grid-template-columns:1fr 1fr!important;gap:10pt!important}
+  .section{margin-bottom:16pt!important}
+  /* Balance ledger */
+  .balance-ledger{background:#f8f9fb!important;border:1px solid #ddd!important;border-radius:8pt!important;padding:14pt!important;break-inside:avoid}
+  .balance-col{background:#fff!important;border:1px solid #ddd!important;border-radius:6pt!important;padding:10pt!important}
+  .balance-col-total{background:#f0f4ff!important}
+  .balance-amount.pos{color:#059669!important}
+  .balance-amount.neg{color:#dc2626!important}
+  .balance-label{color:#555!important;font-size:9pt!important}
+  /* Tables */
+  .table-wrap{border:1px solid #ddd!important;border-radius:6pt!important;overflow:visible!important}
+  table{font-size:9pt!important}
+  th{background:#f0f2f6!important;color:#333!important;padding:7pt 10pt!important}
+  td{padding:6pt 10pt!important;color:#111!important;border-bottom:1px solid #eee!important}
+  .amount-pos{color:#059669!important}
+  .amount-neg{color:#dc2626!important}
+  .tfoot td{background:#f0f2f6!important}
+  /* Report sections */
+  .report-section{background:#fff!important;border:1px solid #ddd!important;border-radius:6pt!important;padding:12pt!important;break-inside:avoid}
+  .card-title{color:#666!important;font-size:8pt!important}
+  .summary-val.pos{color:#059669!important}
+  .summary-val.neg{color:#dc2626!important}
+  /* Charts */
+  .chart-box{border:1px solid #ddd!important;border-radius:6pt!important;padding:12pt!important;break-inside:avoid}
+  /* Alert */
+  .alert-info{background:#eff6ff!important;color:#1d4ed8!important;border:1px solid #bfdbfe!important}
+  /* Page breaks */
+  .grid-4{break-inside:avoid}
+  .balance-grid{grid-template-columns:1fr 1fr 1fr!important}
+  @page{margin:15mm 12mm;size:A4}
+}
 
 /* ── RESPONSIVE ── */
 @media(max-width:768px){
@@ -370,6 +432,51 @@ footer a{color:var(--accent);text-decoration:none}
 .balance-amount{font-family:var(--mono);font-size:13.5px;font-weight:600}
 .balance-amount.pos{color:var(--accent)}
 .balance-amount.neg{color:var(--danger)}
+
+/* ── LICENSE SCREEN ── */
+.license-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px}
+.license-box{background:var(--surface);border:1px solid var(--border-bright);border-radius:var(--radius-2xl);padding:40px;max-width:480px;width:100%;text-align:center;position:relative;overflow:hidden}
+.license-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.license-logo{width:56px;height:56px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 0 30px rgba(0,212,170,.3)}
+.license-logo svg{width:28px;height:28px;fill:white}
+.license-title{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px}
+.license-sub{font-size:13px;color:var(--ink3);margin-bottom:28px;line-height:1.6}
+.license-input-wrap{position:relative;margin-bottom:16px}
+.license-input{padding:14px 16px;background:var(--bg3);border:1.5px solid var(--border-bright);border-radius:var(--radius-lg);font-size:15px;font-family:var(--mono);letter-spacing:2px;text-align:center;color:var(--ink);width:100%;outline:none;transition:border-color .2s}
+.license-input:focus{border-color:var(--accent)}
+.license-input.error{border-color:var(--danger);animation:shake .3s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.license-demo{font-size:11.5px;color:var(--ink3);margin-top:12px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.license-demo:hover{color:var(--ink2)}
+.demo-badge{display:inline-flex;align-items:center;gap:5px;background:var(--warning-subtle);border:1px solid rgba(245,158,11,.2);color:var(--warning);border-radius:20px;padding:3px 10px;font-size:10.5px;font-weight:700;margin-bottom:16px}
+
+/* ── ONBOARDING MODAL ── */
+.onboard-step{display:none}.onboard-step.active{display:block}
+.onboard-number{width:28px;height:28px;background:var(--accent-subtle);border:1.5px solid rgba(0,212,170,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--accent);flex-shrink:0}
+.onboard-steps-bar{display:flex;gap:6px;margin-bottom:24px}
+.onboard-step-dot{flex:1;height:3px;border-radius:2px;background:var(--border)}
+.onboard-step-dot.done{background:var(--accent)}
+
+/* ── DASHBOARD CHART ── */
+.dashboard-chart-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:22px;margin-bottom:24px}
+.dashboard-chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.dashboard-chart-title{font-size:13px;font-weight:700;color:var(--ink)}
+.dashboard-legend{display:flex;gap:16px}
+.dashboard-legend-item{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink3)}
+.dashboard-legend-dot{width:8px;height:8px;border-radius:50%}
+
+/* ── CREDIT PAGE ── */
+.credit-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+@media(max-width:640px){.credit-summary-grid{grid-template-columns:1fr}}
+.credit-supplier-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);overflow:hidden;margin-bottom:14px}
+.credit-supplier-header{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border-bottom:1px solid var(--border);cursor:pointer}
+.credit-supplier-header:hover{background:var(--surface2)}
+.credit-supplier-name{font-weight:700;font-size:14px}
+.credit-supplier-bal{font-family:var(--mono);font-weight:700;font-size:14px;color:var(--danger)}
+.credit-supplier-body{padding:0}
+
+/* ── BIZ NAME IN HERO ── */
+.hero-biz-name{font-size:11px;font-weight:600;color:rgba(255,255,255,.5);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
 /* running balance in income/expense pages */
 .running-balance{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-top:14px}
 .running-balance-title{font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;display:flex;align-items:center;gap:6px}
@@ -386,6 +493,119 @@ footer a{color:var(--accent);text-decoration:none}
 <body>
 <div class="ambient ambient-1"></div>
 <div class="ambient ambient-2"></div>
+
+<!-- LICENSE SCREEN -->
+<div class="license-screen" id="license-screen" style="display:none">
+  <div class="license-box">
+    <div class="license-logo"><svg viewBox="0 0 20 20"><path d="M2 4h16v2H2V4zm0 5h12v2H2V9zm0 5h14v2H2v-2z"/></svg></div>
+    <div class="license-title">FinanceOS</div>
+    <div class="license-sub">Enter your license key to activate the application,<br>or continue in Demo mode (3 entries limit).</div>
+    <div id="license-demo-badge" style="display:none"><span class="demo-badge">⚠ DEMO MODE — 3 entry limit</span></div>
+    <div class="license-input-wrap">
+      <input class="license-input" id="license-key-input" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19" oninput="formatLicenseInput(this)" onkeydown="if(event.key==='Enter')activateLicense()"/>
+    </div>
+    <button class="btn btn-primary" onclick="activateLicense()" style="width:100%;justify-content:center;padding:13px">Activate License</button>
+    <div class="license-demo" onclick="enterDemoMode()">Continue in Demo mode →</div>
+    <div id="license-error" style="font-size:12px;color:var(--danger);margin-top:12px;display:none">Invalid license key. Please try again.</div>
+  </div>
+</div>
+
+<!-- ONBOARDING MODAL -->
+<div class="modal-overlay" id="modal-onboard">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-title">
+      <span>Welcome to FinanceOS 👋</span>
+    </div>
+    <div class="onboard-steps-bar">
+      <div class="onboard-step-dot done" id="ob-dot-1"></div>
+      <div class="onboard-step-dot" id="ob-dot-2"></div>
+      <div class="onboard-step-dot" id="ob-dot-3"></div>
+    </div>
+    <!-- Step 1: Business Name -->
+    <div class="onboard-step active" id="ob-step-1">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+        <div class="onboard-number">1</div>
+        <div>
+          <div style="font-weight:700;font-size:15px">What's your business name?</div>
+          <div style="font-size:12.5px;color:var(--ink3);margin-top:2px">It will appear in reports and PDF exports.</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Business / Restaurant Name</label>
+        <input id="ob-biz-name" placeholder="e.g. Εστιατόριο Παπαδόπουλος" style="font-size:15px;padding:12px"/>
+      </div>
+    </div>
+    <!-- Step 2: Currency -->
+    <div class="onboard-step" id="ob-step-2">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+        <div class="onboard-number">2</div>
+        <div>
+          <div style="font-weight:700;font-size:15px">Select your currency</div>
+          <div style="font-size:12.5px;color:var(--ink3);margin-top:2px">You can change this later from the Tools menu.</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Currency</label>
+        <select id="ob-currency" style="font-size:14px">
+          <option value="EUR|€|el-GR" selected>Euro (€) — EUR</option>
+          <option value="USD|$|en-US">US Dollar ($) — USD</option>
+          <option value="GBP|£|en-GB">British Pound (£) — GBP</option>
+          <option value="CHF|CHF|de-CH">Swiss Franc (CHF)</option>
+          <option value="TRY|₺|tr-TR">Turkish Lira (₺)</option>
+          <option value="AED|د.إ|ar-AE">UAE Dirham (د.إ)</option>
+        </select>
+      </div>
+    </div>
+    <!-- Step 3: Language -->
+    <div class="onboard-step" id="ob-step-3">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+        <div class="onboard-number">3</div>
+        <div>
+          <div style="font-weight:700;font-size:15px">Choose your language</div>
+          <div style="font-size:12.5px;color:var(--ink3);margin-top:2px">Interface, reports and PDFs will use this language.</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div id="ob-lang-el" onclick="selectObLang('el')" style="padding:18px;border:2px solid var(--accent);border-radius:var(--radius-lg);cursor:pointer;text-align:center;background:var(--accent-subtle)">
+          <div style="font-size:28px;margin-bottom:8px">🇬🇷</div>
+          <div style="font-weight:700">Ελληνικά</div>
+          <div style="font-size:11.5px;color:var(--ink3);margin-top:3px">Greek</div>
+        </div>
+        <div id="ob-lang-en" onclick="selectObLang('en')" style="padding:18px;border:1.5px solid var(--border);border-radius:var(--radius-lg);cursor:pointer;text-align:center">
+          <div style="font-size:28px;margin-bottom:8px">🇬🇧</div>
+          <div style="font-weight:700">English</div>
+          <div style="font-size:11.5px;color:var(--ink3);margin-top:3px">English</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:24px;gap:10px">
+      <button class="btn btn-secondary" id="ob-back-btn" onclick="obStep(-1)" style="display:none">← Back</button>
+      <button class="btn btn-primary" id="ob-next-btn" onclick="obStep(1)" style="flex:1;justify-content:center">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: BUSINESS SETTINGS -->
+<div class="modal-overlay" id="modal-biz-settings">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-title">
+      <span>Business Settings</span>
+      <button class="modal-close" onclick="closeModal('modal-biz-settings')"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l8 8M14 6l-8 8"/></svg></button>
+    </div>
+    <div class="form-group" style="margin-bottom:14px">
+      <label>Business / Restaurant Name</label>
+      <input id="biz-name-input" placeholder="e.g. Εστιατόριο Παπαδόπουλος" style="font-size:15px;padding:12px"/>
+    </div>
+    <div class="form-group" style="margin-bottom:20px">
+      <label>License Key</label>
+      <input id="biz-license-display" readonly style="font-family:var(--mono);letter-spacing:1px;color:var(--accent);background:var(--bg3)"/>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px">
+      <button class="btn btn-secondary" onclick="closeModal('modal-biz-settings')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveBizSettings()">Save</button>
+    </div>
+  </div>
+</div>
 
 <!-- NAV -->
 <nav>
@@ -404,6 +624,7 @@ footer a{color:var(--accent);text-decoration:none}
     <button class="nav-link" onclick="nav('income')" id="nl-income" data-el="nav-income">Revenue</button>
     <button class="nav-link" onclick="nav('expenses')" id="nl-expenses" data-el="nav-expenses">Expenses</button>
     <button class="nav-link" onclick="nav('suppliers')" id="nl-suppliers" data-el="nav-suppliers">Suppliers</button>
+    <button class="nav-link" onclick="nav('credit')" id="nl-credit" style="color:var(--warning)" title="Outstanding credit balances">On Credit</button>
     <button class="nav-link" onclick="nav('payroll')" id="nl-payroll" data-el="nav-payroll">Payroll</button>
     <div class="nav-dropdown" id="dd-reports">
       <button class="nav-link" onclick="toggleDD()" id="nl-reports">
@@ -416,9 +637,37 @@ footer a{color:var(--accent);text-decoration:none}
         <div class="nav-dropdown-item" onclick="nav('annual-report')"><span>📊</span> <span data-el="nav-annual">Annual Report</span></div>
       </div>
     </div>
+    <div class="nav-dropdown" id="dd-tools">
+      <button class="nav-link" onclick="toggleToolsDD()" id="nl-tools">
+        Tools ▾
+      </button>
+      <div class="nav-dropdown-menu" style="min-width:220px">
+        <div class="nav-dropdown-item" onclick="openModal('modal-export');closeDDs()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export to Excel
+        </div>
+        <div class="nav-dropdown-item" onclick="openModal('modal-pdf');closeDDs()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Export PDF Report
+        </div>
+        <div style="height:1px;background:var(--border);margin:5px 0"></div>
+        <div class="nav-dropdown-item" onclick="backupData();closeDDs()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v14a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Backup Data
+        </div>
+        <div class="nav-dropdown-item" onclick="document.getElementById('restore-input').click();closeDDs()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12a9 9 0 109 9"/><polyline points="3 3 3 9 9 9"/></svg>
+          Restore Backup
+        </div>
+      </div>
+    </div>
   </div>
   <div class="nav-actions">
-    <button class="lang-btn" id="btn-currency" onclick="openModal('modal-currency')" title="Currency" style="font-weight:700;font-family:var(--mono);min-width:52px;justify-content:center" id="nav-currency-btn">€ EUR</button>
+    <button class="lang-btn" onclick="openModal('modal-biz-settings');document.getElementById('biz-name-input').value=BIZ.name;document.getElementById('biz-license-display').value=BIZ.license||'—'" title="Business Settings" style="gap:5px">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+      <span id="nav-biz-name" style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Settings</span>
+    </button>
+    <button class="lang-btn" id="btn-currency" onclick="openModal('modal-currency')" title="Currency" style="font-weight:700;font-family:var(--mono);min-width:52px;justify-content:center">€ EUR</button>
     <button class="lang-btn" id="btn-lang-el" onclick="setLang('el')">🇬🇷 EL</button>
     <button class="lang-btn active-lang" id="btn-lang-en" onclick="setLang('en')">🇬🇧 EN</button>
   </div>
@@ -446,7 +695,11 @@ footer a{color:var(--accent);text-decoration:none}
       </button>
     </div>
     <div id="modal-supplier-body"></div>
-    <div style="margin-top:18px;text-align:right">
+    <div style="margin-top:18px;display:flex;justify-content:flex-end;gap:8px">
+      <button class="btn btn-secondary btn-sm" onclick="printSupplierTransactions()" style="gap:6px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        PDF
+      </button>
       <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-supplier')" data-el="btn-close">Close</button>
     </div>
   </div>
@@ -642,6 +895,102 @@ footer a{color:var(--accent);text-decoration:none}
   </div>
 </div>
 
+<!-- HIDDEN RESTORE INPUT -->
+<input type="file" id="restore-input" accept=".json" style="display:none" onchange="restoreData(event)"/>
+
+<!-- MODAL: EXPORT -->
+<div class="modal-overlay" id="modal-export">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-title">
+      <span>Export to Excel</span>
+      <button class="modal-close" onclick="closeModal('modal-export')"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l8 8M14 6l-8 8"/></svg></button>
+    </div>
+    <p style="font-size:13px;color:var(--ink3);margin-bottom:20px">Choose what to include in the Excel export. Each section becomes a separate sheet.</p>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+      <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius-lg);cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        <input type="checkbox" id="exp-chk-income" checked style="width:16px;height:16px;accent-color:var(--accent)"/>
+        <div><div style="font-weight:600;font-size:13.5px">Revenue (Έσοδα)</div><div style="font-size:12px;color:var(--ink3)">All daily revenue entries with cash/card breakdown</div></div>
+      </label>
+      <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius-lg);cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        <input type="checkbox" id="exp-chk-expenses" checked style="width:16px;height:16px;accent-color:var(--accent)"/>
+        <div><div style="font-weight:600;font-size:13.5px">Expenses (Έξοδα)</div><div style="font-size:12px;color:var(--ink3)">All expense entries with supplier, type and payment method</div></div>
+      </label>
+      <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius-lg);cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        <input type="checkbox" id="exp-chk-payroll" checked style="width:16px;height:16px;accent-color:var(--accent)"/>
+        <div><div style="font-weight:600;font-size:13.5px">Payroll (Μισθοδοσία)</div><div style="font-size:12px;color:var(--ink3)">All payroll entries per employee per day</div></div>
+      </label>
+      <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius-lg);cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        <input type="checkbox" id="exp-chk-suppliers" checked style="width:16px;height:16px;accent-color:var(--accent)"/>
+        <div><div style="font-weight:600;font-size:13.5px">Suppliers (Προμηθευτές)</div><div style="font-size:12px;color:var(--ink3)">Supplier directory with balances</div></div>
+      </label>
+      <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius-lg);cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        <input type="checkbox" id="exp-chk-summary" checked style="width:16px;height:16px;accent-color:var(--accent)"/>
+        <div><div style="font-weight:600;font-size:13.5px">Monthly Summary</div><div style="font-size:12px;color:var(--ink3)">Month-by-month income, expenses and profit totals</div></div>
+      </label>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+      <div class="form-group">
+        <label>Date Range (optional — leave blank for all data)</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px">
+          <input type="date" id="exp-date-from" placeholder="From"/>
+          <input type="date" id="exp-date-to" placeholder="To"/>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px">
+      <button class="btn btn-secondary" onclick="closeModal('modal-export')">Cancel</button>
+      <button class="btn btn-primary" onclick="exportToExcel()" style="gap:8px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download Excel
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: PDF EXPORT -->
+<div class="modal-overlay" id="modal-pdf">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-title">
+      <span>Export PDF Report</span>
+      <button class="modal-close" onclick="closeModal('modal-pdf')"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l8 8M14 6l-8 8"/></svg></button>
+    </div>
+    <p style="font-size:13px;color:var(--ink3);margin-bottom:18px">Generates a professional PDF with real tables — supports Greek characters.</p>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">
+      <label style="display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--border);border-radius:var(--radius-lg);cursor:pointer">
+        <input type="radio" name="pdf-type" value="daily" id="pdf-daily" checked style="accent-color:var(--accent)"/>
+        <div><div style="font-weight:600;font-size:13px">Daily Report</div><div style="font-size:12px;color:var(--ink3)">Full analysis for one day with balance ledger</div></div>
+      </label>
+      <label style="display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--border);border-radius:var(--radius-lg);cursor:pointer">
+        <input type="radio" name="pdf-type" value="monthly" style="accent-color:var(--accent)"/>
+        <div><div style="font-weight:600;font-size:13px">Monthly Report</div><div style="font-size:12px;color:var(--ink3)">Month summary with day-by-day balance table</div></div>
+      </label>
+      <label style="display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--border);border-radius:var(--radius-lg);cursor:pointer">
+        <input type="radio" name="pdf-type" value="annual" style="accent-color:var(--accent)"/>
+        <div><div style="font-weight:600;font-size:13px">Annual Report</div><div style="font-size:12px;color:var(--ink3)">Full year month-by-month overview</div></div>
+      </label>
+      <label style="display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--border);border-radius:var(--radius-lg);cursor:pointer">
+        <input type="radio" name="pdf-type" value="custom" style="accent-color:var(--accent)"/>
+        <div><div style="font-weight:600;font-size:13px">Custom Range</div><div style="font-size:12px;color:var(--ink3)">Any date range with full day-by-day balance</div></div>
+      </label>
+    </div>
+    <div class="form-grid" style="margin-bottom:18px">
+      <div class="form-group"><label>Date / Month / Year</label><input type="date" id="pdf-date-from" value=""/></div>
+      <div class="form-group"><label>To (for Custom Range)</label><input type="date" id="pdf-date-to" value=""/></div>
+    </div>
+    <div class="form-group" style="margin-bottom:18px">
+      <label>Business Name (appears in PDF header)</label>
+      <input id="pdf-business-name" placeholder="e.g. Εστιατόριο Παπαδόπουλος" style="font-size:14px"/>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px">
+      <button class="btn btn-secondary" onclick="closeModal('modal-pdf')">Cancel</button>
+      <button class="btn btn-primary" onclick="generatePDF()" style="gap:8px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Generate PDF
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- ===== PAGES ===== -->
 <main>
 
@@ -651,6 +1000,7 @@ footer a{color:var(--accent);text-decoration:none}
     <div class="hero-grid-bg"></div>
     <div class="hero-content">
       <div class="hero-badge"><div class="hero-badge-dot"></div><span data-el="hero-badge">Professional Business Suite</span></div>
+      <div class="hero-biz-name" id="hero-biz-display" style="display:none"></div>
       <div class="hero-title" data-el="hero-title">Business Management<br><span>at a new level.</span></div>
       <div class="hero-sub" data-el="hero-sub">Track revenue, expenses, suppliers and payroll in one unified platform. Real-time analytics and beautiful reports — built for modern businesses.</div>
       <div class="hero-btns">
@@ -723,6 +1073,29 @@ footer a{color:var(--accent);text-decoration:none}
       <div class="feature-name" data-el="fc-monthly-report-name">Monthly Report</div>
       <div class="feature-desc" data-el="fc-monthly-report-desc">Monthly revenue, expenses & Food Cost analysis.</div>
       <div class="feature-arrow" style="color:var(--accent)" data-el="fc-view2">View report <span>→</span></div>
+    </div>
+  </div>
+
+  <!-- 30-DAY TREND CHART -->
+  <div class="dashboard-chart-box">
+    <div class="dashboard-chart-header">
+      <div>
+        <div class="dashboard-chart-title">Revenue & Expenses — Last 30 Days</div>
+        <div style="font-size:11.5px;color:var(--ink3);margin-top:3px" id="dashboard-chart-range"></div>
+      </div>
+      <div class="dashboard-legend">
+        <div class="dashboard-legend-item"><div class="dashboard-legend-dot" style="background:var(--accent)"></div>Revenue</div>
+        <div class="dashboard-legend-item"><div class="dashboard-legend-dot" style="background:var(--danger)"></div>Expenses</div>
+      </div>
+    </div>
+    <div style="position:relative;height:200px"><canvas id="dashboard-chart"></canvas></div>
+  </div>
+
+  <!-- CREDIT ALERT (shown if credit balance > 0) -->
+  <div id="home-credit-alert" style="display:none;margin-bottom:24px">
+    <div class="alert alert-warning" style="cursor:pointer" onclick="nav('credit')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span>You have outstanding credit balances: <strong id="home-credit-total"></strong> — <u>View On Credit →</u></span>
     </div>
   </div>
 </div>
@@ -1004,7 +1377,7 @@ footer a{color:var(--accent);text-decoration:none}
   <div class="flex" style="gap:12px;margin-bottom:24px;align-items:flex-end;flex-wrap:wrap">
     <div class="form-group"><label data-el="lbl-date3">Date</label><input type="date" id="dr-date"/></div>
     <button class="btn btn-primary" onclick="loadDailyReport()" data-el="btn-load">Load Report</button>
-    <button class="btn btn-secondary" onclick="printReport()">↓ PDF</button>
+    <button class="btn btn-secondary" onclick="printDailyReport()">↓ PDF</button>
   </div>
   <div id="daily-report-content">
     <div class="empty"><svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 13h4M9 17h6"/></svg><p data-el="empty-select-date3">Select a date and load the report</p></div>
@@ -1019,7 +1392,7 @@ footer a{color:var(--accent);text-decoration:none}
   <div class="flex" style="gap:12px;margin-bottom:24px;align-items:flex-end;flex-wrap:wrap">
     <div class="form-group"><label data-el="lbl-week">Week (any day in the week)</label><input type="date" id="wr-date"/></div>
     <button class="btn btn-primary" onclick="loadWeeklyReport()" data-el="btn-load2">Load Report</button>
-    <button class="btn btn-secondary" onclick="printReport()">↓ PDF</button>
+    <button class="btn btn-secondary" onclick="printWeeklyReport()">↓ PDF</button>
   </div>
   <div id="weekly-report-content"><div class="empty"><p data-el="empty-select-week2">Select a week</p></div></div>
 </div>
@@ -1032,7 +1405,7 @@ footer a{color:var(--accent);text-decoration:none}
   <div class="flex" style="gap:12px;margin-bottom:24px;align-items:flex-end;flex-wrap:wrap">
     <div class="form-group"><label data-el="lbl-month">Month</label><input type="month" id="mr-month"/></div>
     <button class="btn btn-primary" onclick="loadMonthlyReport()" data-el="btn-load3">Load Report</button>
-    <button class="btn btn-secondary" onclick="printReport()">↓ PDF</button>
+    <button class="btn btn-secondary" onclick="printMonthlyReport()">↓ PDF</button>
   </div>
   <div id="monthly-report-content"><div class="empty"><p data-el="empty-select-month">Select a month</p></div></div>
 </div>
@@ -1045,9 +1418,39 @@ footer a{color:var(--accent);text-decoration:none}
   <div class="flex" style="gap:12px;margin-bottom:24px;align-items:flex-end;flex-wrap:wrap">
     <div class="form-group"><label data-el="lbl-year">Year</label><input type="number" id="ar-year" min="2020" max="2040" placeholder="2025" style="width:130px"/></div>
     <button class="btn btn-primary" onclick="loadAnnualReport()" data-el="btn-load4">Load Report</button>
-    <button class="btn btn-secondary" onclick="printReport()">↓ PDF</button>
+    <button class="btn btn-secondary" onclick="printAnnualReport()">↓ PDF</button>
   </div>
   <div id="annual-report-content"><div class="empty"><p data-el="empty-select-year">Select a year</p></div></div>
+</div>
+<!-- ON CREDIT PAGE -->
+<div class="page" id="page-credit">
+  <div class="page-header">
+    <div>
+      <div class="page-title">On Credit — Outstanding Balances</div>
+      <div class="page-sub">All unpaid invoices across all suppliers</div>
+    </div>
+    <button class="btn btn-secondary btn-sm" onclick="printCreditReport()">↓ PDF</button>
+  </div>
+
+  <!-- Summary stats -->
+  <div class="credit-summary-grid" id="credit-summary-stats">
+    <div class="stat amber"><div class="stat-glow"></div>
+      <div class="stat-label">Total Credit Balance</div>
+      <div class="stat-value amber" id="cr-total-balance">—</div>
+    </div>
+    <div class="stat red"><div class="stat-glow"></div>
+      <div class="stat-label">Suppliers with Credit</div>
+      <div class="stat-value red" id="cr-supplier-count">—</div>
+    </div>
+    <div class="stat amber"><div class="stat-glow"></div>
+      <div class="stat-label">Oldest Unpaid</div>
+      <div class="stat-value" style="font-size:18px" id="cr-oldest-date">—</div>
+    </div>
+  </div>
+
+  <div id="credit-content">
+    <div class="empty"><p>No outstanding credit balances</p></div>
+  </div>
 </div>
 
 </main>
@@ -1087,6 +1490,10 @@ footer a{color:var(--accent);text-decoration:none}
     <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
     <span data-el="nav-suppliers">Suppliers</span>
   </div>
+  <div class="bottom-nav-more-item" onclick="nav('credit');closeMobileMore()" id="bm-credit" style="color:var(--warning)">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+    <span>On Credit</span>
+  </div>
   <div class="bottom-nav-more-item" onclick="nav('payroll');closeMobileMore()" id="bm-payroll">
     <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
     <span data-el="nav-payroll">Payroll</span>
@@ -1112,6 +1519,12 @@ footer a{color:var(--accent);text-decoration:none}
   <div style="display:flex;gap:8px;padding:6px 16px 4px">
     <button class="lang-btn" id="btn-lang-el2" onclick="setLang('el');closeMobileMore()" style="flex:1;justify-content:center">🇬🇷 EL</button>
     <button class="lang-btn active-lang" id="btn-lang-en2" onclick="setLang('en');closeMobileMore()" style="flex:1;justify-content:center">🇬🇧 EN</button>
+  </div>
+  <div class="bottom-nav-more-divider"></div>
+  <div style="display:flex;gap:8px;padding:4px 16px 8px">
+    <button class="btn btn-secondary btn-sm" onclick="openModal('modal-export');closeMobileMore()" style="flex:1;justify-content:center">↓ Excel</button>
+    <button class="btn btn-secondary btn-sm" onclick="openModal('modal-pdf');closeMobileMore()" style="flex:1;justify-content:center">↓ PDF</button>
+    <button class="btn btn-secondary btn-sm" onclick="backupData();closeMobileMore()" style="flex:1;justify-content:center">💾 Backup</button>
   </div>
 </div>
 
@@ -1407,14 +1820,18 @@ document.addEventListener('DOMContentLoaded',()=>{
     m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});
   });
 });
-function toggleDD(){document.getElementById('dd-reports').classList.toggle('open');}
+function toggleDD(){
+  document.getElementById('dd-reports').classList.toggle('open');
+  document.getElementById('dd-tools').classList.remove('open');
+}
 document.addEventListener('click',e=>{
   if(!e.target.closest('#dd-reports'))document.getElementById('dd-reports').classList.remove('open');
+  if(!e.target.closest('#dd-tools'))document.getElementById('dd-tools').classList.remove('open');
 });
 
 // ── NAV ──
 let currentPage='home';
-const pages=['home','income','expenses','suppliers','payroll','daily-report','weekly-report','monthly-report','annual-report'];
+const pages=['home','income','expenses','suppliers','credit','payroll','daily-report','weekly-report','monthly-report','annual-report'];
 function nav(page){
   pages.forEach(p=>{
     const el=document.getElementById('page-'+p);if(el)el.classList.toggle('active',p===page);
@@ -1442,6 +1859,7 @@ function onPageEnter(page){
     populateSupplierSelect();renderExpenseTable();renderExpenseSummary();
   }
   if(page==='suppliers')renderSuppliers();
+  if(page==='credit')renderCreditPage();
   if(page==='payroll'){if(!document.getElementById('pay-date').value)document.getElementById('pay-date').value=d;renderEmployees();}
   if(page==='daily-report'&&!document.getElementById('dr-date').value){document.getElementById('dr-date').value=d;loadDailyReport();}
   if(page==='monthly-report'&&!document.getElementById('mr-month').value){document.getElementById('mr-month').value=d.slice(0,7);loadMonthlyReport();}
@@ -1453,7 +1871,6 @@ function updateHomeStats(){
   const d=today();
   const income=DB.income().filter(x=>x.date===d);const expenses=DB.expenses().filter(x=>x.date===d);
   const totalInc=income.reduce((s,x)=>s+x.cash+x.card,0);const totalExp=expenses.reduce((s,x)=>s+x.amount,0);
-  // Running balance = ALL history up to and including today
   const allIncome=DB.income();const allExpenses=DB.expenses();
   const totalCash=allIncome.reduce((s,x)=>s+x.cash,0)-allExpenses.filter(x=>x.pay==='Μετρητά').reduce((s,x)=>s+x.amount,0);
   const totalCard=allIncome.reduce((s,x)=>s+x.card,0)-allExpenses.filter(x=>x.pay==='Κάρτα').reduce((s,x)=>s+x.amount,0);
@@ -1461,9 +1878,28 @@ function updateHomeStats(){
   document.getElementById('hs-expense').textContent=fmtE(totalExp);
   document.getElementById('hs-cash').textContent=fmtE(totalCash+totalCard);
   document.getElementById('hs-suppliers').textContent=DB.suppliers().length;
-  // Update label to show it's cumulative
   const cashLabel=document.getElementById('hs-lbl-cash');
   if(cashLabel)cashLabel.textContent=lang==='en'?'Total Balance':'Συνολικό Υπόλοιπο';
+  // Business name in hero
+  const bizDisplay=document.getElementById('hero-biz-display');
+  if(BIZ.name&&bizDisplay){bizDisplay.textContent=BIZ.name;bizDisplay.style.display='block';}
+  // Credit alert
+  const creditTotal=DB.expenses().filter(x=>x.pay==='Επί Πιστώσει').reduce((s,x)=>s+x.amount,0);
+  const paidCredit=DB.expenses().filter(x=>x.pay!=='Επί Πιστώσει'&&DB.expenses().some(y=>y.pay==='Επί Πιστώσει'&&y.supplier===x.supplier)).reduce((s,x)=>s+x.amount,0);
+  const alertEl=document.getElementById('home-credit-alert');
+  if(alertEl){
+    // Compute actual credit balance per supplier
+    let totalCreditBal=0;
+    DB.suppliers().forEach(s=>{
+      const exp=DB.expenses().filter(x=>x.supplier===s.name);
+      const tot=exp.reduce((a,x)=>a+x.amount,0);
+      const paid=exp.filter(x=>x.pay!=='Επί Πιστώσει').reduce((a,x)=>a+x.amount,0);
+      totalCreditBal+=tot-paid;
+    });
+    if(totalCreditBal>0){alertEl.style.display='block';document.getElementById('home-credit-total').textContent=fmtE(totalCreditBal);}
+    else alertEl.style.display='none';
+  }
+  renderDashboardChart();
 }
 
 // ── INCOME ──
@@ -1491,6 +1927,7 @@ function updateIncCalc(){
 function updateIncTotal(){updateIncCalc();}
 
 function addIncome(){
+  if(checkDemoLimit())return;
   const d=document.getElementById('inc-date').value;
   const desc=document.getElementById('inc-desc').value.trim();
   const total=parseFloat(document.getElementById('inc-total-raw').value)||0;
@@ -1580,6 +2017,7 @@ function populateSupplierSelect(){
   sel.innerHTML=`<option value="">${t('opt-select')}</option>`+DB.suppliers().map(s=>`<option value="${s.name}" ${s.name===cur?'selected':''}>${s.name}</option>`).join('');
 }
 function addExpense(){
+  if(checkDemoLimit())return;
   const d=document.getElementById('exp-date').value;const supplier=document.getElementById('exp-supplier').value;
   const type=document.getElementById('exp-type').value;const pay=document.getElementById('exp-pay').value;
   const inv=document.getElementById('exp-inv').value.trim();const amount=parseFloat(document.getElementById('exp-amount').value)||0;
@@ -1658,7 +2096,56 @@ function renderExpenseSummary(){
       <div class="rb-row"><span class="rb-label" style="font-weight:700">Total closing</span><span class="rb-val ${(cashAfter+cardAfter)>=0?'amount-pos':'amount-neg'}" style="font-size:15px;font-weight:700">${fmtE(cashAfter+cardAfter)}</span></div>
     </div>`;
 }
-function exportExpensePDF(){window.print();}
+function exportExpensePDF(){
+  const d=document.getElementById('exp-filter-date').value||document.getElementById('exp-date').value;
+  if(!d){notify(lang==='el'?'Επιλέξτε ημερομηνία':'Select a date first','danger');return;}
+  _printReport('daily',d);
+}
+
+// ── REPORT PDF SHORTCUTS ──
+// Pre-fill the PDF modal fields and call generatePDF directly —
+// same HTML-print-window logic, same Greek support.
+function _printReport(type,dateVal,dateVal2){
+  const fromInput=document.getElementById('pdf-date-from');
+  const toInput=document.getElementById('pdf-date-to');
+  const prevFrom=fromInput.value,prevTo=toInput.value;
+  fromInput.value=dateVal||'';
+  toInput.value=dateVal2||'';
+  document.querySelectorAll('input[name="pdf-type"]').forEach(r=>{r.checked=(r.value===type);});
+  generatePDF();
+  fromInput.value=prevFrom;
+  toInput.value=prevTo;
+}
+function printDailyReport(){
+  const d=document.getElementById('dr-date').value;
+  if(!d){notify(lang==='el'?'Επιλέξτε ημερομηνία':'Select a date first','danger');return;}
+  _printReport('daily',d);
+}
+function printWeeklyReport(){
+  const d=document.getElementById('wr-date').value;
+  if(!d){notify(lang==='el'?'Επιλέξτε εβδομάδα':'Select a week first','danger');return;}
+  const date=new Date(d);const day=date.getDay();
+  const mon=new Date(date);mon.setDate(date.getDate()-(day===0?6:day-1));
+  const sun=new Date(mon);sun.setDate(mon.getDate()+6);
+  _printReport('custom',mon.toISOString().slice(0,10),sun.toISOString().slice(0,10));
+}
+function printMonthlyReport(){
+  const m=document.getElementById('mr-month').value;
+  if(!m){notify(lang==='el'?'Επιλέξτε μήνα':'Select a month first','danger');return;}
+  _printReport('monthly',m+'-01');
+}
+function printAnnualReport(){
+  const yr=document.getElementById('ar-year').value;
+  if(!yr){notify(lang==='el'?'Εισάγετε έτος':'Enter a year first','danger');return;}
+  _printReport('annual',yr+'-01-01');
+}
+function printReport(){
+  if(currentPage==='daily-report')printDailyReport();
+  else if(currentPage==='weekly-report')printWeeklyReport();
+  else if(currentPage==='monthly-report')printMonthlyReport();
+  else if(currentPage==='annual-report')printAnnualReport();
+  else notify(lang==='el'?'Ανοίξτε πρώτα μια αναφορά':'Open a report first','danger');
+}
 
 // ── SUPPLIERS ──
 function addSupplier(){
@@ -1697,7 +2184,10 @@ function renderSuppliers(){
       </td></tr>`;
   }).join('');
 }
+let _currentSupplierPdfId=null;
+
 function showSupplierTransactions(id){
+  _currentSupplierPdfId=id;
   const s=DB.suppliers().find(x=>x.id===id);if(!s)return;
   document.getElementById('modal-supplier-name').textContent=(lang==='en'?'Transactions: ':'Συναλλαγές: ')+s.name;
   const exp=DB.expenses().filter(x=>x.supplier===s.name).sort((a,b)=>a.date.localeCompare(b.date));
@@ -1718,6 +2208,153 @@ function showSupplierTransactions(id){
       </tfoot></table>
     </div>`;
   openModal('modal-supplier');
+}
+
+function printSupplierTransactions(){
+  const id=_currentSupplierPdfId;
+  if(!id)return;
+  const s=DB.suppliers().find(x=>x.id===id);
+  if(!s){notify('Supplier not found','danger');return;}
+  const isEl=lang==='el';
+  const sym=CURRENCY.symbol;
+  const NF=n=>parseFloat(n||0).toLocaleString(CURRENCY.locale,{minimumFractionDigits:2,maximumFractionDigits:2});
+  const NE=n=>NF(n)+' '+sym;
+
+  const exp=DB.expenses().filter(x=>x.supplier===s.name).sort((a,b)=>a.date.localeCompare(b.date));
+  const total=exp.reduce((a,x)=>a+x.amount,0);
+  const paid=exp.filter(x=>x.pay!=='Επί Πιστώσει').reduce((a,x)=>a+x.amount,0);
+  const creditBalance=total-paid;
+  const payLabel={'Μετρητά':isEl?'Μετρητά':'Cash','Κάρτα':isEl?'Κάρτα':'Card','Επί Πιστώσει':isEl?'Επί Πιστώσει':'On Credit'};
+  const payColor={'Μετρητά':'#5a6372','Κάρτα':'#1d4ed8','Επί Πιστώσει':'#d97706'};
+
+  let runBalance=0;
+  const tableRows=exp.map((r,i)=>{
+    const onCredit=r.pay==='Επί Πιστώσει';
+    if(onCredit)runBalance+=r.amount;
+    const bg=i%2===0?'#f9fafb':'#ffffff';
+    return `<tr style="background:${bg}">
+      <td style="padding:6px 10px;border:1px solid #e5e7eb">${r.date}</td>
+      <td style="padding:6px 10px;border:1px solid #e5e7eb;font-family:monospace">${r.time}</td>
+      <td style="padding:6px 10px;border:1px solid #e5e7eb">
+        <span style="background:${payColor[r.pay]||'#5a6372'}22;color:${payColor[r.pay]||'#5a6372'};border:1px solid ${payColor[r.pay]||'#5a6372'}44;border-radius:12px;padding:2px 8px;font-size:9pt;font-weight:600">${payLabel[r.pay]||r.pay}</span>
+      </td>
+      <td style="padding:6px 10px;border:1px solid #e5e7eb;font-family:monospace">${r.inv||'—'}</td>
+      <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:right;font-family:monospace;font-weight:600;color:#dc2626">${NE(r.amount)}</td>
+      <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:right;font-family:monospace;color:${onCredit?'#d97706':'#aaa'}">${onCredit?NE(runBalance):'—'}</td>
+    </tr>`;
+  }).join('');
+
+  const html=`<!DOCTYPE html><html lang="${lang}"><head>
+    <meta charset="UTF-8"/>
+    <title>${s.name} — ${isEl?'Συναλλαγές':'Transactions'}</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+      *{box-sizing:border-box;margin:0;padding:0}
+      body{font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:10pt;color:#111;background:#fff;padding:0}
+      .page{padding:14mm 12mm}
+      .header{background:#0d1117;color:#fff;padding:10px 14px;border-radius:6px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center}
+      .header .logo{font-size:16pt;font-weight:800}
+      .header .sub{font-size:8pt;color:#8899bb;margin-top:2px}
+      .header .right{text-align:right;font-size:8.5pt;color:#aabbcc}
+      .header .right .biz{font-weight:700;color:#fff;font-size:10pt}
+      .accent{height:3px;background:linear-gradient(90deg,#00d4aa,#00b8ff);border-radius:2px;margin-bottom:14px}
+      .supplier-block{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;padding:14px;background:#f8f9fb;border:1px solid #e5e7eb;border-radius:8px}
+      .supplier-name{font-size:16pt;font-weight:800;letter-spacing:-0.5px;color:#111}
+      .supplier-meta{font-size:9pt;color:#666;margin-top:4px}
+      .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+      .kpi{border:1px solid #e5e7eb;border-radius:6px;padding:10px 12px;position:relative;overflow:hidden}
+      .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+      .kpi.neutral::before{background:#6b7280}
+      .kpi.paid::before{background:#059669}
+      .kpi.credit::before{background:#d97706}
+      .kpi-label{font-size:7.5pt;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px}
+      .kpi-val{font-size:14pt;font-weight:800;letter-spacing:-0.5px}
+      .kpi.neutral .kpi-val{color:#374151}
+      .kpi.paid .kpi-val{color:#059669}
+      .kpi.credit .kpi-val{color:#d97706}
+      .section-title{background:#0d1117;color:#fff;padding:6px 10px;font-size:8pt;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:0;border-radius:4px 4px 0 0}
+      table{width:100%;border-collapse:collapse;font-size:9pt}
+      th{background:#f0f2f6;color:#333;font-weight:700;padding:7px 10px;text-align:left;border:1px solid #ddd;font-size:8pt;text-transform:uppercase;letter-spacing:0.4px}
+      .footer{margin-top:20px;padding-top:8px;border-top:1px solid #e5e7eb;font-size:7.5pt;color:#aaa;display:flex;justify-content:space-between}
+      @page{margin:10mm;size:A4}
+      @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+    </style>
+  </head><body><div class="page">
+    <div class="header">
+      <div><div class="logo">FinanceOS</div><div class="sub">Business Management</div></div>
+      <div class="right">
+        <div class="biz">${isEl?'Αναφορά Προμηθευτή':'Supplier Report'}</div>
+        <div>${new Date().toLocaleDateString(isEl?'el-GR':'en-GB')}</div>
+      </div>
+    </div>
+    <div class="accent"></div>
+
+    <div class="supplier-block">
+      <div>
+        <div class="supplier-name">${s.name}</div>
+        <div class="supplier-meta">
+          ${s.type?`<span style="margin-right:12px">📂 ${s.type}</span>`:''}
+          ${s.phone?`<span style="margin-right:12px">📞 ${s.phone}</span>`:''}
+          ${s.afm?`<span>ΑΦΜ: ${s.afm}</span>`:''}
+        </div>
+      </div>
+      <div style="text-align:right;font-size:8.5pt;color:#666">
+        ${exp.length} ${isEl?'συναλλαγές':'transactions'}
+      </div>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi neutral">
+        <div class="kpi-label">${isEl?'Σύνολο Τιμολογίων':'Total Invoiced'}</div>
+        <div class="kpi-val">${NE(total)}</div>
+      </div>
+      <div class="kpi paid">
+        <div class="kpi-label">${isEl?'Πληρωμένα':'Paid'}</div>
+        <div class="kpi-val">${NE(paid)}</div>
+      </div>
+      <div class="kpi credit">
+        <div class="kpi-label">${isEl?'Υπόλοιπο Πίστωσης':'Credit Balance'}</div>
+        <div class="kpi-val">${NE(creditBalance)}</div>
+      </div>
+    </div>
+
+    <div class="section-title">${isEl?'Αναλυτικές Συναλλαγές':'Transaction Detail'}</div>
+    ${exp.length?`
+    <table>
+      <thead><tr>
+        <th>${isEl?'Ημερομηνία':'Date'}</th>
+        <th>${isEl?'Ώρα':'Time'}</th>
+        <th>${isEl?'Πληρωμή':'Payment'}</th>
+        <th>${isEl?'Τιμολόγιο':'Invoice'}</th>
+        <th style="text-align:right">${isEl?'Ποσό':'Amount'}</th>
+        <th style="text-align:right">${isEl?'Υπόλοιπο Πίστωσης':'Credit Balance'}</th>
+      </tr></thead>
+      <tbody>${tableRows}</tbody>
+      <tfoot>
+        <tr style="background:#e8ecf2;font-weight:700">
+          <td colspan="4" style="padding:7px 10px;border:1px solid #ddd">${isEl?'ΣΥΝΟΛΟ ΤΙΜΟΛΟΓΙΩΝ':'TOTAL INVOICED'}</td>
+          <td style="padding:7px 10px;border:1px solid #ddd;text-align:right;font-family:monospace;color:#dc2626">${NE(total)}</td>
+          <td style="border:1px solid #ddd"></td>
+        </tr>
+        <tr style="background:#e8ecf2;font-weight:700">
+          <td colspan="4" style="padding:7px 10px;border:1px solid #ddd">${isEl?'ΥΠΟΛΟΙΠΟ ΠΙΣΤΩΣΗΣ':'CREDIT BALANCE DUE'}</td>
+          <td style="padding:7px 10px;border:1px solid #ddd;text-align:right;font-family:monospace;color:#d97706">${NE(creditBalance)}</td>
+          <td style="border:1px solid #ddd"></td>
+        </tr>
+      </tfoot>
+    </table>`:`<div style="text-align:center;padding:40px;color:#aaa;border:1px solid #e5e7eb">${isEl?'Δεν υπάρχουν συναλλαγές':'No transactions found'}</div>`}
+
+    <div class="footer">
+      <span>FinanceOS — Business Management</span>
+      <span>${isEl?'Εκτυπώθηκε':'Printed'}: ${new Date().toLocaleString(isEl?'el-GR':'en-GB')}</span>
+    </div>
+  </div></body></html>`;
+
+  const win=window.open('','_blank','width=820,height=1000');
+  if(!win){notify(isEl?'Επιτρέψτε τα popups':'Allow popups to generate PDF','danger');return;}
+  win.document.write(html);
+  win.document.close();
+  win.onload=()=>{setTimeout(()=>{win.focus();win.print();},300);};
 }
 
 // ── PAYROLL ──
@@ -2155,7 +2792,469 @@ function renderChart(id,type,labels,data,colors){
   if(chartInst[id])chartInst[id].destroy();
   chartInst[id]=new Chart(ctx,{type,data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:0,borderRadius:type==='bar'?6:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{...CHART_DEFAULTS.plugins}}});
 }
-function printReport(){window.print();}
+// ── TOOLS DROPDOWN ──
+function toggleToolsDD(){
+  document.getElementById('dd-tools').classList.toggle('open');
+  document.getElementById('dd-reports').classList.remove('open');
+}
+function closeDDs(){
+  document.getElementById('dd-tools').classList.remove('open');
+  document.getElementById('dd-reports').classList.remove('open');
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#dd-tools'))document.getElementById('dd-tools').classList.remove('open');
+});
+
+// ── EXCEL EXPORT ──
+function exportToExcel(){
+  if(typeof XLSX==='undefined'){notify('Excel library not loaded','danger');return;}
+  const wb=XLSX.utils.book_new();
+  const from=document.getElementById('exp-date-from').value||null;
+  const to=document.getElementById('exp-date-to').value||null;
+  const fd=rows=>(!from&&!to)?rows:rows.filter(r=>(!from||r.date>=from)&&(!to||r.date<=to));
+  const sym=CURRENCY.symbol;
+  const isEl=lang==='el';
+
+  // Labels based on selected language
+  const L={
+    register:   isEl?`Ταμείο (${sym})`:`Register (${sym})`,
+    card:       isEl?`Κάρτα (${sym})`:`Card (${sym})`,
+    cash:       isEl?`Μετρητά (${sym})`:`Cash (${sym})`,
+    balCash:    isEl?`Υπόλ.Μετρ.(${sym})`:`Bal.Cash(${sym})`,
+    balCard:    isEl?`Υπόλ.Κάρτα(${sym})`:`Bal.Card(${sym})`,
+    balTotal:   isEl?`Υπόλ.Σύνολο(${sym})`:`Bal.Total(${sym})`,
+    date:       isEl?'Ημερομηνία':'Date',
+    time:       isEl?'Ώρα':'Time',
+    desc:       isEl?'Περιγραφή':'Description',
+    supplier:   isEl?'Προμηθευτής':'Supplier',
+    type:       isEl?'Τύπος':'Type',
+    payment:    isEl?'Πληρωμή':'Payment',
+    invoice:    isEl?'Τιμολόγιο':'Invoice',
+    amount:     isEl?`Ποσό (${sym})`:`Amount (${sym})`,
+    employee:   isEl?'Υπάλληλος':'Employee',
+    mode:       isEl?'Τύπος':'Mode',
+    qty:        isEl?'Ποσ.':'Qty',
+    rate:       isEl?`Τιμή(${sym})`:`Rate(${sym})`,
+    total:      isEl?`Σύνολο(${sym})`:`Total(${sym})`,
+    hourly:     isEl?'Ωριαίο':'Hourly',
+    daily:      isEl?'Ημερήσιο':'Daily',
+    company:    isEl?'Επωνυμία':'Company',
+    phone:      isEl?'Τηλέφωνο':'Phone',
+    taxid:      isEl?'ΑΦΜ':'Tax ID',
+    category:   isEl?'Κατηγορία':'Category',
+    totalInv:   isEl?`Σύν.Τιμολ.(${sym})`:`Total Inv.(${sym})`,
+    balDue:     isEl?`Υπόλ.Οφειλής(${sym})`:`Bal.Due(${sym})`,
+    month:      isEl?'Μήνας':'Month',
+    revenue:    isEl?`Έσοδα(${sym})`:`Revenue(${sym})`,
+    expenses:   isEl?`Έξοδα(${sym})`:`Expenses(${sym})`,
+    credit:     isEl?`Πίστωση(${sym})`:`Credit(${sym})`,
+    profit:     isEl?`Κέρδος(${sym})`:`Profit(${sym})`,
+    profitPct:  isEl?'Κέρδος%':'Profit%',
+    fc:         isEl?`FC(${sym})`:`FC(${sym})`,
+    grandTotal: isEl?'ΓΕΝΙΚΟ ΣΥΝΟΛΟ':'GRAND TOTAL',
+    cashPay:    isEl?'Μετρητά':'Cash',
+    cardPay:    isEl?'Κάρτα':'Card',
+    creditPay:  isEl?'Επί Πιστώσει':'On Credit',
+  };
+
+  function addSheet(name,headers,rows,colWidths){
+    const ws=XLSX.utils.aoa_to_sheet([headers,...rows]);
+    ws['!cols']=colWidths.map(w=>({wch:w}));
+    ws['!rows']=[{hpt:18},...Array(rows.length).fill({hpt:15})];
+    XLSX.utils.book_append_sheet(wb,ws,name);
+  }
+
+  // ── Revenue ──
+  if(document.getElementById('exp-chk-income').checked){
+    const rows=fd(DB.income()).sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
+    let rC=0,rK=0,lastD='';
+    const data=rows.map(r=>{
+      if(r.date!==lastD){const b=getBalanceBefore(r.date);rC=b.cashBefore;rK=b.cardBefore;lastD=r.date;}
+      rC+=r.cash;rK+=r.card;
+      const tot=r.total!=null?r.total:r.cash+r.card;
+      return[r.date,r.time,r.desc,tot,r.card,r.cash,rC,rK,rC+rK];
+    });
+    addSheet(isEl?'Έσοδα':'Revenue',
+      [L.date,L.time,L.desc,L.register,L.card,L.cash,L.balCash,L.balCard,L.balTotal],
+      data,[13,9,34,15,15,15,17,17,17]);
+  }
+
+  // ── Expenses ──
+  if(document.getElementById('exp-chk-expenses').checked){
+    const rows=fd(DB.expenses()).sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
+    let rC=0,rK=0,lastD='';
+    const payL={Μετρητά:L.cashPay,Κάρτα:L.cardPay,'Επί Πιστώσει':L.creditPay};
+    const data=rows.map(r=>{
+      if(r.date!==lastD){
+        const b=getBalanceBefore(r.date);
+        const di=DB.income().filter(x=>x.date===r.date);
+        rC=b.cashBefore+di.reduce((s,x)=>s+x.cash,0);
+        rK=b.cardBefore+di.reduce((s,x)=>s+x.card,0);
+        lastD=r.date;
+      }
+      if(r.pay==='Μετρητά')rC-=r.amount;
+      else if(r.pay==='Κάρτα')rK-=r.amount;
+      const onCredit=r.pay==='Επί Πιστώσει';
+      return[r.date,r.time,r.supplier,r.type,payL[r.pay]||r.pay,r.inv||'',r.amount,
+        onCredit?'—':rC,onCredit?'—':rK,onCredit?'—':rC+rK];
+    });
+    addSheet(isEl?'Έξοδα':'Expenses',
+      [L.date,L.time,L.supplier,L.type,L.payment,L.invoice,L.amount,L.balCash,L.balCard,L.balTotal],
+      data,[13,9,24,13,12,14,14,16,16,16]);
+  }
+
+  // ── Daily Balance ──
+  if(document.getElementById('exp-chk-summary').checked){
+    const allI=DB.income(),allE=DB.expenses();
+    const dates=[...new Set([...allI.map(x=>x.date),...allE.map(x=>x.date)])].sort();
+    if(dates.length){
+      const b0=getBalanceBefore(dates[0]);let rC=b0.cashBefore,rK=b0.cardBefore;
+      const data=dates.map(d=>{
+        const di=allI.filter(x=>x.date===d);const de=allE.filter(x=>x.date===d);
+        const ci=di.reduce((s,x)=>s+x.cash,0),ki=di.reduce((s,x)=>s+x.card,0);
+        const ce=de.filter(x=>x.pay==='Μετρητά').reduce((s,x)=>s+x.amount,0);
+        const ke=de.filter(x=>x.pay==='Κάρτα').reduce((s,x)=>s+x.amount,0);
+        const cr=de.filter(x=>x.pay==='Επί Πιστώσει').reduce((s,x)=>s+x.amount,0);
+        const fc=de.filter(x=>x.type==='FC').reduce((s,x)=>s+x.amount,0);
+        rC+=ci-ce;rK+=ki-ke;
+        return[d,ci+ki,ce+ke,cr,ci+ki-(ce+ke),fc,rC,rK,rC+rK];
+      });
+      addSheet(isEl?'Ημερήσιο Υπόλοιπο':'Daily Balance',
+        [L.date,L.revenue,L.expenses,L.credit,L.profit,L.fc,L.balCash,L.balCard,L.balTotal],
+        data,[13,15,15,13,15,13,17,17,17]);
+    }
+  }
+
+  // ── Payroll ──
+  if(document.getElementById('exp-chk-payroll').checked){
+    const rows=fd(DB.payroll()).sort((a,b)=>a.date.localeCompare(b.date));
+    const data=rows.map(r=>[r.date,r.empName,r.mode==='hour'?L.hourly:L.daily,r.qty,r.rate,r.total]);
+    addSheet(isEl?'Μισθοδοσία':'Payroll',
+      [L.date,L.employee,L.mode,L.qty,L.rate,L.total],data,[13,24,12,8,14,14]);
+  }
+
+  // ── Suppliers ──
+  if(document.getElementById('exp-chk-suppliers').checked){
+    const data=DB.suppliers().map(s=>{
+      const exp=DB.expenses().filter(x=>x.supplier===s.name);
+      const tot=exp.reduce((a,x)=>a+x.amount,0);
+      const paid=exp.filter(x=>x.pay!=='Επί Πιστώσει').reduce((a,x)=>a+x.amount,0);
+      return[s.name,s.phone||'',s.afm||'',s.type||'',tot,paid,tot-paid];
+    });
+    addSheet(isEl?'Προμηθευτές':'Suppliers',
+      [L.company,L.phone,L.taxid,L.category,L.totalInv,isEl?`Πληρωμένα(${sym})`:`Paid(${sym})`,L.balDue],
+      data,[26,15,12,16,18,16,18]);
+  }
+
+  // ── Monthly Summary ──
+  if(document.getElementById('exp-chk-summary').checked){
+    const allI=DB.income(),allE=DB.expenses();
+    const months=[...new Set([...allI.map(x=>x.date.slice(0,7)),...allE.map(x=>x.date.slice(0,7))])].sort();
+    const mNamesEl=['Ιαν','Φεβ','Μαρ','Απρ','Μαΐ','Ιουν','Ιουλ','Αυγ','Σεπ','Οκτ','Νοε','Δεκ'];
+    const mNamesEn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const mNames=isEl?mNamesEl:mNamesEn;
+    const data=months.map(m=>{
+      const [yr,mo]=m.split('-');
+      const mi=allI.filter(x=>x.date.startsWith(m));
+      const me=allE.filter(x=>x.date.startsWith(m));
+      const ti=mi.reduce((s,x)=>s+x.cash+x.card,0);
+      const te=me.filter(x=>x.pay!=='Επί Πιστώσει').reduce((s,x)=>s+x.amount,0);
+      const fc=me.filter(x=>x.type==='FC').reduce((s,x)=>s+x.amount,0);
+      const p=ti-te;
+      return[`${mNames[parseInt(mo)-1]} ${yr}`,ti,te,p,ti>0?parseFloat((p/ti*100).toFixed(1)):0,fc,ti>0?parseFloat((fc/ti*100).toFixed(1)):0];
+    });
+    addSheet(isEl?'Μηνιαία Σύνοψη':'Monthly Summary',
+      [L.month,L.revenue,L.expenses,L.profit,L.profitPct,L.fc,isEl?'FC%':'FC%'],
+      data,[18,16,16,16,10,16,10]);
+  }
+
+  if(wb.SheetNames.length===0){notify(isEl?'Επίλεξε τουλάχιστον μία ενότητα':'Select at least one section','danger');return;}
+  const fname=`FinanceOS_Export_${today()}.xlsx`;
+  XLSX.writeFile(wb,fname);
+  closeModal('modal-export');
+  notify(isEl?`✓ Εξαγωγή: ${fname}`:`✓ Exported: ${fname}`);
+}
+
+// ── BACKUP & RESTORE ──
+function backupData(){
+  const payload={
+    version:2,
+    exportedAt:new Date().toISOString(),
+    currency:CURRENCY,
+    income:DB.income(),
+    expenses:DB.expenses(),
+    suppliers:DB.suppliers(),
+    employees:DB.employees(),
+    payroll:DB.payroll(),
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`FinanceOS_Backup_${today()}.json`;
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},500);
+  notify('Backup downloaded successfully');
+}
+
+function restoreData(event){
+  const file=event.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!data.income&&!data.expenses){notify('Invalid backup file','danger');return;}
+      if(!confirm(`Restore backup from ${data.exportedAt?new Date(data.exportedAt).toLocaleString():'unknown date'}?\n\nThis will REPLACE all current data.`))return;
+      if(data.income)DB.saveIncome(data.income);
+      if(data.expenses)DB.saveExpenses(data.expenses);
+      if(data.suppliers)DB.saveSuppliers(data.suppliers);
+      if(data.employees)DB.saveEmployees(data.employees);
+      if(data.payroll)DB.savePayroll(data.payroll);
+      if(data.currency){CURRENCY=data.currency;updateCurrencyUI();}
+      notify('Backup restored successfully!');
+      nav(currentPage);updateHomeStats();
+    }catch(err){notify('Could not read backup file','danger');}
+    event.target.value='';
+  };
+  reader.readAsText(file);
+}
+
+// ── PDF GENERATION (HTML print window — full Greek support) ──
+function generatePDF(){
+  const type=document.querySelector('input[name="pdf-type"]:checked').value;
+  const bizName=document.getElementById('pdf-business-name').value.trim()||'FinanceOS';
+  const dateFrom=document.getElementById('pdf-date-from').value;
+  const dateTo=document.getElementById('pdf-date-to').value;
+  const isEl=lang==='el';
+  const sym=CURRENCY.symbol;
+
+  const NF=n=>parseFloat(n||0).toLocaleString(CURRENCY.locale,{minimumFractionDigits:2,maximumFractionDigits:2});
+  const NE=n=>NF(n)+' '+sym;
+  const pctF=(a,b)=>b>0?(a/b*100).toFixed(1)+'%':'—';
+  const clr=(v)=>v>=0?'color:#059669':'color:#dc2626';
+
+  const mNamesEl=['Ιανουάριος','Φεβρουάριος','Μάρτιος','Απρίλιος','Μάιος','Ιούνιος','Ιούλιος','Αύγουστος','Σεπτέμβριος','Οκτώβριος','Νοέμβριος','Δεκέμβριος'];
+  const mNamesEn=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const mNames=isEl?mNamesEl:mNamesEn;
+
+  const CSS=`
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:10pt;color:#111;background:#fff;padding:0}
+    .page{padding:14mm 12mm;min-height:297mm}
+    .header{background:#0d1117;color:#fff;padding:10px 14px;border-radius:6px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+    .header-left .title{font-size:18pt;font-weight:800;letter-spacing:-0.5px}
+    .header-left .sub{font-size:8pt;color:#8899bb;margin-top:2px}
+    .header-right{text-align:right;font-size:8.5pt;color:#aabbcc}
+    .header-right .biz{font-weight:700;color:#fff;font-size:10pt}
+    .accent-bar{height:3px;background:linear-gradient(90deg,#00d4aa,#00b8ff);border-radius:2px;margin-bottom:14px}
+    .report-title{font-size:15pt;font-weight:800;margin-bottom:2px;color:#111}
+    .report-sub{font-size:9pt;color:#666;margin-bottom:14px}
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+    .kpi{border:1px solid #e5e7eb;border-radius:6px;padding:9px 10px;position:relative;overflow:hidden}
+    .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+    .kpi.green::before{background:#059669}.kpi.red::before{background:#dc2626}
+    .kpi.blue::before{background:#1d4ed8}.kpi.amber::before{background:#d97706}
+    .kpi-label{font-size:7.5pt;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px}
+    .kpi-val{font-size:14pt;font-weight:800;letter-spacing:-0.5px}
+    .kpi.green .kpi-val{color:#059669}.kpi.red .kpi-val{color:#dc2626}
+    .kpi.blue .kpi-val{color:#1d4ed8}.kpi.amber .kpi-val{color:#d97706}
+    .section-title{background:#0d1117;color:#fff;padding:5px 10px;font-size:8pt;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin:14px 0 0;border-radius:4px 4px 0 0}
+    table{width:100%;border-collapse:collapse;font-size:8.5pt;margin-bottom:14px}
+    th{background:#f0f2f6;color:#333;font-weight:700;padding:6px 8px;text-align:left;border:1px solid #ddd;font-size:7.5pt;text-transform:uppercase;letter-spacing:0.4px}
+    td{padding:5px 8px;border:1px solid #e5e7eb;color:#111;vertical-align:middle}
+    tr:nth-child(even) td{background:#f9fafb}
+    .num{text-align:right;font-family:monospace}
+    .pos{color:#059669;font-weight:600}.neg{color:#dc2626;font-weight:600}
+    .bold{font-weight:700}.total-row td{background:#e8ecf2!important;font-weight:700}
+    .ledger{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+    .ledger-col{border:1px solid #e5e7eb;border-radius:6px;overflow:hidden}
+    .ledger-col.combined{border-color:#0d1117}
+    .ledger-header{background:#0d1117;color:#fff;padding:6px 10px;font-size:7.5pt;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+    .ledger-row{display:flex;justify-content:space-between;padding:5px 10px;border-bottom:1px solid #f0f2f6;font-size:8.5pt}
+    .ledger-row:last-child{border-bottom:none;font-weight:700;background:#f0f2f6}
+    .footer{margin-top:20px;padding-top:8px;border-top:1px solid #e5e7eb;font-size:7.5pt;color:#aaa;display:flex;justify-content:space-between}
+    @page{margin:10mm;size:A4}
+    @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+  `;
+
+  function ledgerHTML(date,s){
+    const{cashBefore,cardBefore}=getBalanceBefore(date);
+    const cA=cashBefore+s.cashInc-s.cashExp;
+    const kA=cardBefore+s.cardInc-s.cardExp;
+    const openLbl=isEl?'Υπόλοιπο Ανοίγματος':'Opening Balance';
+    const incLbl=isEl?'+ Έσοδα':'+ Revenue';
+    const expLbl=isEl?'− Έξοδα':'− Expenses';
+    const closeLbl=isEl?'Υπόλοιπο Κλεισίματος':'Closing Balance';
+    const cashLbl=isEl?'Μετρητά':'Cash';
+    const cardLbl=isEl?'Κάρτα / Τράπεζα':'Card / Bank';
+    const totLbl=isEl?'Σύνολο':'Combined';
+    const col=(header,cls,open,inc,exp,close,closeV)=>`
+      <div class="ledger-col ${cls}">
+        <div class="ledger-header">${header}</div>
+        <div class="ledger-row"><span>${openLbl}</span><span class="${open>=0?'pos':'neg'}">${NE(open)}</span></div>
+        <div class="ledger-row"><span>${incLbl}</span><span class="pos">+${NE(inc)}</span></div>
+        <div class="ledger-row"><span>${expLbl}</span><span class="neg">−${NE(exp)}</span></div>
+        <div class="ledger-row"><span>${closeLbl}</span><span class="${closeV>=0?'pos':'neg'}" style="font-size:11pt">${NE(closeV)}</span></div>
+      </div>`;
+    return `<div class="section-title">${isEl?'Υπόλοιπο Ταμείου':'Balance Ledger'}</div>
+    <div class="ledger">
+      ${col(cashLbl,'',cashBefore,s.cashInc,s.cashExp,closeLbl,cA)}
+      ${col(cardLbl,'',cardBefore,s.cardInc,s.cardExp,closeLbl,kA)}
+      ${col(totLbl,'combined',cashBefore+cardBefore,s.totalInc,s.totalExp,closeLbl,cA+kA)}
+    </div>`;
+  }
+
+  function tableHTML(headers,rows,numCols=[]){
+    const ths=headers.map(h=>`<th>${h}</th>`).join('');
+    const trs=rows.map((r,ri)=>`<tr>${r.map((c,ci)=>{
+      const isNum=numCols.includes(ci)||typeof c==='number';
+      const cls=isNum?'num':'';
+      const val=typeof c==='number'?NF(c):c;
+      return`<td class="${cls}">${val}</td>`;
+    }).join('')}</tr>`).join('');
+    return`<table><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table>`;
+  }
+
+  let body='';
+  let title='',sub='',fname='';
+
+  if(type==='daily'){
+    const d=dateFrom||today();
+    const dLabel=new Date(d+'T00:00:00').toLocaleDateString(isEl?'el-GR':'en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    const inc=DB.income().filter(x=>x.date===d);
+    const exp=DB.expenses().filter(x=>x.date===d);
+    const s=reportSummaryHTML(inc,exp);
+    title=isEl?'Ημερήσια Αναφορά':'Daily Report';
+    sub=dLabel;fname=`FinanceOS_Daily_${d}`;
+    const payL={Μετρητά:isEl?'Μετρητά':'Cash',Κάρτα:isEl?'Κάρτα':'Card','Επί Πιστώσει':isEl?'Επί Πιστώσει':'On Credit'};
+    body=`
+      <div class="kpis">
+        <div class="kpi green"><div class="kpi-label">${isEl?'Σύνολο Εσόδων':'Total Revenue'}</div><div class="kpi-val">${NE(s.totalInc)}</div></div>
+        <div class="kpi red"><div class="kpi-label">${isEl?'Σύνολο Εξόδων':'Total Expenses'}</div><div class="kpi-val">${NE(s.totalExp)}</div></div>
+        <div class="kpi blue"><div class="kpi-label">${isEl?'Καθαρό Αποτέλεσμα':'Net Result'}</div><div class="kpi-val" style="${clr(s.totalBal)}">${NE(s.totalBal)}</div></div>
+        <div class="kpi amber"><div class="kpi-label">Food Cost %</div><div class="kpi-val">${s.fcPct}%</div></div>
+      </div>
+      ${ledgerHTML(d,s)}
+      ${inc.length?`<div class="section-title">${isEl?'Έσοδα':'Revenue'}</div>
+      ${tableHTML([isEl?'Ώρα':'Time',isEl?'Περιγραφή':'Description',isEl?'Ταμείο':'Register',isEl?'Κάρτα':'Card',isEl?'Μετρητά':'Cash'],
+        inc.map(r=>[r.time,r.desc,r.total!=null?r.total:r.cash+r.card,r.card,r.cash]),[2,3,4])}`:''}
+      ${exp.length?`<div class="section-title">${isEl?'Έξοδα':'Expenses'}</div>
+      ${tableHTML([isEl?'Ώρα':'Time',isEl?'Προμηθευτής':'Supplier',isEl?'Τύπος':'Type',isEl?'Πληρωμή':'Payment',isEl?'Ποσό':'Amount'],
+        exp.map(r=>[r.time,r.supplier,r.type,payL[r.pay]||r.pay,r.amount]),[4])}`:''}`;
+  }
+
+  else if(type==='monthly'||type==='custom'){
+    let from2,to2;
+    if(type==='monthly'){
+      const m=dateFrom?dateFrom.slice(0,7):today().slice(0,7);
+      from2=m+'-01';
+      const last=new Date(m.split('-')[0],m.split('-')[1],0).getDate();
+      to2=m+'-'+String(last).padStart(2,'0');
+      const mL=new Date(from2+'T00:00:00').toLocaleDateString(isEl?'el-GR':'en-GB',{month:'long',year:'numeric'});
+      title=isEl?'Μηνιαία Αναφορά':'Monthly Report';sub=mL;
+    } else {
+      from2=dateFrom||today().slice(0,8)+'01';to2=dateTo||today();
+      title=isEl?'Αναφορά Περιόδου':'Period Report';sub=`${from2} → ${to2}`;
+    }
+    fname=`FinanceOS_${type==='monthly'?'Monthly':'Period'}_${from2}`;
+    const inc=DB.income().filter(x=>x.date>=from2&&x.date<=to2);
+    const exp=DB.expenses().filter(x=>x.date>=from2&&x.date<=to2);
+    const s=reportSummaryHTML(inc,exp);
+    // day by day
+    const dates=getDateRange(from2,to2);
+    const{cashBefore,cardBefore}=getBalanceBefore(from2);
+    let rC=cashBefore,rK=cardBefore;
+    const dayRows=dates.map(d=>{
+      const di=DB.income().filter(x=>x.date===d);
+      const de=DB.expenses().filter(x=>x.date===d);
+      const ci=di.reduce((s,x)=>s+x.cash,0),ki=di.reduce((s,x)=>s+x.card,0);
+      const ce=de.filter(x=>x.pay==='Μετρητά').reduce((s,x)=>s+x.amount,0);
+      const ke=de.filter(x=>x.pay==='Κάρτα').reduce((s,x)=>s+x.amount,0);
+      rC+=ci-ce;rK+=ki-ke;
+      return[d,ci+ki,ce+ke,ci+ki-(ce+ke),rC,rK,rC+rK];
+    }).filter(r=>r[1]||r[2]);
+    body=`
+      <div class="kpis">
+        <div class="kpi green"><div class="kpi-label">${isEl?'Σύνολο Εσόδων':'Total Revenue'}</div><div class="kpi-val">${NE(s.totalInc)}</div></div>
+        <div class="kpi red"><div class="kpi-label">${isEl?'Σύνολο Εξόδων':'Total Expenses'}</div><div class="kpi-val">${NE(s.totalExp)}</div></div>
+        <div class="kpi blue"><div class="kpi-label">${isEl?'Καθαρό Κέρδος':'Net Profit'}</div><div class="kpi-val" style="${clr(s.totalBal)}">${NE(s.totalBal)}</div></div>
+        <div class="kpi amber"><div class="kpi-label">Food Cost %</div><div class="kpi-val">${s.fcPct}%</div></div>
+      </div>
+      ${ledgerHTML(from2,s)}
+      ${dayRows.length?`<div class="section-title">${isEl?'Ημερήσιο Υπόλοιπο':'Day-by-Day Balance'}</div>
+      ${tableHTML([isEl?'Ημερομηνία':'Date',isEl?'Έσοδα':'Revenue',isEl?'Έξοδα':'Expenses',isEl?'Κέρδος':'Profit',isEl?'Υπ.Μετρ.':'Bal.Cash',isEl?'Υπ.Κάρτα':'Bal.Card',isEl?'Υπ.Σύνολο':'Bal.Total'],dayRows,[1,2,3,4,5,6])}`:''}`;
+  }
+
+  else if(type==='annual'){
+    const yr=dateFrom?dateFrom.slice(0,4):new Date().getFullYear().toString();
+    title=isEl?'Ετήσια Αναφορά':'Annual Report';sub=yr;fname=`FinanceOS_Annual_${yr}`;
+    const inc=DB.income().filter(x=>x.date.startsWith(yr));
+    const exp=DB.expenses().filter(x=>x.date.startsWith(yr));
+    const s=reportSummaryHTML(inc,exp);
+    const{cashBefore,cardBefore}=getBalanceBefore(yr+'-01-01');
+    let rC=cashBefore,rK=cardBefore;
+    const mRows=Array.from({length:12},(_,i)=>{
+      const m=yr+'-'+String(i+1).padStart(2,'0');
+      const mi=DB.income().filter(x=>x.date.startsWith(m));
+      const me=DB.expenses().filter(x=>x.date.startsWith(m));
+      const ti=mi.reduce((s,x)=>s+x.cash+x.card,0);
+      const ci=mi.reduce((s,x)=>s+x.cash,0),ki=mi.reduce((s,x)=>s+x.card,0);
+      const ce=me.filter(x=>x.pay==='Μετρητά').reduce((s,x)=>s+x.amount,0);
+      const ke=me.filter(x=>x.pay==='Κάρτα').reduce((s,x)=>s+x.amount,0);
+      const te=ce+ke;
+      const fc=me.filter(x=>x.type==='FC').reduce((s,x)=>s+x.amount,0);
+      rC+=ci-ce;rK+=ki-ke;
+      return[mNames[i],ti,te,ti-te,ti>0?pctF(ti-te,ti):'—',fc,rC+rK];
+    });
+    body=`
+      <div class="kpis">
+        <div class="kpi green"><div class="kpi-label">${isEl?'Ετήσια Έσοδα':'Annual Revenue'}</div><div class="kpi-val">${NE(s.totalInc)}</div></div>
+        <div class="kpi red"><div class="kpi-label">${isEl?'Ετήσια Έξοδα':'Annual Expenses'}</div><div class="kpi-val">${NE(s.totalExp)}</div></div>
+        <div class="kpi blue"><div class="kpi-label">${isEl?'Ετήσιο Κέρδος':'Annual Profit'}</div><div class="kpi-val" style="${clr(s.totalBal)}">${NE(s.totalBal)}</div></div>
+        <div class="kpi amber"><div class="kpi-label">Food Cost %</div><div class="kpi-val">${s.fcPct}%</div></div>
+      </div>
+      ${ledgerHTML(yr+'-01-01',s)}
+      <div class="section-title">${isEl?'Μηνιαία Σύνοψη':'Monthly Summary'}</div>
+      ${tableHTML([isEl?'Μήνας':'Month',isEl?'Έσοδα':'Revenue',isEl?'Έξοδα':'Expenses',isEl?'Κέρδος':'Profit',isEl?'Κέρδος%':'Profit%','Food Cost',isEl?'Υπ.Σύνολο':'Balance'],mRows,[1,2,3,4,6])}`;
+  }
+
+  // Build full HTML and open print window
+  const html=`<!DOCTYPE html><html lang="${lang}"><head>
+    <meta charset="UTF-8"/>
+    <title>${bizName} — ${title}</title>
+    <style>${CSS}</style>
+  </head><body>
+    <div class="page">
+      <div class="header">
+        <div class="header-left">
+          <div class="title">FinanceOS</div>
+          <div class="sub">Business Management</div>
+        </div>
+        <div class="header-right">
+          <div class="biz">${bizName}</div>
+          <div>${new Date().toLocaleDateString(isEl?'el-GR':'en-GB')}</div>
+        </div>
+      </div>
+      <div class="accent-bar"></div>
+      <div class="report-title">${title}</div>
+      <div class="report-sub">${sub}</div>
+      ${body}
+      <div class="footer">
+        <span>FinanceOS — Business Management</span>
+        <span>${isEl?'Εκτυπώθηκε':'Printed'}: ${new Date().toLocaleString(isEl?'el-GR':'en-GB')}</span>
+      </div>
+    </div>
+  </body></html>`;
+
+  const win=window.open('','_blank','width=850,height=1100');
+  if(!win){notify(isEl?'Επιτρέψτε τα popups για PDF':'Allow popups to generate PDF','danger');return;}
+  win.document.write(html);
+  win.document.close();
+  win.onload=()=>{setTimeout(()=>{win.focus();win.print();},300);};
+  closeModal('modal-pdf');
+  notify(isEl?'Άνοιξε παράθυρο εκτύπωσης — επίλεξε "Αποθήκευση ως PDF"':'Print window opened — choose "Save as PDF"');
+}
 
 // ── MOBILE NAV ──
 function toggleMobileMenu(){
@@ -2374,12 +3473,429 @@ function loadWeeklyPayroll(){
   document.getElementById('weekly-payroll-content').innerHTML=html;
 }
 
+// ── BUSINESS SETTINGS ──
+let BIZ={name:'',license:'',mode:'demo',fingerprint:''}; // mode: 'active' | 'demo'
+
+function loadBIZ(){
+  try{const s=localStorage.getItem('fos_biz');if(s)BIZ=JSON.parse(s);}catch(e){}
+}
+function saveBIZ(){localStorage.setItem('fos_biz',JSON.stringify(BIZ));}
+
+function saveBizSettings(){
+  BIZ.name=document.getElementById('biz-name-input').value.trim();
+  saveBIZ();
+  updateBizUI();
+  closeModal('modal-biz-settings');
+  notify('Settings saved');
+}
+function updateBizUI(){
+  const navBiz=document.getElementById('nav-biz-name');
+  if(navBiz)navBiz.textContent=BIZ.name||'Settings';
+  const bizDisplay=document.getElementById('hero-biz-display');
+  if(bizDisplay&&BIZ.name){bizDisplay.textContent=BIZ.name;bizDisplay.style.display='block';}
+  const pdfBiz=document.getElementById('pdf-business-name');
+  if(pdfBiz&&BIZ.name)pdfBiz.value=BIZ.name;
+}
+
+// ── MACHINE FINGERPRINT ──
+// Builds a stable identifier from hardware/browser characteristics.
+// Not 100% unique but changes when moving to a different machine.
+function getFingerprint(){
+  const ua=navigator.userAgent;
+  const lang=navigator.language||'';
+  const tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'';
+  const sw=screen.width+'x'+screen.height;
+  const sd=screen.colorDepth||0;
+  const cores=navigator.hardwareConcurrency||0;
+  const mem=navigator.deviceMemory||0;
+  const raw=ua+'|'+lang+'|'+tz+'|'+sw+'|'+sd+'|'+cores+'|'+mem;
+  // Simple djb2 hash → hex string
+  let h=5381;
+  for(let i=0;i<raw.length;i++){h=((h<<5)+h+raw.charCodeAt(i))>>>0;}
+  return h.toString(16).toUpperCase().padStart(8,'0');
+}
+
+function fingerprintMatches(){
+  if(!BIZ.fingerprint)return true; // not yet bound
+  const current=getFingerprint();
+  return current===BIZ.fingerprint;
+}
+
+// ── LICENSE ──
+const MASTER_SECRET=0xF05A1234; // must match KeyGenerator
+const VALID_TYPES_LIC=['REST','CAF','HOT','FOS'];
+const CHARS_LIC='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function isValidKey(k){
+  if(!k)return false;
+  const clean=k.toUpperCase().trim();
+  const parts=clean.split('-');
+  if(parts.length!==4)return false;
+  const[type,g1,g2,g3]=parts;
+  if(!VALID_TYPES_LIC.includes(type))return false;
+  if(![g1,g2,g3].every(g=>g.length===4&&/^[A-Z0-9]+$/.test(g)))return false;
+  const allChars=g1+g2+g3.slice(0,3);
+  const checksum=allChars.split('').reduce((s,c)=>s+c.charCodeAt(0),0);
+  const expectedChk=CHARS_LIC[(checksum+MASTER_SECRET)%CHARS_LIC.length];
+  return g3[3]===expectedChk;
+}
+function isDemoLimited(){
+  if(BIZ.mode==='active')return false;
+  const total=DB.income().length+DB.expenses().length;
+  return total>=3;
+}
+function checkDemoLimit(){
+  if(isDemoLimited()){
+    notify('Demo limit reached (3 entries). Please activate your license.','danger');
+    setTimeout(()=>document.getElementById('license-screen').style.display='flex',600);
+    return true;
+  }
+  return false;
+}
+
+function formatLicenseInput(el){
+  let v=el.value.replace(/[^A-Za-z0-9-]/g,'').toUpperCase();
+  el.value=v;
+}
+
+function activateLicense(){
+  const key=document.getElementById('license-key-input').value.trim();
+  const errEl=document.getElementById('license-error');
+  if(isValidKey(key)){
+    // Bind to this machine on first activation
+    BIZ.license=key;
+    BIZ.mode='active';
+    BIZ.fingerprint=getFingerprint();
+    saveBIZ();
+    document.getElementById('license-screen').style.display='none';
+    errEl.style.display='none';
+    notify('License activated! Welcome to FinanceOS ✓');
+    if(!BIZ.name)showOnboarding();
+  } else {
+    errEl.style.display='block';
+    document.getElementById('license-key-input').classList.add('error');
+    setTimeout(()=>document.getElementById('license-key-input').classList.remove('error'),400);
+  }
+}
+
+function enterDemoMode(){
+  BIZ.mode='demo';saveBIZ();
+  document.getElementById('license-screen').style.display='none';
+  const demoBanner=document.createElement('div');
+  demoBanner.id='demo-banner';
+  demoBanner.style.cssText='background:var(--warning-subtle);border-bottom:1px solid rgba(245,158,11,.2);padding:6px;text-align:center;font-size:11.5px;color:var(--warning);font-weight:600;position:sticky;top:var(--nav-h);z-index:190';
+  demoBanner.innerHTML='⚠ DEMO MODE — 3 entry limit. <span style="text-decoration:underline;cursor:pointer" onclick="document.getElementById(\'license-screen\').style.display=\'flex\'">Activate License</span>';
+  document.querySelector('nav').after(demoBanner);
+  if(!BIZ.name)showOnboarding();
+}
+
+// ── ONBOARDING ──
+let _obLang='el';
+let _obStep=1;
+function showOnboarding(){
+  _obStep=1;_obLang=lang;
+  document.getElementById('ob-biz-name').value=BIZ.name||'';
+  updateObStep();
+  openModal('modal-onboard');
+}
+function selectObLang(l){
+  _obLang=l;
+  document.getElementById('ob-lang-el').style.borderColor=l==='el'?'var(--accent)':'var(--border)';
+  document.getElementById('ob-lang-el').style.background=l==='el'?'var(--accent-subtle)':'transparent';
+  document.getElementById('ob-lang-en').style.borderColor=l==='en'?'var(--accent)':'var(--border)';
+  document.getElementById('ob-lang-en').style.background=l==='en'?'var(--accent-subtle)':'transparent';
+}
+function obStep(dir){
+  _obStep+=dir;
+  if(_obStep>3){
+    // Finish
+    BIZ.name=document.getElementById('ob-biz-name').value.trim();
+    saveBIZ();
+    const sel=document.getElementById('ob-currency').value;
+    const[code,symbol,locale]=sel.split('|');
+    CURRENCY={code,symbol,locale,decimals:code==='JPY'?0:2};
+    localStorage.setItem('fos_currency',JSON.stringify(CURRENCY));
+    setLang(_obLang);
+    updateCurrencyUI();
+    updateBizUI();
+    closeModal('modal-onboard');
+    notify('Setup complete! Welcome to FinanceOS 🎉');
+    updateHomeStats();
+    return;
+  }
+  if(_obStep<1)_obStep=1;
+  updateObStep();
+}
+function updateObStep(){
+  for(let i=1;i<=3;i++){
+    document.getElementById('ob-step-'+i).classList.toggle('active',i===_obStep);
+    document.getElementById('ob-dot-'+i).classList.toggle('done',i<=_obStep);
+  }
+  const backBtn=document.getElementById('ob-back-btn');
+  const nextBtn=document.getElementById('ob-next-btn');
+  backBtn.style.display=_obStep>1?'block':'none';
+  nextBtn.textContent=_obStep===3?'Finish ✓':'Next →';
+}
+
+// ── 30-DAY DASHBOARD CHART ──
+function renderDashboardChart(){
+  const ctx=document.getElementById('dashboard-chart');if(!ctx)return;
+  // Build last 30 days
+  const days=[];const labels=[];
+  for(let i=29;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const ds=d.toISOString().slice(0,10);
+    days.push(ds);
+    // Short label: day/month
+    labels.push(d.getDate()+'/'+(d.getMonth()+1));
+  }
+  const inc=days.map(d=>DB.income().filter(x=>x.date===d).reduce((s,x)=>s+x.cash+x.card,0));
+  const exp=days.map(d=>DB.expenses().filter(x=>x.date===d&&x.pay!=='Επί Πιστώσει').reduce((s,x)=>s+x.amount,0));
+  // Range label
+  const rangeEl=document.getElementById('dashboard-chart-range');
+  if(rangeEl)rangeEl.textContent=`${days[0]} → ${days[29]}`;
+  if(chartInst['dashboard'])chartInst['dashboard'].destroy();
+  chartInst['dashboard']=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        {label:lang==='el'?'Έσοδα':'Revenue',data:inc,backgroundColor:'rgba(0,212,170,.75)',borderRadius:3,borderWidth:0},
+        {label:lang==='el'?'Έξοδα':'Expenses',data:exp,backgroundColor:'rgba(255,77,109,.65)',borderRadius:3,borderWidth:0},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmtE(ctx.raw)}`}}},
+      scales:{
+        x:{grid:{display:false},ticks:{color:'rgba(255,255,255,.35)',font:{size:9},maxRotation:0,maxTicksLimit:10}},
+        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'rgba(255,255,255,.35)',font:{size:9},callback:v=>fmtE(v)}}
+      }
+    }
+  });
+}
+
+// ── ON CREDIT PAGE ──
+function renderCreditPage(){
+  const suppliers=DB.suppliers();
+  const allExp=DB.expenses();
+  // Build per-supplier credit data
+  const creditSuppliers=suppliers.map(s=>{
+    const exp=allExp.filter(x=>x.supplier===s.name);
+    const creditEntries=exp.filter(x=>x.pay==='Επί Πιστώσει').sort((a,b)=>a.date.localeCompare(b.date));
+    const totalInv=exp.reduce((a,x)=>a+x.amount,0);
+    const paid=exp.filter(x=>x.pay!=='Επί Πιστώσει').reduce((a,x)=>a+x.amount,0);
+    const balance=totalInv-paid;
+    return{s,exp,creditEntries,totalInv,paid,balance};
+  }).filter(x=>x.balance>0).sort((a,b)=>b.balance-a.balance);
+
+  const totalBalance=creditSuppliers.reduce((s,x)=>s+x.balance,0);
+  const allCreditDates=creditSuppliers.flatMap(x=>x.creditEntries.map(e=>e.date));
+  const oldestDate=allCreditDates.length?allCreditDates.sort()[0]:'—';
+
+  // Update stats
+  document.getElementById('cr-total-balance').textContent=fmtE(totalBalance);
+  document.getElementById('cr-supplier-count').textContent=creditSuppliers.length;
+  document.getElementById('cr-oldest-date').textContent=oldestDate;
+
+  const el=document.getElementById('credit-content');
+  if(!creditSuppliers.length){
+    el.innerHTML=`<div class="empty"><svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><p>No outstanding credit balances</p><small>All supplier invoices are paid up to date.</small></div>`;
+    return;
+  }
+
+  el.innerHTML=creditSuppliers.map(({s,creditEntries,totalInv,paid,balance})=>{
+    const payBadge={'Μετρητά':'badge-gray','Κάρτα':'badge-blue','Επί Πιστώσει':'badge-amber'};
+    const rows=creditEntries.map(r=>`<tr>
+      <td style="padding:8px 16px">${r.date}</td>
+      <td style="padding:8px 16px">${r.inv||'—'}</td>
+      <td style="padding:8px 16px"><span class="badge badge-amber">${lang==='el'?'Επί Πιστώσει':'On Credit'}</span></td>
+      <td style="padding:8px 16px;text-align:right;font-family:var(--mono);color:var(--danger);font-weight:600">${fmtE(r.amount)}</td>
+    </tr>`).join('');
+    return`<div class="credit-supplier-block">
+      <div class="credit-supplier-header" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+        <div>
+          <div class="credit-supplier-name">${s.name}</div>
+          <div style="font-size:11.5px;color:var(--ink3);margin-top:3px">
+            ${s.type?`${s.type} · `:''}${s.phone||''}
+            · ${creditEntries.length} ${lang==='el'?'τιμολόγια':'invoice(s)'}
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div class="credit-supplier-bal">${fmtE(balance)}</div>
+          <div style="font-size:11px;color:var(--ink3);margin-top:2px">${lang==='el'?'ανεξόφλητο':'outstanding'}</div>
+        </div>
+      </div>
+      <div class="credit-supplier-body" style="display:none">
+        <div class="table-wrap" style="border-radius:0;border:none;border-top:1px solid var(--border)">
+          <table>
+            <thead><tr>
+              <th>${lang==='el'?'Ημερομηνία':'Date'}</th>
+              <th>${lang==='el'?'Τιμολόγιο':'Invoice'}</th>
+              <th>${lang==='el'?'Κατάσταση':'Status'}</th>
+              <th style="text-align:right">${lang==='el'?'Ποσό':'Amount'}</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+            <tfoot>
+              <tr class="tfoot">
+                <td colspan="3" style="padding:10px 16px"><strong>${lang==='el'?'Υπόλοιπο Πίστωσης':'Credit Balance'}</strong></td>
+                <td style="padding:10px 16px;text-align:right;font-family:var(--mono);color:var(--danger)"><strong>${fmtE(balance)}</strong></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function printCreditReport(){
+  const isEl=lang==='el';
+  const suppliers=DB.suppliers();
+  const allExp=DB.expenses();
+  const creditSuppliers=suppliers.map(s=>{
+    const exp=allExp.filter(x=>x.supplier===s.name);
+    const creditEntries=exp.filter(x=>x.pay==='Επί Πιστώσει').sort((a,b)=>a.date.localeCompare(b.date));
+    const totalInv=exp.reduce((a,x)=>a+x.amount,0);
+    const paid=exp.filter(x=>x.pay!=='Επί Πιστώσει').reduce((a,x)=>a+x.amount,0);
+    const balance=totalInv-paid;
+    return{s,creditEntries,balance};
+  }).filter(x=>x.balance>0).sort((a,b)=>b.balance-a.balance);
+  const totalBal=creditSuppliers.reduce((s,x)=>s+x.balance,0);
+  const NE=n=>parseFloat(n||0).toLocaleString(CURRENCY.locale,{minimumFractionDigits:2,maximumFractionDigits:2})+' '+CURRENCY.symbol;
+  const tableRows=creditSuppliers.map(({s,creditEntries,balance},i)=>
+    creditEntries.map((r,ri)=>`<tr style="background:${(i+ri)%2===0?'#f9fafb':'#fff'}">
+      <td style="padding:6px 10px;border:1px solid #e5e7eb">${ri===0?`<strong>${s.name}</strong>`:''}</td>
+      <td style="padding:6px 10px;border:1px solid #e5e7eb">${r.date}</td>
+      <td style="padding:6px 10px;border:1px solid #e5e7eb;font-family:monospace">${r.inv||'—'}</td>
+      <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:right;font-family:monospace;color:#dc2626;font-weight:600">${NE(r.amount)}</td>
+      ${ri===creditEntries.length-1?`<td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:right;font-family:monospace;color:#d97706;font-weight:700">${NE(balance)}</td>`:`<td style="padding:6px 10px;border:1px solid #e5e7eb"></td>`}
+    </tr>`).join('')
+  ).join('');
+  const html=`<!DOCTYPE html><html lang="${lang}"><head><meta charset="UTF-8"/>
+    <title>${isEl?'Αναφορά Επί Πιστώσει':'On Credit Report'}</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+      *{box-sizing:border-box;margin:0;padding:0}
+      body{font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:10pt;color:#111;padding:0}
+      .page{padding:14mm 12mm}
+      .header{background:#0d1117;color:#fff;padding:10px 14px;border-radius:6px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center}
+      .header .logo{font-size:16pt;font-weight:800}.header .sub{font-size:8pt;color:#8899bb;margin-top:2px}
+      .header .right{text-align:right;font-size:8.5pt;color:#aabbcc}
+      .header .right .biz{font-weight:700;color:#fff;font-size:10pt}
+      .accent{height:3px;background:linear-gradient(90deg,#f59e0b,#ef4444);border-radius:2px;margin-bottom:14px}
+      .title{font-size:15pt;font-weight:800;margin-bottom:2px}
+      .sub{font-size:9pt;color:#666;margin-bottom:16px}
+      .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+      .kpi{border:1px solid #e5e7eb;border-radius:6px;padding:10px 12px}
+      .kpi::before{content:'';display:block;height:3px;border-radius:2px;margin-bottom:8px}
+      .kpi.amber::before{background:#d97706}.kpi.red::before{background:#dc2626}.kpi.gray::before{background:#6b7280}
+      .kpi-label{font-size:7.5pt;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
+      .kpi-val{font-size:14pt;font-weight:800}
+      .kpi.amber .kpi-val{color:#d97706}.kpi.red .kpi-val{color:#dc2626}.kpi.gray .kpi-val{color:#374151}
+      table{width:100%;border-collapse:collapse;font-size:8.5pt;margin-top:0}
+      th{background:#0d1117;color:#fff;padding:7px 10px;text-align:left;border:1px solid #333;font-size:7.5pt;text-transform:uppercase}
+      .footer{margin-top:20px;padding-top:8px;border-top:1px solid #e5e7eb;font-size:7.5pt;color:#aaa;display:flex;justify-content:space-between}
+      @page{margin:10mm;size:A4}
+      @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+    </style>
+  </head><body><div class="page">
+    <div class="header">
+      <div><div class="logo">FinanceOS</div><div class="sub">Business Management</div></div>
+      <div class="right">
+        <div class="biz">${BIZ.name||'FinanceOS'}</div>
+        <div>${new Date().toLocaleDateString(isEl?'el-GR':'en-GB')}</div>
+      </div>
+    </div>
+    <div class="accent"></div>
+    <div class="title">${isEl?'Αναφορά Επί Πιστώσει':'On Credit Report'}</div>
+    <div class="sub">${isEl?'Ανεξόφλητα υπόλοιπα ανά προμηθευτή':'Outstanding balances by supplier'} — ${new Date().toLocaleDateString(isEl?'el-GR':'en-GB')}</div>
+    <div class="kpis">
+      <div class="kpi amber"><div class="kpi-label">${isEl?'Συνολικό Υπόλοιπο':'Total Balance'}</div><div class="kpi-val">${NE(totalBal)}</div></div>
+      <div class="kpi red"><div class="kpi-label">${isEl?'Προμηθευτές':'Suppliers'}</div><div class="kpi-val">${creditSuppliers.length}</div></div>
+      <div class="kpi gray"><div class="kpi-label">${isEl?'Τιμολόγια':'Invoices'}</div><div class="kpi-val">${creditSuppliers.reduce((s,x)=>s+x.creditEntries.length,0)}</div></div>
+    </div>
+    <table>
+      <thead><tr>
+        <th>${isEl?'Προμηθευτής':'Supplier'}</th>
+        <th>${isEl?'Ημερομηνία':'Date'}</th>
+        <th>${isEl?'Τιμολόγιο':'Invoice'}</th>
+        <th style="text-align:right">${isEl?'Ποσό':'Amount'}</th>
+        <th style="text-align:right">${isEl?'Υπόλοιπο':'Balance'}</th>
+      </tr></thead>
+      <tbody>${tableRows}</tbody>
+      <tfoot>
+        <tr style="background:#e8ecf2;font-weight:700">
+          <td colspan="4" style="padding:8px 10px;border:1px solid #ddd">${isEl?'ΓΕΝΙΚΟ ΣΥΝΟΛΟ':'GRAND TOTAL'}</td>
+          <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;font-family:monospace;color:#d97706">${NE(totalBal)}</td>
+        </tr>
+      </tfoot>
+    </table>
+    <div class="footer">
+      <span>FinanceOS — Business Management</span>
+      <span>${isEl?'Εκτυπώθηκε':'Printed'}: ${new Date().toLocaleString(isEl?'el-GR':'en-GB')}</span>
+    </div>
+  </div></body></html>`;
+  const win=window.open('','_blank','width=820,height=1000');
+  if(!win){notify(isEl?'Επιτρέψτε τα popups':'Allow popups','danger');return;}
+  win.document.write(html);win.document.close();
+  win.onload=()=>setTimeout(()=>{win.focus();win.print();},300);
+}
+
 // ── INIT ──
 document.addEventListener('DOMContentLoaded',()=>{
+  loadBIZ();
   loadCurrency();
   setLang('en');
+  updateBizUI();
+
+  if(!BIZ.mode){
+    // First time ever — show license screen
+    document.getElementById('license-screen').style.display='flex';
+
+  } else if(BIZ.mode==='active'){
+    // Check machine binding
+    if(BIZ.fingerprint && !fingerprintMatches()){
+      // Wrong machine — show blocking screen
+      showWrongDeviceScreen();
+      return;
+    }
+    // All good — refresh fingerprint silently in case browser updated
+    BIZ.fingerprint=getFingerprint();
+    saveBIZ();
+
+  } else if(BIZ.mode==='demo'){
+    const demoBanner=document.createElement('div');
+    demoBanner.id='demo-banner';
+    demoBanner.style.cssText='background:var(--warning-subtle);border-bottom:1px solid rgba(245,158,11,.2);padding:6px;text-align:center;font-size:11.5px;color:var(--warning);font-weight:600;position:sticky;top:var(--nav-h);z-index:190';
+    demoBanner.innerHTML='⚠ DEMO MODE — 3 entry limit. <span style="text-decoration:underline;cursor:pointer" onclick="document.getElementById(\'license-screen\').style.display=\'flex\'">Activate License</span>';
+    document.querySelector('nav').after(demoBanner);
+  }
+
   nav('home');
 });
+
+function showWrongDeviceScreen(){
+  const screen=document.getElementById('license-screen');
+  screen.style.display='flex';
+  // Replace content with wrong-device message
+  const box=screen.querySelector('.license-box');
+  box.innerHTML=`
+    <div class="license-logo" style="background:linear-gradient(135deg,#ff4d6d,#ff8c42)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" width="28" height="28"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    </div>
+    <div class="license-title" style="color:var(--danger)">Device Not Authorized</div>
+    <div class="license-sub">This license key is registered to a different device.<br><br>
+      If you changed computers or reinstalled your browser, contact your FinanceOS provider to transfer your license.<br><br>
+      <span style="font-size:11px;color:var(--ink3);font-family:var(--mono)">Device ID: ${getFingerprint()}</span>
+    </div>
+    <div id="license-error" style="display:none;font-size:12px;color:var(--danger);margin-top:12px"></div>
+    <div style="margin-bottom:16px">
+      <label style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Enter a new license key for this device</label>
+      <input class="license-input" id="license-key-input" placeholder="REST-XXXX-XXXX-XXXX" maxlength="19" oninput="formatLicenseInput(this)" onkeydown="if(event.key==='Enter')activateLicense()"/>
+    </div>
+    <button class="btn btn-primary" onclick="activateLicense()" style="width:100%;justify-content:center;padding:13px">Activate New License</button>
+  `;
+}
 </script>
 </body>
 </html>
