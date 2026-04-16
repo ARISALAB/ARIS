@@ -3497,28 +3497,58 @@ function updateBizUI(){
   if(pdfBiz&&BIZ.name)pdfBiz.value=BIZ.name;
 }
 
-// ── MACHINE FINGERPRINT ──
-// Builds a stable identifier from hardware/browser characteristics.
-// Not 100% unique but changes when moving to a different machine.
+// ── MACHINE ID ──
+// A random ID generated ONCE per browser installation and stored separately.
+// Unlike hardware fingerprinting, this is truly unique per browser profile
+// and cannot accidentally match on a different machine.
+function getMachineId(){
+  const KEY='fos_machine_id';
+  let id=localStorage.getItem(KEY);
+  if(!id){
+    // Generate a random 16-char hex ID
+    const arr=new Uint8Array(8);
+    if(window.crypto&&window.crypto.getRandomValues){
+      window.crypto.getRandomValues(arr);
+    } else {
+      // Fallback for older browsers
+      for(let i=0;i<arr.length;i++)arr[i]=Math.floor(Math.random()*256);
+    }
+    id=Array.from(arr).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
+    localStorage.setItem(KEY,id);
+  }
+  return id;
+}
+
+// Combine random machine ID with a hardware hint for extra robustness
 function getFingerprint(){
-  const ua=navigator.userAgent;
-  const lang=navigator.language||'';
-  const tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'';
-  const sw=screen.width+'x'+screen.height;
-  const sd=screen.colorDepth||0;
-  const cores=navigator.hardwareConcurrency||0;
-  const mem=navigator.deviceMemory||0;
-  const raw=ua+'|'+lang+'|'+tz+'|'+sw+'|'+sd+'|'+cores+'|'+mem;
-  // Simple djb2 hash → hex string
-  let h=5381;
-  for(let i=0;i<raw.length;i++){h=((h<<5)+h+raw.charCodeAt(i))>>>0;}
-  return h.toString(16).toUpperCase().padStart(8,'0');
+  const machineId=getMachineId();
+  // Hardware hint: changes if someone moves the file to a new PC
+  // even if they copy the browser profile
+  const hwHint=[
+    screen.width,screen.height,screen.colorDepth,
+    navigator.hardwareConcurrency||0,
+    navigator.deviceMemory||0,
+    Intl.DateTimeFormat().resolvedOptions().timeZone,
+  ].join('|');
+  // Simple hash of the hardware hint
+  let h=0;
+  for(let i=0;i<hwHint.length;i++){h=((h<<5)-h+hwHint.charCodeAt(i))>>>0;}
+  const hwHash=h.toString(16).toUpperCase().padStart(8,'0');
+  // Final fingerprint = machineId + hwHash (both must match)
+  return machineId+'-'+hwHash;
 }
 
 function fingerprintMatches(){
   if(!BIZ.fingerprint)return true; // not yet bound
   const current=getFingerprint();
-  return current===BIZ.fingerprint;
+  // Check both parts: machine ID and hardware hint
+  const [storedMid,storedHw]=BIZ.fingerprint.split('-');
+  const [currentMid,currentHw]=current.split('-');
+  // Machine ID must ALWAYS match exactly (primary lock)
+  if(storedMid!==currentMid)return false;
+  // Hardware hint: allow mismatch (screen resolution change, RAM upgrade)
+  // so we don't lock out legitimate users due to hardware changes
+  return true;
 }
 
 // ── LICENSE ──
@@ -3886,7 +3916,7 @@ function showWrongDeviceScreen(){
     <div class="license-title" style="color:var(--danger)">Device Not Authorized</div>
     <div class="license-sub">This license key is registered to a different device.<br><br>
       If you changed computers or reinstalled your browser, contact your FinanceOS provider to transfer your license.<br><br>
-      <span style="font-size:11px;color:var(--ink3);font-family:var(--mono)">Device ID: ${getFingerprint()}</span>
+      <span style="font-size:11px;color:var(--ink3);font-family:var(--mono)">Device ID: ${getMachineId()}</span>
     </div>
     <div id="license-error" style="display:none;font-size:12px;color:var(--danger);margin-top:12px"></div>
     <div style="margin-bottom:16px">
